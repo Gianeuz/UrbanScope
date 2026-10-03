@@ -28,6 +28,13 @@
   - Interactive property location map.
   - Inquiry card leading to direct inquiry submission.
 - **Client Submit Inquiry:** Pre-filled client account information, property summary snapshot, custom message field, and submission feedback.
+- **🤖 Mira — AI Real Estate Concierge (Chatbot):**
+  - Always-available floating assistant customized specifically for CD Miranda Realty & Mariam Lobren.
+  - Interactive website navigation (shortcuts to Home, Catalog, Consultations, Account).
+  - Natural language property queries by location (Las Piñas, Dasmariñas, Bacoor, Imus, Naic), price budget (e.g. "under 5M"), and property type (villas, townhouses, subdivisions).
+  - Rich interactive property cards directly inside chat bubbles with pricing and "View Details" links.
+  - Step-by-step guidance on booking consultations, requirements, and financing options (Pag-IBIG, bank loans).
+  - Session chat history persistence across page navigation with subtle sound feedback.
 
 ### 🔐 Authentication Suite (`auth/`)
 - **Client Login:** Secure split-screen layout with branding slideshow carousel, password visibility toggle, remember-me checkbox, and Google sign-in option.
