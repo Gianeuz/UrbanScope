@@ -1,0 +1,282 @@
+/* MANAGE PROPERTIES STYLING (PAGE 15) */
+
+.manage-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--green);
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--text-muted);
+}
+
+.add-property-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background-color: var(--green);
+    color: #ffffff;
+    border: none;
+    border-radius: 24px;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(45, 92, 57, 0.25);
+    transition: all 0.2s;
+}
+
+.add-property-btn:hover {
+    background-color: var(--dark-green);
+    transform: translateY(-1px);
+}
+
+/* CONTROLS ROW */
+.manage-controls-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.search-input-card {
+    flex: 1;
+    min-width: 280px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 44px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.search-input-card svg {
+    color: var(--text-muted);
+}
+
+.search-input-card input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 13.5px;
+    color: var(--text-dark);
+    font-family: inherit;
+}
+
+.status-select-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0 32px 0 16px;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    min-width: 180px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.status-select-card select {
+    width: 100%;
+    border: none;
+    outline: none;
+    appearance: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-dark);
+    font-family: inherit;
+    background: transparent;
+    cursor: pointer;
+}
+
+.status-select-card svg {
+    position: absolute;
+    right: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* TABLE SPECIFIC */
+.prop-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.table-prop-thumb {
+    width: 52px;
+    height: 38px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.status-badge-table {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.status-badge-table.muted {
+    background: #f1f5f2;
+    color: #556c5c;
+}
+
+.status-badge-table.available {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.action-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.act-link {
+    background: none;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.act-link.view { color: var(--green); }
+.act-link.view:hover { text-decoration: underline; }
+
+.act-link.edit { color: #2563eb; }
+.act-link.edit:hover { text-decoration: underline; }
+
+.act-link.delete { color: #dc2626; }
+.act-link.delete:hover { text-decoration: underline; }
+
+/* MODAL */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease;
+}
+
+.modal-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    padding: 28px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ebf2ec;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green);
+}
+
+.close-modal {
+    border: none;
+    background: none;
+    font-size: 24px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.modal-field {
+    margin-bottom: 16px;
+}
+
+.modal-field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--text-dark);
+}
+
+.modal-field input,
+.modal-field select {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 13.5px;
+    outline: none;
+    font-family: inherit;
+}
+
+.modal-field input:focus,
+.modal-field select:focus {
+    border-color: var(--green);
+}
+
+.modal-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.cancel-modal-btn {
+    padding: 10px 22px;
+    background: #e2ece4;
+    color: var(--green);
+    border: none;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.submit-modal-btn {
+    padding: 10px 24px;
+    background: var(--green);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+}

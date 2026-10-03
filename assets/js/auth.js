@@ -2,20 +2,19 @@
 // 1. CAROUSEL & SLIDESHOW LOGIC
 // ==========================================
 
-// Add your own image filenames here
 const slides = [
     {
-        image: "Urban.jpg",
+        image: "../assets/images/Urban.jpg",
         title: "Your Next Home is<br>Just a Click away",
         desc: "Access property details, submit inquiries, upload your requirements, and track your journey."
     },
     {
-        image: "your-house-image-2.jpg", // Add a second photo if available
+        image: "../assets/images/property1.jpg",
         title: "Modern Living,<br>Elevated Comfort",
         desc: "Discover curated properties built with precision and timeless elegance."
     },
     {
-        image: "your-house-image-3.jpg", // Add a third photo if available
+        image: "../assets/images/property2.jpg",
         title: "Seamless Real Estate<br>Experience",
         desc: "Dedicated realty support from consultation to your key turnover."
     }
@@ -32,8 +31,7 @@ function setSlide(index) {
     const descEl = document.getElementById("slideDesc");
     const dots = document.querySelectorAll(".dots-container .dot");
 
-    // Smooth transition
-    if (imgEl) {
+    if (imgEl && slides[currentSlide]) {
         imgEl.style.opacity = "0.4";
         setTimeout(() => {
             imgEl.src = slides[currentSlide].image;
@@ -41,10 +39,9 @@ function setSlide(index) {
         }, 150);
     }
 
-    if (titleEl) titleEl.innerHTML = slides[currentSlide].title;
-    if (descEl) descEl.textContent = slides[currentSlide].desc;
+    if (titleEl && slides[currentSlide]) titleEl.innerHTML = slides[currentSlide].title;
+    if (descEl && slides[currentSlide]) descEl.textContent = slides[currentSlide].desc;
 
-    // Update active dot indicator
     dots.forEach((dot, idx) => {
         if (idx === currentSlide) {
             dot.classList.add("active");
@@ -53,7 +50,6 @@ function setSlide(index) {
         }
     });
 
-    // Reset autoplay timer when clicked manually
     resetAutoSlide();
 }
 
@@ -64,10 +60,9 @@ function nextSlide() {
 
 function resetAutoSlide() {
     clearInterval(slideTimer);
-    slideTimer = setInterval(nextSlide, 5000); // changes slide every 5 seconds
+    slideTimer = setInterval(nextSlide, 5000);
 }
 
-// Start auto slide on page load
 resetAutoSlide();
 
 
@@ -82,7 +77,6 @@ function togglePassword(inputId, btn) {
     const isPassword = input.type === "password";
     input.type = isPassword ? "text" : "password";
 
-    // Toggle icon visual
     const eyeSvg = isPassword 
         ? `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`
         : `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
@@ -92,11 +86,11 @@ function togglePassword(inputId, btn) {
 
 
 // ==========================================
-// 3. REGISTRATION PASSWORD MATCH VALIDATION
+// 3. REGISTRATION VALIDATION & STRENGTH METER
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
-    const registerForm = document.querySelector("form[action='register.php']");
+    const registerForm = document.querySelector("form[action='register.php']") || document.getElementById("registerForm");
     if (registerForm) {
         registerForm.addEventListener("submit", (e) => {
             const pwd = document.getElementById("password");
@@ -109,13 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-});
 
-// ==========================================
-// 4. REGISTRATION: STRENGTH METER, MATCH HINT & GOOGLE SIGN-UP
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", () => {
     const pwd = document.getElementById("password");
     const confirmPwd = document.getElementById("confirm_password");
     const meter = document.getElementById("strengthMeter");
@@ -123,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const hint = document.getElementById("matchHint");
     const googleBtn = document.getElementById("googleSignup");
 
-    if (!pwd || !meter) return; // Not on the registration page
+    if (!pwd || !meter) return;
 
     const labels = ["Use 8+ characters with letters, numbers & symbols", "Weak", "Fair", "Good", "Strong"];
 
@@ -139,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateMatch() {
+        if (!confirmPwd || !hint) return;
         if (!confirmPwd.value) {
             hint.textContent = "";
             hint.className = "match-hint";
@@ -152,15 +141,16 @@ document.addEventListener("DOMContentLoaded", () => {
     pwd.addEventListener("input", () => {
         const level = scorePassword(pwd.value);
         meter.dataset.level = level;
-        label.textContent = labels[level];
+        if (label) label.textContent = labels[level];
         updateMatch();
     });
 
-    confirmPwd.addEventListener("input", updateMatch);
+    if (confirmPwd) {
+        confirmPwd.addEventListener("input", updateMatch);
+    }
 
     if (googleBtn) {
         googleBtn.addEventListener("click", () => {
-            // TODO: Hook up to Google OAuth endpoint
             window.location.href = "google_auth.php?mode=register";
         });
     }

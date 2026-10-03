@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties - Mariam Lobren | Real Estate Agent</title>
+    <link rel="icon" href="assets/images/favicon.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="assets/css/properties.css">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <a class="Cname" href="index.html">
+            <img src="assets/images/logo.png" alt="ML Logo" class="brand-logo" onerror="this.style.display='none'">
+            <span>
+                <strong>Mariam Lobren</strong>
+                <small>REAL ESTATE AGENT</small>
+            </span>
+        </a>
+
+        <nav id="mainNav">
+            <a href="index.html">Home</a>
+            <a href="properties.html" class="active">Properties</a>
+            <a href="index.html#about">About Us</a>
+            <a href="index.html#contact">Contact</a>
+        </nav>
+
+        <div class="nav-acts">
+            <button class="s-icon-btn" id="searchToggle" aria-label="Search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f4928" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+
+            <a href="auth/login.html" class="login-btn" id="loginBtn">Log In</a>
+            <a href="auth/register.html" class="signup-btn" id="signupBtn">Sign Up</a>
+        </div>
+    </header>
+
+    <main class="properties-container">
+        <!-- CATEGORY BAR WITH ARROWS -->
+        <div class="listing-category-bar">
+            <button class="category-arrow" type="button" aria-label="Scroll left" onclick="scrollCat(-1)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+
+            <div class="category-scroll" id="catScroll">
+                <button class="listing-category active" type="button" data-cat="all">All</button>
+                <button class="listing-category" type="button" data-cat="villas">Villas</button>
+                <button class="listing-category" type="button" data-cat="apartments">Apartments</button>
+                <button class="listing-category" type="button" data-cat="townhouses">Townhouses</button>
+                <button class="listing-category" type="button" data-cat="luxury">Luxury Villas</button>
+                <button class="listing-category" type="button" data-cat="house-lot">House &amp; Lot</button>
+                <button class="listing-category" type="button" data-cat="subdivision">Subdivision</button>
+            </div>
+
+            <button class="category-arrow" type="button" aria-label="Scroll right" onclick="scrollCat(1)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+        </div>
+
+        <!-- CONTROLS: FILTER BUTTON & SORT BY -->
+        <div class="listing-controls">
+            <button class="filter-button" id="openFilterBtn" type="button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                <span>Filter</span>
+            </button>
+
+            <div class="sort-control">
+                <label for="sortSelect">Sort by:</label>
+                <div class="sort-select-wrapper">
+                    <select id="sortSelect">
+                        <option value="newest">Newest</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT WITH FILTER DRAWER & LISTINGS GRID -->
+        <div class="content-wrapper">
+            <!-- SLIDE-IN / OVERLAY FILTER DRAWER (PAGE 6) -->
+            <aside class="filter-drawer" id="filterDrawer">
+                <div class="filter-drawer-header">
+                    <h3>Filter Options</h3>
+                    <button type="button" class="close-filter-btn" id="closeFilterBtn" aria-label="Close filters">&times;</button>
+                </div>
+
+                <form id="filterForm" onsubmit="event.preventDefault(); applyFilter();">
+                    <div class="filter-group">
+                        <label for="filterLocation">Location</label>
+                        <select id="filterLocation">
+                            <option value="">All Locations</option>
+                            <option value="dasmarinas" selected>Dasmariñas, Cavite</option>
+                            <option value="las-pinas">Las Piñas City</option>
+                            <option value="bacoor">Bacoor, Cavite</option>
+                            <option value="imus">Imus, Cavite</option>
+                            <option value="naic">Naic, Cavite</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterType">Property Type</label>
+                        <select id="filterType">
+                            <option value="">All Types</option>
+                            <option value="townhouse" selected>Townhouse</option>
+                            <option value="villa">Villa</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="subdivision">Subdivision</option>
+                            <option value="luxury">Luxury Villa</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Price Range</label>
+                        <div class="price-range-inputs">
+                            <input type="text" id="minPrice" placeholder="₱1,000,000" value="₱1,000,000">
+                            <input type="text" id="maxPrice" placeholder="₱1,500,000" value="₱1,500,000">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterBedrooms">Bedrooms</label>
+                        <select id="filterBedrooms">
+                            <option value="any">Any</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4+">4+</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterBathrooms">Bathrooms</label>
+                        <select id="filterBathrooms">
+                            <option value="any" selected>Any</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3+">3+</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="apply-filters-btn">Apply Filters</button>
+                    <button type="button" class="clear-all-btn" onclick="clearFilters()">Clear All</button>
+                </form>
+            </aside>
+
+            <!-- OVERLAY BACKDROP FOR MOBILE FILTER -->
+            <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleFilter(false)"></div>
+
+            <!-- PROPERTY LISTINGS GRID (PAGE 5) -->
+            <div class="listing-grid" id="listingGrid">
+                <!-- Card 1 -->
+                <article class="listing-card" onclick="location.href='property-detail.html'">
+                    <div class="listing-image">
+                        <img src="assets/images/property1.jpg" alt="Velemont Residences">
+                    </div>
+                    <div class="listing-info">
+                        <h3>Velemont Residences</h3>
+                        <p class="listing-location">Manuyo, Las pinas City</p>
+                        <div class="listing-specs">3 Beds &bull; 2 Baths &bull; 120 sqm</div>
+                        <strong class="listing-price">₱6,880,000.00</strong>
+                    </div>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="listing-card" onclick="location.href='property-detail.html'">
+                    <div class="listing-image">
+                        <img src="assets/images/property2.jpg" alt="Green Valley Villa">
+                    </div>
+                    <div class="listing-info">
+                        <h3>Green Valley Villa</h3>
+                        <p class="listing-location">Dasmariñas, Cavite</p>
+                        <div class="listing-specs">3 Beds &bull; 2 Baths &bull; 120 sqm</div>
+                        <strong class="listing-price">₱8,200,000.00</strong>
+                    </div>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="listing-card" onclick="location.href='property-detail.html'">
+                    <div class="listing-image">
+                        <img src="assets/images/property3.jpg" alt="Sunset Townhouse">
+                    </div>
+                    <div class="listing-info">
+                        <h3>Sunset Townhouse</h3>
+                        <p class="listing-location">Bacoor, Cavite</p>
+                        <div class="listing-specs">3 Beds &bull; 2 Baths &bull; 120 sqm</div>
+                        <strong class="listing-price">₱3,800,000.00</strong>
+                    </div>
+                </article>
+
+                <!-- Card 4 -->
+                <article class="listing-card" onclick="location.href='property-detail.html'">
+                    <div class="listing-image">
+                        <img src="assets/images/property1.jpg" alt="Garden Residence">
+                    </div>
+                    <div class="listing-info">
+                        <h3>Garden Residence</h3>
+                        <p class="listing-location">Imus, Cavite</p>
+                        <div class="listing-specs">3 Beds &bull; 2 Baths &bull; 120 sqm</div>
+                        <strong class="listing-price">₱6,200,000.00</strong>
+                    </div>
+                </article>
+
+                <!-- Card 5 -->
+                <article class="listing-card" onclick="location.href='property-detail.html'">
+                    <div class="listing-image">
+                        <img src="assets/images/property2.jpg" alt="Greenview Estate">
+                    </div>
+                    <div class="listing-info">
+                        <h3>Greenview Estate</h3>
+                        <p class="listing-location">Naic, Cavite</p>
+                        <div class="listing-specs">3 Beds &bull; 2 Baths &bull; 120 sqm</div>
+                        <strong class="listing-price">₱7,500,000.00</strong>
+                    </div>
+                </article>
+
+                <!-- Card 6 -->
+                <article class="listing-card" onclick="location.href='property-detail.html'">
+                    <div class="listing-image">
+                        <img src="assets/images/property3.jpg" alt="Sunset Homes">
+                    </div>
+                    <div class="listing-info">
+                        <h3>Sunset Homes</h3>
+                        <p class="listing-location">Dasmariñas, Cavite</p>
+                        <div class="listing-specs">3 Beds &bull; 2 Baths &bull; 120 sqm</div>
+                        <strong class="listing-price">₱4,300,000.00</strong>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-about">
+                <h3>Marian Lobren</h3>
+                <p>L elit, sed do eiusmod tempor incididunt ut. Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.</p>
+            </div>
+
+            <div class="footer-links-column">
+                <h3>QUICK LINKS</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#properties">Services</a></li>
+                    <li><a href="properties.html">Listings</a></li>
+                    <li><a href="inquiry.html">Consultation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>CONTACT</h3>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <p>+63 9000000000</p>
+                </div>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <p>name@sample.com</p>
+                </div>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <p>123 Market Street, 500</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>&copy; 2026 Miriam Lobren. All rights reserved.</span>
+            <div class="socials">
+                <a href="#" aria-label="Facebook" class="social-icon fb"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                <a href="#" aria-label="WhatsApp" class="social-icon wa"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg></a>
+                <a href="#" aria-label="Instagram" class="social-icon ig"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                <a href="#" aria-label="LinkedIn" class="social-icon li"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+            </div>
+            <div class="legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const filterDrawer = document.getElementById('filterDrawer');
+        const drawerBackdrop = document.getElementById('drawerBackdrop');
+        const openFilterBtn = document.getElementById('openFilterBtn');
+        const closeFilterBtn = document.getElementById('closeFilterBtn');
+
+        function toggleFilter(show) {
+            if (show) {
+                filterDrawer.classList.add('open');
+                drawerBackdrop.classList.add('active');
+            } else {
+                filterDrawer.classList.remove('open');
+                drawerBackdrop.classList.remove('active');
+            }
+        }
+
+        openFilterBtn.addEventListener('click', () => toggleFilter(true));
+        closeFilterBtn.addEventListener('click', () => toggleFilter(false));
+
+        function scrollCat(direction) {
+            document.getElementById('catScroll').scrollBy({ left: direction * 140, behavior: 'smooth' });
+        }
+
+        document.querySelectorAll('.listing-category').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.listing-category').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        function clearFilters() {
+            document.getElementById('filterLocation').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            document.getElementById('filterBedrooms').value = 'any';
+            document.getElementById('filterBathrooms').value = 'any';
+        }
+
+        function applyFilter() {
+            toggleFilter(false);
+            alert('Filters applied!');
+        }
+    </script>
+</body>
+</html>
