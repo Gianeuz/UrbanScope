@@ -361,3 +361,102 @@ body {
         padding: 40px 24px;
     }
 }
+/* ==========================================
+   Registration Page Additions
+   ========================================== */
+.input-box.has-toggle {
+    position: relative;
+}
+
+.input-box.has-toggle input {
+    padding-right: 46px;
+}
+
+.toggle-pw {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.toggle-pw:hover {
+    color: var(--brand-primary-green);
+    background-color: rgba(45, 92, 57, 0.08);
+}
+
+/* Password strength meter */
+.strength-meter {
+    margin-top: 8px;
+}
+
+.strength-bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}
+
+.strength-bars span {
+    height: 4px;
+    border-radius: 4px;
+    background-color: #d5e0d7;
+    transition: background-color 0.25s ease;
+}
+
+.strength-meter small,
+.match-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+}
+
+.strength-meter[data-level="1"] .strength-bars span:nth-child(-n+1) { background-color: #d9534f; }
+.strength-meter[data-level="2"] .strength-bars span:nth-child(-n+2) { background-color: #e8a33d; }
+.strength-meter[data-level="3"] .strength-bars span:nth-child(-n+3) { background-color: #7fb069; }
+.strength-meter[data-level="4"] .strength-bars span:nth-child(-n+4) { background-color: #2d5c39; }
+
+.strength-meter[data-level="1"] small { color: #c0392b; }
+.strength-meter[data-level="2"] small { color: #b97a14; }
+.strength-meter[data-level="3"] small,
+.strength-meter[data-level="4"] small { color: var(--brand-primary-green); }
+
+.match-hint:empty { display: none; }
+.match-hint.ok { color: var(--brand-primary-green); }
+.match-hint.error { color: #c0392b; }
+
+/* Terms checkbox */
+.terms-label {
+    align-items: flex-start;
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+.terms-label input {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.inline-link {
+    color: var(--brand-primary-green);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.inline-link:hover {
+    text-decoration: underline;
+}
+
+input:user-invalid {
+    border-color: #c0392b;
+}

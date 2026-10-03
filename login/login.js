@@ -110,3 +110,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// ==========================================
+// 4. REGISTRATION: STRENGTH METER, MATCH HINT & GOOGLE SIGN-UP
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const pwd = document.getElementById("password");
+    const confirmPwd = document.getElementById("confirm_password");
+    const meter = document.getElementById("strengthMeter");
+    const label = document.getElementById("strengthLabel");
+    const hint = document.getElementById("matchHint");
+    const googleBtn = document.getElementById("googleSignup");
+
+    if (!pwd || !meter) return; // Not on the registration page
+
+    const labels = ["Use 8+ characters with letters, numbers & symbols", "Weak", "Fair", "Good", "Strong"];
+
+    function scorePassword(value) {
+        if (!value) return 0;
+        let score = 0;
+        if (value.length >= 8) score++;
+        if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score++;
+        if (/\d/.test(value)) score++;
+        if (/[^A-Za-z0-9]/.test(value)) score++;
+        if (value.length < 8) score = Math.min(score, 1);
+        return Math.max(score, 1);
+    }
+
+    function updateMatch() {
+        if (!confirmPwd.value) {
+            hint.textContent = "";
+            hint.className = "match-hint";
+            return;
+        }
+        const ok = pwd.value === confirmPwd.value;
+        hint.textContent = ok ? "Passwords match" : "Passwords do not match";
+        hint.className = "match-hint " + (ok ? "ok" : "error");
+    }
+
+    pwd.addEventListener("input", () => {
+        const level = scorePassword(pwd.value);
+        meter.dataset.level = level;
+        label.textContent = labels[level];
+        updateMatch();
+    });
+
+    confirmPwd.addEventListener("input", updateMatch);
+
+    if (googleBtn) {
+        googleBtn.addEventListener("click", () => {
+            // TODO: Hook up to Google OAuth endpoint
+            window.location.href = "google_auth.php?mode=register";
+        });
+    }
+});
