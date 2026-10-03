@@ -7,6 +7,8 @@
     <link rel="icon" href="assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/property-detail.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase.js"></script>
 </head>
 <body>
     <!-- NAVBAR -->
@@ -257,6 +259,27 @@
             currentSlide = index;
             updateGallery();
         }
+
+        async function loadPropertyFromDb() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const propId = urlParams.get('id');
+            if (!propId || typeof apiGetPropertyById !== 'function') return;
+
+            const property = await apiGetPropertyById(propId);
+            if (!property) return;
+
+            const titleEl = document.querySelector('.property-title');
+            const locEl = document.querySelector('.property-loc');
+            const priceEl = document.querySelector('.detail-price');
+            const mainImgEl = document.getElementById('mainGalleryImg');
+
+            if (titleEl) titleEl.innerText = property.title;
+            if (locEl) locEl.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${property.location}`;
+            if (priceEl) priceEl.innerText = `₱${Number(property.price).toLocaleString()}`;
+            if (mainImgEl && property.image_url) mainImgEl.src = property.image_url;
+        }
+
+        window.addEventListener('DOMContentLoaded', loadPropertyFromDb);
     </script>
 </body>
 </html>

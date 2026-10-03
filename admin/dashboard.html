@@ -6,6 +6,8 @@
     <title>Admin Dashboard - UrbanScope | Miriam Lobren</title>
     <link rel="icon" href="../assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/supabase.js"></script>
 </head>
 <body>
     <!-- TOP NAVIGATION BAR -->
@@ -127,7 +129,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Properties</span>
-                    <strong class="kpi-value">124</strong>
+                    <strong class="kpi-value" id="kpiTotalProperties">124</strong>
                 </div>
             </div>
 
@@ -137,7 +139,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Clients</span>
-                    <strong class="kpi-value">87</strong>
+                    <strong class="kpi-value" id="kpiTotalClients">87</strong>
                 </div>
             </div>
 
@@ -147,7 +149,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Inquiries</span>
-                    <strong class="kpi-value">42</strong>
+                    <strong class="kpi-value" id="kpiTotalInquiries">42</strong>
                 </div>
             </div>
 
@@ -157,7 +159,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Pending Review</span>
-                    <strong class="kpi-value">5</strong>
+                    <strong class="kpi-value" id="kpiPendingInquiries">5</strong>
                 </div>
             </div>
 
@@ -316,7 +318,7 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="recentInquiriesBody">
                         <tr>
                             <td class="id-col">INQ-2026-008</td>
                             <td>Juan Dela Cruz</td>
@@ -366,6 +368,52 @@
         toggleBtn.addEventListener('click', () => toggleSidebar(true));
         closeBtn.addEventListener('click', () => toggleSidebar(false));
         backdrop.addEventListener('click', () => toggleSidebar(false));
+
+        // Load live inquiries & properties from Supabase
+        async function loadDashboardData() {
+            if (typeof apiGetInquiries === 'function') {
+                const inquiries = await apiGetInquiries();
+                if (inquiries && inquiries.length > 0) {
+                    const inqCountEl = document.getElementById('kpiTotalInquiries');
+                    const pendingEl = document.getElementById('kpiPendingInquiries');
+                    if (inqCountEl) inqCountEl.innerText = inquiries.length;
+                    
+                    const pendingCount = inquiries.filter(i => (i.status || '').toLowerCase().includes('review') || (i.status || '').toLowerCase().includes('pending')).length;
+                    if (pendingEl) pendingEl.innerText = pendingCount;
+
+                    const tbody = document.getElementById('recentInquiriesBody');
+                    if (tbody) {
+                        tbody.innerHTML = inquiries.slice(0, 5).map(inq => {
+                            const dateStr = inq.created_at ? new Date(inq.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+                            const statusColor = (inq.status || '').toLowerCase().includes('approved') ? 'green' : 
+                                               (inq.status || '').toLowerCase().includes('completed') ? 'dark-green' : 'orange';
+                            return `
+                                <tr>
+                                    <td class="id-col">INQ-#${inq.id}</td>
+                                    <td>${inq.client_name || 'Client'}</td>
+                                    <td>${inq.property_title || 'General Inquiry'}</td>
+                                    <td>${dateStr}</td>
+                                    <td><span class="status-pill ${statusColor}">${inq.status || 'Pending'}</span></td>
+                                    <td><button class="action-view-btn" onclick="alert('Inquiry Message:\\n\\n${(inq.message || '').replace(/'/g, "\\'")}\\n\\nPhone: ${inq.client_phone || 'N/A'}\\nEmail: ${inq.client_email || 'N/A'}')">View</button></td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            }
+
+            if (typeof apiGetProperties === 'function') {
+                const props = await apiGetProperties();
+                if (props && props.length > 0) {
+                    const propCountEl = document.getElementById('kpiTotalProperties');
+                    if (propCountEl) propCountEl.innerText = props.length;
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+        });
     </script>
 </body>
 </html>

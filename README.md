@@ -103,6 +103,88 @@ CD-Miranda-1/
 - **CSS3:** Responsive Grid, Flexbox, custom design tokens/variables, SVG charting, smooth transitions, mobile-first breakpoints.
 - **JavaScript (ES6+):** Interactive image carousels, slide-in drawers, modal dialogs, client-side table filtering, and real-time form validation.
 - **Typography:** [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) & [Dancing Script](https://fonts.google.com/specimen/Dancing+Script) via Google Fonts.
+- **Backend / Database:** [Supabase](https://supabase.com) (PostgreSQL, Realtime, Auth, Storage) via `@supabase/supabase-js`.
+
+---
+
+## 🗄️ Database Integration (Supabase)
+
+The platform is pre-wired to connect directly to your **Supabase** backend using client-side JavaScript.
+
+### 1. Configure Your API Keys
+Open [`assets/js/supabase.js`](assets/js/supabase.js) and paste your Project URL and Anon Public Key (found in **Supabase Dashboard &rarr; Project Settings &rarr; API**):
+
+```javascript
+const SUPABASE_CONFIG = {
+    url: 'https://YOUR_PROJECT_ID.supabase.co',
+    anonKey: 'YOUR_SUPABASE_ANON_PUBLIC_KEY'
+};
+```
+
+### 2. Run Database SQL Migration
+Execute the following script in your **Supabase SQL Editor** to create the required tables and public policies:
+
+```sql
+-- 1. Create Properties Table
+CREATE TABLE IF NOT EXISTS properties (
+    id BIGSERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    location TEXT NOT NULL,
+    property_type TEXT DEFAULT 'Residential',
+    price NUMERIC NOT NULL,
+    bedrooms INT DEFAULT 3,
+    bathrooms INT DEFAULT 2,
+    lot_area NUMERIC DEFAULT 120,
+    status TEXT DEFAULT 'Available',
+    image_url TEXT,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 2. Create Inquiries Table
+CREATE TABLE IF NOT EXISTS inquiries (
+    id BIGSERIAL PRIMARY KEY,
+    property_title TEXT NOT NULL,
+    client_name TEXT NOT NULL,
+    client_email TEXT NOT NULL,
+    client_phone TEXT,
+    message TEXT,
+    status TEXT DEFAULT 'Under Review',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 3. Enable Row Level Security (RLS)
+ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
+ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
+
+-- 4. Public Policies
+-- Allow anyone to view properties
+CREATE POLICY "Allow public read properties" 
+ON properties FOR SELECT USING (true);
+
+-- Allow admins/clients to insert properties
+CREATE POLICY "Allow insert properties" 
+ON properties FOR INSERT WITH CHECK (true);
+
+-- Allow deleting properties
+CREATE POLICY "Allow delete properties" 
+ON properties FOR DELETE USING (true);
+
+-- Allow public to submit inquiries
+CREATE POLICY "Allow public insert inquiries" 
+ON inquiries FOR INSERT WITH CHECK (true);
+
+-- Allow reading inquiries (admin / client)
+CREATE POLICY "Allow select inquiries" 
+ON inquiries FOR SELECT USING (true);
+
+-- 5. Seed Initial Demo Properties
+INSERT INTO properties (title, location, property_type, price, bedrooms, bathrooms, lot_area, status, image_url)
+VALUES 
+('Velemont Residences', 'Manuyo, Las Piñas City', 'Subdivision', 6880000, 3, 2, 120, 'Available', 'assets/images/property1.jpg'),
+('Green Valley Villa', 'Dasmariñas, Cavite', 'Villa', 8200000, 3, 2, 120, 'Available', 'assets/images/property2.jpg'),
+('Sunset Townhouse', 'Bacoor, Cavite', 'Townhouse', 3800000, 3, 2, 120, 'Available', 'assets/images/property3.jpg');
+```
 
 ---
 

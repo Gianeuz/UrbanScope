@@ -6,6 +6,8 @@
     <title>Properties - Mariam Lobren | Real Estate Agent</title>
     <link rel="icon" href="assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="assets/css/properties.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase.js"></script>
 </head>
 <body>
     <!-- NAVBAR -->
@@ -318,10 +320,50 @@
             document.getElementById('catScroll').scrollBy({ left: direction * 140, behavior: 'smooth' });
         }
 
+        // Dynamic Property Fetching & Category Filtering
+        let activePropertiesData = null;
+
+        async function loadProperties(filter = {}) {
+            if (typeof apiGetProperties === 'function') {
+                const data = await apiGetProperties(filter);
+                if (data && data.length > 0) {
+                    activePropertiesData = data;
+                    renderProperties(data);
+                }
+            }
+        }
+
+        function renderProperties(list) {
+            const grid = document.getElementById('listingGrid');
+            if (!grid || !list || list.length === 0) return;
+
+            grid.innerHTML = list.map(item => `
+                <article class="listing-card" onclick="location.href='property-detail.html?id=${item.id}'">
+                    <div class="listing-image">
+                        <img src="${item.image_url || 'assets/images/property1.jpg'}" alt="${item.title}" onerror="this.src='assets/images/property1.jpg'">
+                    </div>
+                    <div class="listing-info">
+                        <h3>${item.title}</h3>
+                        <p class="listing-location">${item.location}</p>
+                        <div class="listing-specs">${item.bedrooms || 3} Beds &bull; ${item.bathrooms || 2} Baths &bull; ${item.lot_area || 120} sqm</div>
+                        <strong class="listing-price">₱${Number(item.price || 0).toLocaleString()}</strong>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // Initialize properties on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProperties();
+        });
+
         document.querySelectorAll('.listing-category').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.listing-category').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                const cat = btn.getAttribute('data-cat');
+                const typeFilter = cat === 'all' ? '' : (cat === 'house-lot' ? 'house' : cat);
+                loadProperties({ type: typeFilter });
             });
         });
 
@@ -332,11 +374,14 @@
             document.getElementById('maxPrice').value = '';
             document.getElementById('filterBedrooms').value = 'any';
             document.getElementById('filterBathrooms').value = 'any';
+            loadProperties();
         }
 
         function applyFilter() {
             toggleFilter(false);
-            alert('Filters applied!');
+            const loc = document.getElementById('filterLocation').value;
+            const type = document.getElementById('filterType').value;
+            loadProperties({ location: loc, type: type });
         }
     </script>
 </body>

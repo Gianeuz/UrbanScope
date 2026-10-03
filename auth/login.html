@@ -6,6 +6,8 @@
     <link rel="icon" href="../assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/auth.css">
     <title>UrbanScope - CD Miranda Realty</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/supabase.js"></script>
     <script src="../assets/js/auth.js" defer></script>
 </head>
 <body>
@@ -53,7 +55,7 @@
                     <p>WELCOME BACK!</p>
                 </div>
 
-                <form action="../index.html" method="GET" class="auth-form">
+                <form action="../index.html" method="GET" class="auth-form" id="loginForm">
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <div class="input-box">
@@ -113,5 +115,33 @@
 
     </div>
 
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.btn-submit');
+            const originalText = btn.innerText;
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            btn.innerText = 'Signing In...';
+
+            if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
+                const res = await apiSignIn(email, password);
+                if (res && res.success) {
+                    alert('✓ Welcome back! Logged in successfully.');
+                    window.location.href = '../index.html';
+                } else {
+                    alert('Login failed: ' + (res.error || 'Invalid email or password.'));
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+            } else {
+                // Graceful demo login fallback
+                window.location.href = '../index.html';
+            }
+        });
+    </script>
 </body>
 </html>

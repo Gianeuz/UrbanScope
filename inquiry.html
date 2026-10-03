@@ -6,6 +6,8 @@
     <title>Submit Inquiry - Mariam Lobren</title>
     <link rel="icon" href="assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="assets/css/inquiry.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase.js"></script>
 </head>
 <body>
     <!-- CLIENT APP TOPBAR (PAGE 12) -->
@@ -110,9 +112,30 @@
     </main>
 
     <script>
-        function submitInquiry() {
-            alert('Your inquiry has been submitted to Mariam Lobren Realty! Reference: INQ-2026-009');
-            window.location.href = 'index.html';
+        async function submitInquiry() {
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+
+            const inquiryData = {
+                property_title: "Residential Lot",
+                client_name: document.getElementById('clientName').value.trim(),
+                client_email: document.getElementById('clientEmail').value.trim(),
+                client_phone: document.getElementById('clientPhone').value.trim(),
+                message: document.getElementById('inquiryMessage').value.trim(),
+                status: 'Under Review'
+            };
+
+            const result = await apiSubmitInquiry(inquiryData);
+
+            if (result && result.success) {
+                alert('✓ Your inquiry has been successfully sent to Mariam Lobren Realty!\nReference: INQ-2026-009');
+                window.location.href = 'index.html';
+            } else {
+                alert('Submission error: ' + (result.error || 'Please try again.'));
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+            }
         }
     </script>
 </body>
