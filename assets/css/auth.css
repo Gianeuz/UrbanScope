@@ -519,3 +519,34 @@ input:user-invalid {
     color: var(--brand-primary-green);
     text-decoration: underline;
 }
+
+/* ---------- Back link & login notice ---------- */
+.back-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2d5c39;
+    text-decoration: none;
+    transition: transform 0.2s, color 0.2s;
+}
+.back-home-link:hover { transform: translateX(-3px); color: #1a3b23; }
+
+.auth-notice {
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #eef5ef;
+    border: 1px solid #c4dbc8;
+    color: #1f4928;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    animation: noticeIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.auth-notice[hidden] { display: none; }
+@keyframes noticeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+}

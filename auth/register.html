@@ -49,11 +49,14 @@
         <!-- RIGHT PANEL: Register Form -->
         <div class="form-panel">
             <div class="form-wrapper">
-                
+                <a href="../index.html" class="back-home-link">&larr; Back to Home</a>
+
                 <div class="welcome-header">
                     <h1>Create Your Account</h1>
                     <p>It only takes a few minutes.</p>
                 </div>
+
+                <div class="auth-notice" id="authNotice" hidden>Please create an account (or log in) to send an inquiry to Mariam Lobren.</div>
 
                 <form action="login.html" method="GET" class="auth-form" id="registerForm">
                     <div class="form-group">
@@ -137,6 +140,16 @@
     </div>
 
     <script>
+        // Where to go after sign-up (set when a visitor tried to inquire while logged out)
+        const params = new URLSearchParams(window.location.search);
+        const rawNext = params.get('redirect') || '';
+        const safeNext = /^[A-Za-z0-9_\-]+\.html([?#][A-Za-z0-9_\-=&%.]*)?$/.test(rawNext) ? rawNext : 'index.html';
+
+        // Keep the redirect target when switching to the login page
+        if (params.get('reason') === 'inquiry') document.getElementById('authNotice').hidden = false;
+        const loginLink = document.querySelector('.register-prompt a');
+        if (loginLink && window.location.search) loginLink.href = 'login.html' + window.location.search;
+
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('.btn-submit');
@@ -159,17 +172,22 @@
             if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
                 const res = await apiSignUp(email, password, fullname, phone);
                 if (res && res.success) {
-                    alert('✓ Account successfully created! Please check your email to confirm registration or log in directly.');
-                    window.location.href = 'login.html';
+                    if (res.data && res.data.session) {
+                        // Signed in automatically - continue to where they were headed
+                        window.location.href = '../' + safeNext;
+                    } else {
+                        alert('✓ Account created! Please check your email to confirm your registration, then log in.');
+                        window.location.href = 'login.html' + window.location.search;
+                    }
                 } else {
                     alert('Registration failed: ' + (res.error || 'Please try again.'));
                     btn.disabled = false;
                     btn.innerText = originalText;
                 }
             } else {
-                // Graceful fallback when credentials are not configured yet
-                alert('✓ Account registered in demo mode! You can now log in.');
-                window.location.href = 'login.html';
+                // Demo session when Supabase is not configured
+                localStorage.setItem('urbanscope_demo_user', JSON.stringify({ name: fullname, email: email, phone: phone }));
+                window.location.href = '../' + safeNext;
             }
         });
     </script>

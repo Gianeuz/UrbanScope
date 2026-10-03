@@ -49,10 +49,15 @@
         <!-- RIGHT PANEL: Login Form -->
         <div class="form-panel">
             <div class="form-wrapper">
-                
+                <a href="../index.html" class="back-home-link">&larr; Back to Home</a>
+
                 <div class="welcome-header">
                     <h1>Login</h1>
                     <p>WELCOME BACK!</p>
+                </div>
+
+                <div class="auth-notice" id="authNotice" hidden>
+                    Please log in or create an account to send an inquiry to Mariam Lobren.
                 </div>
 
                 <form action="../index.html" method="GET" class="auth-form" id="loginForm">
@@ -116,6 +121,19 @@
     </div>
 
     <script>
+        // Where to go after login (set when a visitor tried to inquire while logged out)
+        const params = new URLSearchParams(window.location.search);
+        const rawNext = params.get('redirect') || '';
+        const safeNext = /^[A-Za-z0-9_\-]+\.html([?#][A-Za-z0-9_\-=&%.]*)?$/.test(rawNext) ? rawNext : 'index.html';
+
+        if (params.get('reason') === 'inquiry') {
+            document.getElementById('authNotice').hidden = false;
+        }
+
+        // Keep the redirect target when switching to the register page
+        const registerLink = document.querySelector('.register-prompt a');
+        if (registerLink && window.location.search) registerLink.href = 'register.html' + window.location.search;
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('.btn-submit');
@@ -130,16 +148,17 @@
             if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
                 const res = await apiSignIn(email, password);
                 if (res && res.success) {
-                    alert('✓ Welcome back! Logged in successfully.');
-                    window.location.href = '../index.html';
+                    window.location.href = '../' + safeNext;
                 } else {
                     alert('Login failed: ' + (res.error || 'Invalid email or password.'));
                     btn.disabled = false;
                     btn.innerText = originalText;
                 }
             } else {
-                // Graceful demo login fallback
-                window.location.href = '../index.html';
+                // Demo session when Supabase is not configured
+                const name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                localStorage.setItem('urbanscope_demo_user', JSON.stringify({ name: name, email: email, phone: '' }));
+                window.location.href = '../' + safeNext;
             }
         });
     </script>

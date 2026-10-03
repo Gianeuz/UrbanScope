@@ -6,19 +6,19 @@
  */
 
 const SUPABASE_CONFIG = {
-    // 1. Supabase Project URL:
+    // 1. Replace with your Supabase Project URL:
     url: 'https://magyevswjzvlbbwgxulj.supabase.co',
 
-    // 2. Supabase Anon/Publishable API Key:
+    // 2. Replace with your Supabase Anon/Public API Key:
     anonKey: 'sb_publishable_jHBKAMajIGz525dxIXvq4A_kpPttqqE'
 };
 
 // Check if credentials have been provided
 function isSupabaseConfigured() {
-    return SUPABASE_CONFIG.url && 
-           !SUPABASE_CONFIG.url.includes('YOUR_PROJECT_ID') &&
-           SUPABASE_CONFIG.anonKey && 
-           !SUPABASE_CONFIG.anonKey.includes('YOUR_SUPABASE_ANON');
+    return SUPABASE_CONFIG.url &&
+        !SUPABASE_CONFIG.url.includes('YOUR_PROJECT_ID') &&
+        SUPABASE_CONFIG.anonKey &&
+        !SUPABASE_CONFIG.anonKey.includes('YOUR_SUPABASE_ANON');
 }
 
 // Initialize Supabase Client
@@ -26,9 +26,8 @@ let dbClient = null;
 
 if (window.supabase && isSupabaseConfigured()) {
     try {
-        const targetUrl = SUPABASE_CONFIG.url.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
-        dbClient = window.supabase.createClient(targetUrl, SUPABASE_CONFIG.anonKey);
-        console.log('✓ UrbanScope Supabase connected successfully!');
+        dbClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        console.log('✓ Supabase successfully connected!');
     } catch (err) {
         console.error('Supabase initialization failed:', err);
     }
