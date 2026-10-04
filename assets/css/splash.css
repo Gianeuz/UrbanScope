@@ -1,0 +1,182 @@
+/**
+ * UrbanScope - Welcome Splash Screen
+ * Shown once per browser session when the site is first opened.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* While the splash is up, hide the page underneath (it is revealed as the curtain lifts) */
+html.splash-pending,
+html.splash-pending body {
+    background: #1a3b23 !important;
+}
+html.splash-pending body > *:not(#splash) {
+    visibility: hidden;
+}
+html.splash-pending {
+    overflow: hidden;
+}
+
+#splash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+    color: #fff;
+    background: radial-gradient(circle at 50% 38%, #347c47 0%, #2d5c39 38%, #1a3b23 78%, #10261a 100%);
+    border-radius: 0 0 0 0;
+    transition: transform 0.9s cubic-bezier(0.77, 0, 0.18, 1), border-radius 0.9s cubic-bezier(0.77, 0, 0.18, 1);
+    will-change: transform;
+}
+
+#splash.splash-exit {
+    transform: translateY(-101%);
+    border-radius: 0 0 50% 50% / 0 0 14% 14%;
+    pointer-events: none;
+}
+
+/* Soft drifting glow orbs */
+#splash .splash-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.35;
+    animation: splashFloat 6s ease-in-out infinite alternate;
+}
+#splash .splash-orb.o1 { width: 340px; height: 340px; background: #5aa86d; top: -90px; left: -80px; }
+#splash .splash-orb.o2 { width: 300px; height: 300px; background: #c9a24a; bottom: -100px; right: -60px; animation-delay: -2s; opacity: 0.22; }
+
+#splash .splash-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px;
+}
+
+/* Logo ring */
+#splash .splash-logo-ring {
+    position: relative;
+    width: 116px;
+    height: 116px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45), 0 18px 40px rgba(0, 0, 0, 0.3);
+    animation: splashPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both, splashPulse 2.2s ease-out 0.9s infinite;
+}
+#splash .splash-logo-ring::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: #e3c779;
+    border-right-color: rgba(227, 199, 121, 0.4);
+    animation: splashSpin 1.6s linear infinite;
+}
+#splash .splash-logo-ring img {
+    width: 74px;
+    height: 74px;
+    object-fit: contain;
+}
+#splash .splash-mono {
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: 1px;
+    color: #2d5c39;
+}
+
+/* Agent name, revealed letter by letter */
+#splash .splash-name {
+    margin-top: 30px;
+    font-size: clamp(2.1rem, 7vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+#splash .splash-name .ch {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(26px) rotateX(-70deg);
+    animation: splashLetter 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation-delay: calc(0.55s + var(--i) * 0.06s);
+}
+#splash .splash-name .sp { width: 0.35em; }
+
+#splash .splash-line {
+    height: 2px;
+    width: 0;
+    margin: 16px 0 14px;
+    background: linear-gradient(90deg, transparent, #e3c779, transparent);
+    animation: splashLine 0.9s ease-out 1.35s forwards;
+}
+
+#splash .splash-role {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: #cfe5d3;
+    opacity: 0;
+    animation: splashFade 0.8s ease-out 1.55s forwards;
+}
+
+#splash .splash-tag {
+    margin-top: 14px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5rem;
+    color: #e3c779;
+    opacity: 0;
+    animation: splashFade 0.9s ease-out 1.85s forwards;
+}
+
+#splash .splash-skip {
+    position: absolute;
+    bottom: 28px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    opacity: 0;
+    animation: splashFade 0.8s ease-out 1.2s forwards;
+}
+
+@keyframes splashPop {
+    from { opacity: 0; transform: scale(0.4) rotate(-12deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes splashPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45), 0 18px 40px rgba(0, 0, 0, 0.3); }
+    100% { box-shadow: 0 0 0 28px rgba(255, 255, 255, 0), 0 18px 40px rgba(0, 0, 0, 0.3); }
+}
+@keyframes splashSpin { to { transform: rotate(360deg); } }
+@keyframes splashLetter { to { opacity: 1; transform: translateY(0) rotateX(0); } }
+@keyframes splashLine { to { width: min(260px, 60vw); } }
+@keyframes splashFade { to { opacity: 1; } }
+@keyframes splashFloat {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(40px, 30px) scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #splash, #splash * {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
+        transition-duration: 0.2s !important;
+    }
+    #splash .ch, #splash .splash-role, #splash .splash-tag, #splash .splash-skip { opacity: 1; transform: none; }
+    #splash .splash-line { width: 200px; }
+}
