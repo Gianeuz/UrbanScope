@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../assets/images/favicon.jpg" type="image/x-icon">
-    <link rel="stylesheet" href="../assets/css/auth.css">
+    <link rel="stylesheet" href="auth.css">
     <title>UrbanScope - CD Miranda Realty</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../assets/js/supabase.js"></script>
-    <script src="../assets/js/auth.js" defer></script>
+    <script src="../shared/js/supabase.js"></script>
+    <script src="auth.js" defer></script>
 </head>
 <body>
 
@@ -120,47 +120,6 @@
 
     </div>
 
-    <script>
-        // Where to go after login (set when a visitor tried to inquire while logged out)
-        const params = new URLSearchParams(window.location.search);
-        const rawNext = params.get('redirect') || '';
-        const safeNext = /^[A-Za-z0-9_\-]+\.html([?#][A-Za-z0-9_\-=&%.]*)?$/.test(rawNext) ? rawNext : 'index.html';
-
-        if (params.get('reason') === 'inquiry') {
-            document.getElementById('authNotice').hidden = false;
-        }
-
-        // Keep the redirect target when switching to the register page
-        const registerLink = document.querySelector('.register-prompt a');
-        if (registerLink && window.location.search) registerLink.href = 'register.html' + window.location.search;
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = this.querySelector('.btn-submit');
-            const originalText = btn.innerText;
-
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            btn.disabled = true;
-            btn.innerText = 'Signing In...';
-
-            if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
-                const res = await apiSignIn(email, password);
-                if (res && res.success) {
-                    window.location.href = '../' + safeNext;
-                } else {
-                    alert('Login failed: ' + (res.error || 'Invalid email or password.'));
-                    btn.disabled = false;
-                    btn.innerText = originalText;
-                }
-            } else {
-                // Demo session when Supabase is not configured
-                const name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                localStorage.setItem('urbanscope_demo_user', JSON.stringify({ name: name, email: email, phone: '' }));
-                window.location.href = '../' + safeNext;
-            }
-        });
-    </script>
+    <script src="login.js"></script>
 </body>
 </html>

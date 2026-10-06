@@ -60,46 +60,73 @@
 ## 📂 Project Directory Structure
 
 ```text
-CD-Miranda-1/
+Mariam-Lobren-Real-Estate/
 ├── index.html                   # Main Home Landing Page
-├── properties.html              # Property Listings with Slide-in Filter Drawer
-├── property-detail.html         # Individual Property Detail & Gallery Page
-├── inquiry.html                 # Client Submit Inquiry Form
+├── index.css                    # Home landing page styles
+├── index.js                     # Home interactive controls & category filter
 ├── README.md                    # Project Documentation
+├── .gitignore                   # Git ignore patterns (.history, temporary files)
 │
-├── auth/                        # Public User Authentication
-│   ├── login.html               # Client Sign-In Page
-│   └── register.html            # Client Registration Page
+├── properties/                  # Properties Feature Module
+│   ├── properties.html          # Properties catalog with filter drawer
+│   ├── properties.css           # Properties listing & drawer styles
+│   ├── properties.js            # Listing search, filters, category pills & dynamic cards
+│   ├── property-detail.html     # Dynamic property details page (Supabase / query param)
+│   ├── property-detail.css      # Property details specs, gallery & booking card styles
+│   ├── property-detail.js       # Gallery image carousel & dynamic listing loader
+│   ├── Liora.html               # Featured listing: Liora Homes Executive Townhouse
+│   └── Airmen.html              # Featured listing: Airmen Triplex Modern Residence
 │
-├── admin/                       # Administrator Portal
-│   ├── login.html               # Admin Sign-In Page
-│   ├── dashboard.html           # Admin Analytics Dashboard & Slide-out Sidebar
-│   └── properties.html          # Property Management & Add Property Modal
+├── inquiry/                     # Client Inquiry Feature Module
+│   ├── inquiry.html             # Client inquiry submission form
+│   ├── inquiry.css              # Inquiry form layout, input groups & responsive styles
+│   └── inquiry.js               # Form submission handling & validation
 │
-└── assets/                      # Centralized Static Assets
-    ├── css/                     # Modular Stylesheets
-    │   ├── home.css             # Landing page styles
-    │   ├── properties.css       # Properties listings & drawer styles
-    │   ├── property-detail.css  # Property details & gallery styles
-    │   ├── inquiry.css          # Client inquiry styles
-    │   ├── auth.css             # Authentication (login & register) styles
-    │   ├── dashboard.css        # Admin dashboard & sidebar styles
-    │   └── properties-admin.css # Admin property management styles
-    │
-    ├── js/                      # Frontend Scripts
-    │   └── auth.js              # Slideshow carousel, password toggle & strength meter
-    │
-    └── images/                  # Project Images & Icons
-        ├── logo.png             # Real estate agent logo
-        ├── logo-urban.png       # UrbanScope branding logo
+├── auth/                        # Client Authentication Feature Module
+│   ├── login.html               # Client sign-in page
+│   ├── login.js                 # Client login authentication logic & redirect
+│   ├── register.html            # Client registration page
+│   ├── register.js              # Registration form validation & account creation
+│   ├── auth.css                 # Authentication split-screen layout & input styling
+│   └── auth.js                  # Hero carousel, password visibility toggle & strength meter
+│
+├── admin/                       # Administrator Portal Feature Module
+│   ├── login.html               # Admin login portal
+│   ├── login.js                 # Admin authentication handler
+│   ├── dashboard.html           # Admin dashboard analytics & KPI charts
+│   ├── dashboard.css            # Dashboard layout, KPI cards & slide-out sidebar styles
+│   ├── dashboard.js             # Dashboard metrics, chart interactions & sidebar toggle
+│   ├── properties.html          # Property management table & modal dialog
+│   ├── properties.css           # Admin data table, filter pills & modal styles
+│   └── properties.js            # Admin property CRUD operations & modal controls
+│
+├── shared/                      # Shared Cross-Cutting Components
+│   ├── css/
+│   │   ├── common.css           # Global tokens, reset, typography, shared navbar & footer
+│   │   ├── splash.css           # Welcome splash screen loader styles
+│   │   ├── session.css          # User profile avatar, dropdown & login state styles
+│   │   └── chatbot.css          # Mira AI chatbot widget styling & animations
+│   └── js/
+│       ├── supabase.js          # Supabase client SDK initialization & DB API helpers
+│       ├── session.js           # Session manager, auth gate, profile pill & dropdown
+│       ├── splash.js            # Animated welcome splash screen controller
+│       └── chatbot.js           # Mira AI Real Estate Assistant chatbot engine
+│
+└── assets/                      # Static Media Assets
+    └── images/                  # Project images, icons & photography
+        ├── logo.png             # Real estate agent branding logo
+        ├── logo-urban.png       # UrbanScope agency logo
         ├── favicon.jpg          # Browser tab icon
-        ├── home-bg.png          # Hero backdrop image
-        ├── Urban.jpg            # Auth showcase image
-        ├── agent.jpg            # Agent portrait
-        ├── property1.jpg        # Property showcase 1
-        ├── property2.jpg        # Property showcase 2
-        ├── property3.jpg        # Property showcase 3
-        └── *.png                # Interface & social media icons
+        ├── home-bg.png          # Hero backdrop photography
+        ├── Urban.jpg            # Authentication showcase photography
+        ├── agent.jpg            # Agent portrait (Mariam Lobren)
+        ├── property1.jpg        # Property showcase 1 (Velemont)
+        ├── property2.jpg        # Property showcase 2 (Green Valley)
+        ├── property3.jpg        # Property showcase 3 (Horizon Heights)
+        ├── LioraHomes.jpg       # Liora Homes cover
+        ├── liora2.JPG, ...      # Liora gallery photos
+        ├── AirmenTriplex.WEBP   # Airmen Triplex showcase
+        └── *.png                # Interface & social media icons (search, email, phone, etc.)
 ```
 
 ---
@@ -220,9 +247,11 @@ Simply double-click `index.html` or drag it into any modern web browser.
 | Page | URL Path | Description |
 | :--- | :--- | :--- |
 | **Home** | [`index.html`](index.html) | Main landing page, search, featured homes, bio, testimonials |
-| **Properties** | [`properties.html`](properties.html) | Listings catalog with interactive filter drawer & sorting |
-| **Property Details** | [`property-detail.html`](property-detail.html) | High-res photo carousel, specs bar, map, and inquiry card |
-| **Submit Inquiry** | [`inquiry.html`](inquiry.html) | Client inquiry form with pre-filled account details |
+| **Properties** | [`properties/properties.html`](properties/properties.html) | Listings catalog with interactive filter drawer & sorting |
+| **Property Details** | [`properties/property-detail.html`](properties/property-detail.html) | High-res photo carousel, specs bar, map, and inquiry card |
+| **Featured: Liora Homes** | [`properties/Liora.html`](properties/Liora.html) | Dedicated showcase for Liora Homes Executive Townhouse |
+| **Featured: Airmen Triplex** | [`properties/Airmen.html`](properties/Airmen.html) | Dedicated showcase for Airmen Triplex Modern Residence |
+| **Submit Inquiry** | [`inquiry/inquiry.html`](inquiry/inquiry.html) | Client inquiry form with pre-filled account details |
 | **Client Login** | [`auth/login.html`](auth/login.html) | Client sign-in with split-screen branding |
 | **Client Register** | [`auth/register.html`](auth/register.html) | Account registration with password strength meter |
 | **Admin Login** | [`admin/login.html`](admin/login.html) | Restricted access portal for administrative staff |

@@ -1,0 +1,9 @@
+# Local editor history
+.history/
+
+# Node dependencies
+node_modules/
+
+# Operating System metadata
+.DS_Store
+Thumbs.db
