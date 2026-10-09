@@ -111,8 +111,8 @@
                     <div class="filter-group">
                         <label for="filterLocation">Location</label>
                         <select id="filterLocation">
-                            <option value="">All Locations</option>
-                            <option value="dasmarinas" selected>Dasmariñas, Cavite</option>
+                            <option value="" selected>All Locations</option>
+                            <option value="dasmarinas">Dasmariñas, Cavite</option>
                             <option value="las-pinas">Las Piñas City</option>
                             <option value="bacoor">Bacoor, Cavite</option>
                             <option value="imus">Imus, Cavite</option>
@@ -123,30 +123,31 @@
                     <div class="filter-group">
                         <label for="filterType">Property Type</label>
                         <select id="filterType">
-                            <option value="">All Types</option>
-                            <option value="townhouse" selected>Townhouse</option>
+                            <option value="" selected>All Types</option>
+                            <option value="townhouse">Townhouse</option>
                             <option value="villa">Villa</option>
                             <option value="apartment">Apartment</option>
                             <option value="subdivision">Subdivision</option>
                             <option value="luxury">Luxury Villa</option>
+                            <option value="house-lot">House &amp; Lot</option>
                         </select>
                     </div>
 
                     <div class="filter-group">
                         <label>Price Range</label>
                         <div class="price-range-inputs">
-                            <input type="text" id="minPrice" placeholder="₱1,000,000" value="₱1,000,000">
-                            <input type="text" id="maxPrice" placeholder="₱1,500,000" value="₱1,500,000">
+                            <input type="text" id="minPrice" placeholder="Min Price (₱)">
+                            <input type="text" id="maxPrice" placeholder="Max Price (₱)">
                         </div>
                     </div>
 
                     <div class="filter-group">
                         <label for="filterBedrooms">Bedrooms</label>
                         <select id="filterBedrooms">
-                            <option value="any">Any</option>
+                            <option value="any" selected>Any</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
-                            <option value="3" selected>3</option>
+                            <option value="3">3</option>
                             <option value="4+">4+</option>
                         </select>
                     </div>

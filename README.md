@@ -61,17 +61,25 @@
 
 ```text
 Mariam-Lobren-Real-Estate/
+├── run.py                       # Single-Command Python Server Launcher
 ├── index.html                   # Main Home Landing Page
 ├── index.css                    # Home landing page styles
 ├── index.js                     # Home interactive controls & category filter
 ├── README.md                    # Project Documentation
-├── .gitignore                   # Git ignore patterns (.history, temporary files)
+├── .gitignore                   # Git ignore patterns (.history, temporary files, pycache, .db)
+│
+├── backend/                     # 🐍 Python FastAPI & SQLite Backend
+│   ├── app.py                   # FastAPI REST API routes, static hosting & CORS
+│   ├── database.py              # SQLite connection, tables schema & seed data
+│   ├── models.py                # Pydantic data schemas & request validation
+│   ├── auth.py                  # PBKDF2 password hashing & PyJWT token auth
+│   └── requirements.txt         # Python dependencies (fastapi, uvicorn, pydantic, pyjwt)
 │
 ├── properties/                  # Properties Feature Module
 │   ├── properties.html          # Properties catalog with filter drawer
 │   ├── properties.css           # Properties listing & drawer styles
 │   ├── properties.js            # Listing search, filters, category pills & dynamic cards
-│   ├── property-detail.html     # Dynamic property details page (Supabase / query param)
+│   ├── property-detail.html     # Dynamic property details page
 │   ├── property-detail.css      # Property details specs, gallery & booking card styles
 │   ├── property-detail.js       # Gallery image carousel & dynamic listing loader
 │   ├── Liora.html               # Featured listing: Liora Homes Executive Townhouse
@@ -107,7 +115,8 @@ Mariam-Lobren-Real-Estate/
 │   │   ├── session.css          # User profile avatar, dropdown & login state styles
 │   │   └── chatbot.css          # Mira AI chatbot widget styling & animations
 │   └── js/
-│       ├── supabase.js          # Supabase client SDK initialization & DB API helpers
+│       ├── api.js               # Python REST API Client (Properties, Inquiries, Auth)
+│       ├── supabase.js          # Unified Service Gateway (bridges to Python REST API)
 │       ├── session.js           # Session manager, auth gate, profile pill & dropdown
 │       ├── splash.js            # Animated welcome splash screen controller
 │       └── chatbot.js           # Mira AI Real Estate Assistant chatbot engine
@@ -133,112 +142,67 @@ Mariam-Lobren-Real-Estate/
 
 ## 🛠️ Technology Stack
 
-- **HTML5:** Semantic elements, form validation, accessible attributes.
-- **CSS3:** Responsive Grid, Flexbox, custom design tokens/variables, SVG charting, smooth transitions, mobile-first breakpoints.
-- **JavaScript (ES6+):** Interactive image carousels, slide-in drawers, modal dialogs, client-side table filtering, and real-time form validation.
+- **Backend:** **Python 3** with **FastAPI** (asynchronous, high performance), **Uvicorn** ASGI server.
+- **Database & Storage:** **SQLite** with automated relational schema migrations and seed population.
+- **Security & Auth:** PBKDF2-HMAC-SHA256 password hashing (standard library `hashlib`) & **PyJWT** token authorization.
+- **API Documentation:** Interactive Swagger UI (`/docs`) and ReDoc (`/redoc`).
+- **Frontend Core:** HTML5, Modern Vanilla CSS3 (Custom design tokens, Flexbox, Responsive Grid), JavaScript (ES6+).
 - **Typography:** [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) & [Dancing Script](https://fonts.google.com/specimen/Dancing+Script) via Google Fonts.
-- **Backend / Database:** [Supabase](https://supabase.com) (PostgreSQL, Realtime, Auth, Storage) via `@supabase/supabase-js`.
 
 ---
 
-## 🗄️ Database Integration (Supabase)
+## 🐍 Python Backend Architecture
 
-The platform is pre-wired to connect directly to your **Supabase** backend using client-side JavaScript.
+The backend is organized under the [`backend/`](backend/) directory and provides a complete RESTful API:
 
-### 1. Configure Your API Keys
-Open [`assets/js/supabase.js`](assets/js/supabase.js) and paste your Project URL and Anon Public Key (found in **Supabase Dashboard &rarr; Project Settings &rarr; API**):
+### 1. API Endpoints
 
-```javascript
-const SUPABASE_CONFIG = {
-    url: 'https://YOUR_PROJECT_ID.supabase.co',
-    anonKey: 'YOUR_SUPABASE_ANON_PUBLIC_KEY'
-};
-```
+| Category | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **System** | `GET` | `/api/health` | Service health status |
+| **Dashboard**| `GET` | `/api/stats` | Aggregate counts for KPI metric cards |
+| **Auth** | `POST` | `/api/auth/register` | Register new client account |
+| **Auth** | `POST` | `/api/auth/login` | Authenticate client or admin |
+| **Auth** | `POST` | `/api/auth/logout` | Revoke session / sign out |
+| **Auth** | `GET` | `/api/auth/me` | Fetch authenticated user profile |
+| **Properties** | `GET` | `/api/properties` | Search & filter property catalog |
+| **Properties** | `GET` | `/api/properties/{id}` | Retrieve individual property detail |
+| **Properties** | `POST` | `/api/properties` | Add new property listing (Admin) |
+| **Properties** | `PUT` | `/api/properties/{id}` | Update listing information |
+| **Properties** | `DELETE` | `/api/properties/{id}` | Remove listing from database |
+| **Inquiries** | `POST` | `/api/inquiries` | Submit client inquiry message |
+| **Inquiries** | `GET` | `/api/inquiries` | Retrieve all inquiries (Admin) |
 
-### 2. Run Database SQL Migration
-Execute the following script in your **Supabase SQL Editor** to create the required tables and public policies:
+### 2. Default Seed Accounts & Data
 
-```sql
--- 1. Create Properties Table
-CREATE TABLE IF NOT EXISTS properties (
-    id BIGSERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    location TEXT NOT NULL,
-    property_type TEXT DEFAULT 'Residential',
-    price NUMERIC NOT NULL,
-    bedrooms INT DEFAULT 3,
-    bathrooms INT DEFAULT 2,
-    lot_area NUMERIC DEFAULT 120,
-    status TEXT DEFAULT 'Available',
-    image_url TEXT,
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
--- 2. Create Inquiries Table
-CREATE TABLE IF NOT EXISTS inquiries (
-    id BIGSERIAL PRIMARY KEY,
-    property_title TEXT NOT NULL,
-    client_name TEXT NOT NULL,
-    client_email TEXT NOT NULL,
-    client_phone TEXT,
-    message TEXT,
-    status TEXT DEFAULT 'Under Review',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
--- 3. Enable Row Level Security (RLS)
-ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
-ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
-
--- 4. Public Policies
--- Allow anyone to view properties
-CREATE POLICY "Allow public read properties" 
-ON properties FOR SELECT USING (true);
-
--- Allow admins/clients to insert properties
-CREATE POLICY "Allow insert properties" 
-ON properties FOR INSERT WITH CHECK (true);
-
--- Allow deleting properties
-CREATE POLICY "Allow delete properties" 
-ON properties FOR DELETE USING (true);
-
--- Allow public to submit inquiries
-CREATE POLICY "Allow public insert inquiries" 
-ON inquiries FOR INSERT WITH CHECK (true);
-
--- Allow reading inquiries (admin / client)
-CREATE POLICY "Allow select inquiries" 
-ON inquiries FOR SELECT USING (true);
-
--- 5. Seed Initial Demo Properties
-INSERT INTO properties (title, location, property_type, price, bedrooms, bathrooms, lot_area, status, image_url)
-VALUES 
-('Velemont Residences', 'Manuyo, Las Piñas City', 'Subdivision', 6880000, 3, 2, 120, 'Available', 'assets/images/property1.jpg'),
-('Green Valley Villa', 'Dasmariñas, Cavite', 'Villa', 8200000, 3, 2, 120, 'Available', 'assets/images/property2.jpg'),
-('Sunset Townhouse', 'Bacoor, Cavite', 'Townhouse', 3800000, 3, 2, 120, 'Available', 'assets/images/property3.jpg');
-```
+When first launched, the SQLite database is automatically generated and populated:
+- **Admin Staff:** `admin@cdmiranda.com` / `admin123`
+- **Demo Client:** `client@example.com` / `client123`
+- **Properties:** 5 showcase listings (Velemont Residences, Green Valley, Horizon Heights, Liora Homes, Airmen Triplex)
+- **Inquiries:** Sample client leads pre-loaded for dashboard KPI display.
 
 ---
 
 ## 💻 Getting Started
 
-You can run this project directly in any web browser without build tools or external dependencies.
+### Option 1: Run with Python Server (Recommended)
 
-### Option 1: Live Server (VS Code / Antigravity IDE)
-1. Open the project folder in your IDE.
-2. Right-click on `index.html` and select **"Open with Live Server"**.
+Run the single-command server runner from the root directory:
 
-### Option 2: Python Local Server
-Run the following command in your terminal from the project root:
 ```bash
-python3 -m http.server 8000
+python3 run.py
 ```
-Then navigate to `http://localhost:8000` in your web browser.
 
-### Option 3: Direct File Open
-Simply double-click `index.html` or drag it into any modern web browser.
+The terminal will launch the server and display all accessible endpoints:
+- **Web Application:** `http://localhost:8000/`
+- **Properties Catalog:** `http://localhost:8000/properties/properties.html`
+- **Admin Portal:** `http://localhost:8000/admin/login.html` (Login: `admin@cdmiranda.com` / `admin123`)
+- **Swagger Interactive API Docs:** `http://localhost:8000/docs`
+- **ReDoc Documentation:** `http://localhost:8000/redoc`
+
+### Option 2: Live Server or Direct Browser Open
+
+You can also run the frontend via VS Code Live Server (`http://127.0.0.1:5500`) or open `index.html` directly. The frontend REST client will automatically connect to `http://127.0.0.1:8000/api` with full CORS support!
 
 ---
 
