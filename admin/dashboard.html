@@ -3,352 +3,653 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Admin Dashboard - UrbanScope | Miriam Lobren</title>
+
     <link rel="icon" href="../assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="dashboard.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../shared/js/supabase.js"></script>
 </head>
+
 <body>
-    <!-- TOP NAVIGATION BAR -->
+
+    <!-- TOPBAR------->
     <header class="admin-topbar">
+
         <div class="topbar-left">
-            <button class="hamburger-btn" id="sidebarToggle" type="button" aria-label="Toggle sidebar menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <button
+                class="hamburger-btn"
+                id="sidebarToggle"
+                type="button"
+                aria-label="Toggle sidebar menu"
+            >
+                <svg width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
             </button>
+
             <div class="brand-badge">
-                <img src="../assets/images/logo-urban.png" alt="Logo" class="logo-icon" onerror="this.style.display='none'">
+                <img
+                    src="../assets/images/logo-urban.png"
+                    alt="Miriam Lobren Real Estate"
+                    class="logo-icon"
+                    onerror="this.style.display='none'"
+                >
+
                 <div class="brand-text">
-                    <h1>UrbanScope</h1>
-                    <h2>CD Miranda Realty</h2>
+                    <h1>Miriam Lobren</h1>
+                    <h2>Real Estate Agent</h2>
                 </div>
             </div>
         </div>
 
         <div class="topbar-search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" placeholder="Search properties, location, or keywords...">
+            <svg width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+
+            <input
+                type="text"
+                placeholder="Search properties, location, or keywords..."
+            >
         </div>
 
         <div class="topbar-right">
-            <button class="notif-btn" type="button" aria-label="Notifications">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+
+            <button
+                class="notif-btn"
+                type="button"
+                aria-label="Notifications"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+
                 <span class="notif-badge">3</span>
             </button>
 
-            <div class="admin-profile-badge">
-                <div class="avatar-circle">AL</div>
-                <div class="user-meta">
-                    <strong>Admin User</strong>
-                    <small>Administrator</small>
+<button
+    class="admin-profile-badge"
+    id="profileButton"
+    type="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="profileDropdown"
+>
+    <img src="../assets/images/agent.jpg" alt="Miriam Lobren"
+        class="avatar-circle">
+
+        
+
+    <svg class="profile-chevron"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true">
+        <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+</button>
+
+            
+            <div class="profile-dropdown" id="profileDropdown" role="menu" hidden>
+                
+                <div class="profile-dropdown-info">
+                        <div class="profile-dropdown-info">
+        <img src="../assets/images/agent.jpg"
+             alt="Miriam Lobren"
+             class="avatar-circle">
+                    
+                    <span class="profile-dropdown-name"><strong>Miriam Lobren</strong><small>Administrator</small></span>
                 </div>
+                </div>
+                
+                
+                <div class="profile-dropdown-divider"></div>
+                <a href="#" role="menuitem" data-profile-action><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile</span></a>
+                <a href="login.html" role="menuitem" class="profile-signout"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path></svg><span>Sign Out</span></a>
             </div>
         </div>
     </header>
 
-    <!-- SLIDE-OUT SIDEBAR NAVIGATION (PAGE 14) -->
+
+    <!-- SIDEBAR BACKDROP -->
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+
+    <!-- SIDEBAR NAVIGATION -->
     <aside class="admin-sidebar" id="adminSidebar">
+
         <div class="sidebar-header">
+
             <div class="brand-badge">
-                <img src="../assets/images/logo-urban.png" alt="Logo" class="logo-icon" onerror="this.style.display='none'">
+                <img
+                    src="../assets/images/logo-urban.png"
+                    alt="Yamm Lobren Real Estate"
+                    class="logo-icon"
+                    onerror="this.style.display='none'"
+                >
+
                 <div class="brand-text">
-                    <h1>UrbanScope</h1>
-                    <h2>CD Miranda Realty</h2>
+                    <h1>Miriam Lobren</h1>
+                    <h2>Real Estate Agent</h2>
                 </div>
             </div>
-            <button class="close-sidebar-btn" id="closeSidebarBtn">&times;</button>
+
+            <button
+                class="close-sidebar-btn"
+                id="closeSidebarBtn"
+                type="button"
+                aria-label="Close sidebar"
+            >
+                &times;
+            </button>
         </div>
 
+
         <nav class="sidebar-nav">
-            <a href="dashboard.html" class="nav-item active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+
+            <a href="dashboard.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
                 <span>Home</span>
             </a>
-            <a href="properties.html" class="nav-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="22" x2="9" y2="22.01"/><line x1="15" y1="22" x2="15" y2="22.01"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><line x1="9" y1="18" x2="9" y2="18.01"/><line x1="15" y1="18" x2="15" y2="18.01"/></svg>
+
+            <a href="properties.html" class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                    <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                    <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                    <line x1="9" y1="6" x2="9" y2="6.01"></line>
+                    <line x1="15" y1="6" x2="15" y2="6.01"></line>
+                    <line x1="9" y1="10" x2="9" y2="10.01"></line>
+                    <line x1="15" y1="10" x2="15" y2="10.01"></line>
+                    <line x1="9" y1="14" x2="9" y2="14.01"></line>
+                    <line x1="15" y1="14" x2="15" y2="14.01"></line>
+                    <line x1="9" y1="18" x2="9" y2="18.01"></line>
+                    <line x1="15" y1="18" x2="15" y2="18.01"></line>
+                </svg>
                 <span>Properties</span>
             </a>
-            <a href="#" class="nav-item" onclick="alert('Client Management coming in v2.0')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('Client Management coming in v2.0'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
                 <span>Clients</span>
             </a>
 
-            <!-- EXPANDABLE INQUIRIES SUB-MENU -->
+
+            <!-- INQUIRIES SUB-MENU -->
             <div class="nav-group open">
+
                 <div class="nav-item group-header">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+
                     <span>Inquiries</span>
-                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+                    <svg class="chevron" width="16" height="16"
+                        viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
                 </div>
+
                 <div class="sub-menu">
-                    <a href="#" class="sub-item"><span>All Inquiries</span></a>
-                    <a href="#" class="sub-item"><span>Pending Review</span><span class="count-badge orange">5</span></a>
-                    <a href="#" class="sub-item"><span>For Resubmission</span><span class="count-badge gray">2</span></a>
-                    <a href="#" class="sub-item"><span>Approved</span><span class="count-badge green">8</span></a>
-                    <a href="#" class="sub-item"><span>Completed</span><span class="count-badge dark-green">12</span></a>
+                    <a href="#" class="sub-item">
+                        <span>All Inquiries</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>Pending Review</span>
+                        <span class="count-badge orange">5</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>For Resubmission</span>
+                        <span class="count-badge gray">2</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>Approved</span>
+                        <span class="count-badge green">8</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>Completed</span>
+                        <span class="count-badge dark-green">12</span>
+                    </a>
                 </div>
             </div>
 
-            <a href="#" class="nav-item" onclick="alert('User Management coming in v2.0')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('User Management coming in v2.0'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
                 <span>Users</span>
             </a>
-            <a href="#" class="nav-item" onclick="alert('Analytics Reports coming in v2.0')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('Analytics Reports coming in v2.0'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
                 <span>Reports</span>
             </a>
-            <a href="#" class="nav-item" onclick="alert('System Settings')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('System Settings'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
                 <span>Settings</span>
             </a>
+
         </nav>
 
+
         <div class="sidebar-footer">
-            <div class="cursive-tagline">Better Homes,<br>Brighter Futures</div>
+            <div class="cursive-tagline">
+                Better Homes,<br>Brighter Futures
+            </div>
+
             <a href="login.html" class="logout-link">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
                 <span>Sign Out</span>
             </a>
         </div>
-    </aside>
 
-    <!-- DASHBOARD MAIN CONTENT (PAGE 13) -->
+    </aside>
+    
+    
+    <!-- MAIN DASHBOARD -->
     <main class="dashboard-content">
-        <!-- WELCOME HEADER -->
-        <div class="welcome-banner">
+
+        <section class="welcome-banner">
+            <span class="welcome-eyebrow">ADMIN WORKSPACE</span>
             <h2>Hello, Admin!</h2>
             <p>Monitor and manage your property, client, and inquiry records.</p>
-        </div>
+        </section>
 
-        <!-- 5 KPI METRICS CARDS -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
+        <!-- KPI CARDS -->
+        <section class="kpi-grid">
+
+            <article class="kpi-card">
                 <div class="kpi-icon blue">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Properties</span>
                     <strong class="kpi-value" id="kpiTotalProperties">124</strong>
                 </div>
-            </div>
+            </article>
 
-            <div class="kpi-card">
+            <article class="kpi-card">
                 <div class="kpi-icon green">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Clients</span>
                     <strong class="kpi-value" id="kpiTotalClients">87</strong>
                 </div>
-            </div>
+            </article>
 
-            <div class="kpi-card">
+            <article class="kpi-card">
                 <div class="kpi-icon purple">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Inquiries</span>
                     <strong class="kpi-value" id="kpiTotalInquiries">42</strong>
                 </div>
-            </div>
+            </article>
 
-            <div class="kpi-card">
+            <article class="kpi-card">
                 <div class="kpi-icon orange">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Pending Review</span>
                     <strong class="kpi-value" id="kpiPendingInquiries">5</strong>
                 </div>
-            </div>
+            </article>
 
-            <div class="kpi-card">
+            <article class="kpi-card">
                 <div class="kpi-icon emerald">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Completed Inquiries</span>
-                    <strong class="kpi-value">12</strong>
+                    <strong class="kpi-value" id="kpiCompletedInquiries">12</strong>
                 </div>
-            </div>
-        </div>
+            </article>
 
-        <!-- ANALYTICS ROW -->
-        <div class="analytics-row">
-            <!-- BAR CHART (INQUIRIES OVERVIEW) -->
-            <div class="analytics-card bar-chart-card">
-                <div class="card-header">
+        </section>
+
+        <!-- PROPERTY OVERVIEW AND QUICK ACTIONS -->
+        <section class="dashboard-feature-grid">
+
+            <article class="feature-card property-overview-card">
+
+                <div class="feature-card-header">
                     <div>
-                        <h3>Inquiries Overview</h3>
-                        <p>Total inquiries per month</p>
+                        <span class="section-eyebrow">YOUR PROPERTY LISTINGS</span>
+                        <h3>Property Overview</h3>
+                        <p>Your currently managed listings</p>
                     </div>
-                    <select class="time-filter">
-                        <option>Last 5 months</option>
-                        <option>This Year</option>
-                    </select>
+
+                    <a href="properties.html" class="feature-view-link">
+                        View All →
+                    </a>
                 </div>
 
-                <div class="bar-chart-container">
-                    <svg class="bar-chart-svg" viewBox="0 0 360 180" width="100%" height="180">
-                        <!-- Grid lines -->
-                        <line x1="30" y1="20" x2="350" y2="20" stroke="#e6eee8" stroke-dasharray="3,3" />
-                        <text x="5" y="24" font-size="11" fill="#7d9183">80</text>
-                        <line x1="30" y1="60" x2="350" y2="60" stroke="#e6eee8" stroke-dasharray="3,3" />
-                        <text x="5" y="64" font-size="11" fill="#7d9183">60</text>
-                        <line x1="30" y1="100" x2="350" y2="100" stroke="#e6eee8" stroke-dasharray="3,3" />
-                        <text x="5" y="104" font-size="11" fill="#7d9183">40</text>
-                        <line x1="30" y1="140" x2="350" y2="140" stroke="#e6eee8" stroke-dasharray="3,3" />
-                        <text x="5" y="144" font-size="11" fill="#7d9183">20</text>
-                        <line x1="30" y1="170" x2="350" y2="170" stroke="#c0d4c4" />
+                <div class="property-overview-content">
 
-                        <!-- Jan: 60 -->
-                        <rect x="50" y="60" width="28" height="110" rx="4" fill="#4285f4" />
-                        <text x="64" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#3b5242">60</text>
-                        <text x="64" y="185" text-anchor="middle" font-size="11" fill="#7d9183">Jan</text>
+                    <div class="property-illustration">
+                        <div class="property-illustration-icon">
+                            <svg width="34" height="34" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.7">
+                                <path d="M3 10.5 12 3l9 7.5"/>
+                                <path d="M5 9v12h14V9"/>
+                                <path d="M9 21v-7h6v7"/>
+                            </svg>
+                        </div>
 
-                        <!-- Feb: 45 -->
-                        <rect x="110" y="90" width="28" height="80" rx="4" fill="#5c9cf8" />
-                        <text x="124" y="82" text-anchor="middle" font-size="11" font-weight="bold" fill="#3b5242">45</text>
-                        <text x="124" y="185" text-anchor="middle" font-size="11" fill="#7d9183">Feb</text>
+                        <div>
+                            <span class="property-highlight-label">
+                                All Available Properties 
+                            </span>
 
-                        <!-- Mar: 78 -->
-                        <rect x="170" y="24" width="28" height="146" rx="4" fill="#3367d6" />
-                        <text x="184" y="18" text-anchor="middle" font-size="11" font-weight="bold" fill="#3b5242">78</text>
-                        <text x="184" y="185" text-anchor="middle" font-size="11" fill="#7d9183">Mar</text>
+                            <strong id="overviewPropertyCount">3</strong>
 
-                        <!-- Apr: 28 -->
-                        <rect x="230" y="124" width="28" height="46" rx="4" fill="#669df6" />
-                        <text x="244" y="116" text-anchor="middle" font-size="11" font-weight="bold" fill="#3b5242">28</text>
-                        <text x="244" y="185" text-anchor="middle" font-size="11" fill="#7d9183">Apr</text>
 
-                        <!-- May: 42 -->
-                        <rect x="290" y="96" width="28" height="74" rx="4" fill="#4285f4" />
-                        <text x="304" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#3b5242">42</text>
-                        <text x="304" y="185" text-anchor="middle" font-size="11" fill="#7d9183">May</text>
-                    </svg>
+                        </div>
+                    </div>
+
+                    <div class="property-overview-note">
+                        <span class="note-dot"></span>
+                        <span>
+                            Keep your listings updated so clients can get an accurate informations and 
+                            explore available properties.
+                        </span>
+                    </div>
+
+                    <a href="properties.html" class="primary-action-btn">
+                        Go to Property Listings
+                        <span aria-hidden="true">→</span>
+                    </a>
+
                 </div>
-            </div>
+            </article>
 
-            <!-- DONUT CHART (INQUIRY STATUS) -->
-            <div class="analytics-card donut-card">
-                <div class="card-header">
+            <article class="feature-card quick-actions-card">
+
+                <div class="feature-card-header">
                     <div>
-                        <h3>Inquiry Status</h3>
-                        <p>Current status of all inquiries</p>
+                        <span class="section-eyebrow">WORKSPACE</span>
+                        <h3>Quick Actions</h3>
+                        <p>Shortcuts to your daily tasks</p>
                     </div>
                 </div>
 
-                <div class="donut-chart-container">
-                    <svg viewBox="0 0 160 160" width="140" height="140">
-                        <circle r="60" cx="80" cy="80" fill="none" stroke="#e0e8e2" stroke-width="24" />
-                        <circle r="60" cx="80" cy="80" fill="none" stroke="#3b82f6" stroke-width="24" stroke-dasharray="75 377" stroke-dashoffset="0" />
-                        <circle r="60" cx="80" cy="80" fill="none" stroke="#a855f7" stroke-width="24" stroke-dasharray="60 377" stroke-dashoffset="-75" />
-                        <circle r="60" cx="80" cy="80" fill="none" stroke="#f59e0b" stroke-width="24" stroke-dasharray="80 377" stroke-dashoffset="-135" />
-                        <circle r="60" cx="80" cy="80" fill="none" stroke="#22c55e" stroke-width="24" stroke-dasharray="90 377" stroke-dashoffset="-215" />
-                        <circle r="60" cx="80" cy="80" fill="none" stroke="#15803d" stroke-width="24" stroke-dasharray="72 377" stroke-dashoffset="-305" />
-                        <text x="80" y="75" text-anchor="middle" font-size="20" font-weight="bold" fill="#1b2e21">42</text>
-                        <text x="80" y="93" text-anchor="middle" font-size="9.5" fill="#6d8373">Total Inquiries</text>
-                    </svg>
+                <div class="quick-actions-grid">
 
-                    <div class="donut-legend">
-                        <div class="legend-item"><span class="dot blue"></span> Submitted</div>
-                        <div class="legend-item"><span class="dot purple"></span> Requirements Submitted</div>
-                        <div class="legend-item"><span class="dot orange"></span> Under Review</div>
-                        <div class="legend-item"><span class="dot green"></span> Approved</div>
-                        <div class="legend-item"><span class="dot dark-green"></span> Completed</div>
+                    <a href="properties.html" class="quick-action-item">
+                        <span class="quick-action-icon add-icon">
+                            <svg width="23" height="23" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                        </span>
+
+                        <strong>Add New Property</strong>
+                        <span>Create a property listing</span>
+                        <span class="quick-action-arrow">↗</span>
+                    </a>
+
+                    <a href="#recentInquiries" class="quick-action-item">
+                        <span class="quick-action-icon inquiry-icon">
+                            <svg width="23" height="23" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.8">
+                                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                                <path d="m3 6 9 7 9-7"/>
+                            </svg>
+                        </span>
+
+                        <strong>Manage Inquiries</strong>
+                        <span>Review client requests</span>
+                        <span class="quick-action-arrow">↗</span>
+                    </a>
+
+                </div>
+                
+                                <div class="daily-reminder">
+                    <div class="reminder-icon">
+                        <svg width="21" height="21" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="1.8">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 7v5l3 2"/>
+                        </svg>
                     </div>
+
+                    <div>
+                        <strong>Daily reminder</strong>
+                        <p>
+                            Review pending inquiries regularly and keep
+                            clients updated about their property requests.
+                        </p>
+                    </div>
+                </div>
+
+            </article>
+
+        </section>
+
+        <!-- PROPERTY VIEWING CALENDAR -->
+        <section class="calendar-card">
+
+            <div class="calendar-heading">
+                <div>
+                    <span class="section-eyebrow">
+                        SCHEDULE &amp; APPOINTMENTS
+                    </span>
+
+                    <h3>Property Viewing Calendar</h3>
+
+                    <p>
+                        Choose a date to view its scheduled activities.
+                    </p>
+                </div>
+
+                <div class="calendar-legend">
+                    <span class="legend-dot"></span>
+                    Scheduled viewing
                 </div>
             </div>
 
-            <!-- RECENT NOTIFICATIONS -->
-            <div class="analytics-card notif-card">
-                <div class="card-header">
-                    <h3>Recent Notifications</h3>
-                    <a href="#" class="view-all-link">View All</a>
-                </div>
+            <div class="calendar-layout">
 
-                <div class="notif-list">
-                    <div class="notif-item">
-                        <div class="notif-avatar user">👤</div>
-                        <div class="notif-text">
-                            <strong>New inquiry submitted by Maria Santos</strong>
-                            <small>INQ-2026-001 &bull; 1 hour ago</small>
-                        </div>
+                <div class="calendar-main">
+
+                    <div class="calendar-month-header">
+                        <button
+                            type="button"
+                            class="calendar-nav-btn"
+                            id="previousMonth"
+                            aria-label="Previous month"
+                        >‹</button>
+
+                        <h4 id="calendarMonthLabel">October 2026</h4>
+
+                        <button
+                            type="button"
+                            class="calendar-nav-btn"
+                            id="nextMonth"
+                            aria-label="Next month"
+                        >›</button>
                     </div>
 
-                    <div class="notif-item">
-                        <div class="notif-avatar check">✓</div>
-                        <div class="notif-text">
-                            <strong>Inquiry INQ-2026-005 approved</strong>
-                            <small>Client: Park Solomon &bull; 3 hours ago</small>
-                        </div>
+                    <div class="calendar-weekdays">
+                        <span>Sun</span>
+                        <span>Mon</span>
+                        <span>Tue</span>
+                        <span>Wed</span>
+                        <span>Thu</span>
+                        <span>Fri</span>
+                        <span>Sat</span>
                     </div>
 
-                    <div class="notif-item">
-                        <div class="notif-avatar reg">👤</div>
-                        <div class="notif-text">
-                            <strong>New Client registered</strong>
-                            <small>Juan Santos &bull; 4 hours ago</small>
-                        </div>
+                    <div class="calendar-days" id="calendarDays"></div>
+
+                </div>
+
+                <aside class="calendar-agenda">
+
+                    <div class="agenda-date-heading">
+                        <span class="section-eyebrow">SELECTED DATE</span>
+                        <h4 id="selectedDateLabel">October 10, 2026</h4>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- RECENT INQUIRIES TABLE -->
-        <div class="table-card">
-            <div class="card-header">
-                <div class="table-title-group">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    <h3>Recent Inquiries</h3>
-                </div>
-                <a href="#" class="view-all-link">View All Inquiries</a>
-            </div>
+                    <div id="calendarAgenda" class="calendar-agenda-list"></div>
 
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Client Name</th>
-                            <th>Property</th>
-                            <th>Date Submitted</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentInquiriesBody">
-                        <tr>
-                            <td class="id-col">INQ-2026-008</td>
-                            <td>Juan Dela Cruz</td>
-                            <td>Camella Dasmarinas</td>
-                            <td>May 10, 2026 10:24 AM</td>
-                            <td><span class="status-pill purple">Requirements Submitted</span></td>
-                            <td><button class="action-view-btn" onclick="alert('Viewing Inquiry INQ-2026-008')">View</button></td>
-                        </tr>
-                        <tr>
-                            <td class="id-col">INQ-2026-005</td>
-                            <td>Park Solomon</td>
-                            <td>Southwoods City</td>
-                            <td>May 10, 2026 09:15 AM</td>
-                            <td><span class="status-pill green">Approved</span></td>
-                            <td><button class="action-view-btn" onclick="alert('Viewing Inquiry INQ-2026-005')">View</button></td>
-                        </tr>
-                        <tr>
-                            <td class="id-col">INQ-2026-001</td>
-                            <td>Maria Santos</td>
-                            <td>Lancaster New City</td>
-                            <td>May 9, 2026 04:32 PM</td>
-                            <td><span class="status-pill orange">Under Review</span></td>
-                            <td><button class="action-view-btn" onclick="alert('Viewing Inquiry INQ-2026-001')">View</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <div class="agenda-note">
+                        <span aria-hidden="true">ⓘ</span>
+                        <p>
+                            Calendar appointments are sample data for now.
+                        </p>
+                    </div>
+
+                </aside>
+
             </div>
-        </div>
+        </section>
+        
+        
+        
+            <div class="panel table-panel">
+                
+     <div class="panel-heading">
+      <div>
+       <h2>
+        Recent Inquiries
+       </h2>
+       <p>
+        Keep track of your latest client requests
+       </p>
+      </div>
+      
+      <button class="text-button" data-go="inquiries">
+       View All Inquiries &rarr;
+      </button>
+      
+     </div>
+     <div class="table-scroll">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          INQUIRY ID
+         </th>
+         <th>
+          CLIENT NAME
+         </th>
+         <th>
+          PROPERTY
+         </th>
+         <th>
+          DATE SUBMITTED
+         </th>
+         <th>
+          STATUS
+         </th>
+         <th>
+          ACTION
+         </th>
+        </tr>
+       </thead>
+       <tbody id="recentInquiryRows">
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </section>
+
     </main>
 
     <script src="dashboard.js"></script>
+
 </body>
 </html>
+
