@@ -1,0 +1,199 @@
+// ============================================================================
+// UrbanScope — Prisma schema (SQLite)
+// Adapted from the team's original PostgreSQL design ("first try database").
+// Table and column names are kept identical via @@map / @map so the schema can
+// be moved to PostgreSQL later by changing only the datasource provider.
+//
+// SQLite adaptations (see DATABASE.md §2 for details):
+//   • DECIMAL columns → Float (Prisma Decimal is not JSON-serialisable)
+//   • CHECK constraints → validated in src/lib/constants.ts + zod schemas
+//   • users.password_hash / phone_number → nullable (Google sign-in accounts)
+//   • users.google_id added for Google OAuth account linking
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────────── Users ─────────────────────────────
+model User {
+  id            Int      @id @default(autoincrement())
+  fullName      String   @map("full_name")
+  email         String   @unique
+  phoneNumber   String?  @map("phone_number")
+  passwordHash  String?  @map("password_hash")
+  role          String   @default("client") // 'client' | 'agent' | 'admin'
+  licenseNumber String?  @map("license_number")
+  avatarUrl     String?  @map("avatar_url")
+  googleId      String?  @unique @map("google_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  listings          Property[]        @relation("AgentListings")
+  savedProperties   SavedProperty[]
+  inquiries         Inquiry[]         @relation("ClientInquiries")
+  assignedInquiries Inquiry[]         @relation("AgentInquiries")
+  notifications     Notification[]
+
+  @@map("users")
+}
+
+// ───────────────────────── Property types ────────────────────────
+model PropertyType {
+  id         Int        @id @default(autoincrement())
+  name       String     @unique
+  slug       String     @unique
+  properties Property[]
+
+  @@map("property_types")
+}
+
+// ─────────────────────────── Properties ──────────────────────────
+model Property {
+  id              Int      @id @default(autoincrement())
+  agentId         Int      @map("agent_id")
+  propertyTypeId  Int      @map("property_type_id")
+  title           String
+  subdivisionName String?  @map("subdivision_name")
+  address         String
+  city            String
+  province        String
+  price           Float
+  bedrooms        Int      @default(0)
+  bathrooms       Int      @default(0)
+  lotAreaSqm      Float    @map("lot_area_sqm")
+  floorAreaSqm    Float?   @map("floor_area_sqm")
+  status          String   @default("available") // 'available' | 'reserved' | 'sold'
+  titleStatus     String   @default("Clean Title") @map("title_status")
+  utilities       String   @default("Water, Electricity")
+  description     String?
+  latitude        Float?
+  longitude       Float?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  agent        User              @relation("AgentListings", fields: [agentId], references: [id], onDelete: Restrict)
+  propertyType PropertyType      @relation(fields: [propertyTypeId], references: [id], onDelete: Restrict)
+  images       PropertyImage[]
+  features     PropertyFeature[]
+  savedBy      SavedProperty[]
+  inquiries    Inquiry[]
+
+  @@index([city, province], map: "idx_properties_location")
+  @@index([propertyTypeId], map: "idx_properties_type")
+  @@index([price], map: "idx_properties_price")
+  @@index([bedrooms, bathrooms], map: "idx_properties_specs")
+  @@map("properties")
+}
+
+model PropertyImage {
+  id           Int     @id @default(autoincrement())
+  propertyId   Int     @map("property_id")
+  imageUrl     String  @map("image_url")
+  displayOrder Int     @default(1) @map("display_order")
+  isPrimary    Boolean @default(false) @map("is_primary")
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("property_images")
+}
+
+model PropertyFeature {
+  id          Int    @id @default(autoincrement())
+  propertyId  Int    @map("property_id")
+  featureName String @map("feature_name")
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("property_features")
+}
+
+model SavedProperty {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  propertyId Int      @map("property_id")
+  savedAt    DateTime @default(now()) @map("saved_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId], map: "uq_user_saved_property")
+  @@map("saved_properties")
+}
+
+// ─────────────────────────── Inquiries ───────────────────────────
+model Inquiry {
+  id              Int      @id @default(autoincrement())
+  inquiryCode     String   @unique @map("inquiry_code")
+  clientId        Int      @map("client_id")
+  propertyId      Int      @map("property_id")
+  assignedAgentId Int      @map("assigned_agent_id")
+  message         String
+  // 'submitted' | 'requirements_submitted' | 'under_review' | 'for_resubmission'
+  // | 'approved' | 'completed' | 'cancelled'
+  status          String   @default("submitted")
+  submittedAt     DateTime @default(now()) @map("submitted_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  client        User                   @relation("ClientInquiries", fields: [clientId], references: [id], onDelete: Restrict)
+  property      Property               @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  assignedAgent User                   @relation("AgentInquiries", fields: [assignedAgentId], references: [id], onDelete: Restrict)
+  documents     InquiryDocument[]
+  history       InquiryStatusHistory[]
+
+  @@index([clientId], map: "idx_inquiries_client")
+  @@index([assignedAgentId], map: "idx_inquiries_agent")
+  @@index([status], map: "idx_inquiries_status")
+  @@map("inquiries")
+}
+
+model InquiryDocument {
+  id           Int       @id @default(autoincrement())
+  inquiryId    Int       @map("inquiry_id")
+  documentType String    @map("document_type") // 'government_id' | 'proof_of_income' | 'other'
+  fileName     String?   @map("file_name")
+  fileUrl      String?   @map("file_url")
+  fileSizeMb   Float?    @map("file_size_mb") // ≤ 5.00
+  // 'not_uploaded' | 'submitted' | 'under_review' | 'verified' | 'rejected'
+  status       String    @default("not_uploaded")
+  remarks      String?
+  uploadedAt   DateTime? @map("uploaded_at")
+
+  inquiry Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  @@map("inquiry_documents")
+}
+
+model InquiryStatusHistory {
+  id          Int      @id @default(autoincrement())
+  inquiryId   Int      @map("inquiry_id")
+  status      String
+  description String
+  changedAt   DateTime @default(now()) @map("changed_at")
+
+  inquiry Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  @@map("inquiry_status_history")
+}
+
+// ───────────────────────── Notifications ─────────────────────────
+model Notification {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  title         String
+  message       String
+  referenceType String?  @map("reference_type")
+  referenceId   Int?     @map("reference_id")
+  isRead        Boolean  @default(false) @map("is_read")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead], map: "idx_notifications_user_read")
+  @@map("notifications")
+}

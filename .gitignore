@@ -1,22 +1,33 @@
 # Local editor history
 .history/
 
-# Node dependencies
+# Node / Next.js
 node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
 
 # Operating System metadata
 .DS_Store
 Thumbs.db
 
-# Python & Virtual Environments
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Database & uploads (runtime data)
+*.db
+*.db-journal
+*.sqlite3
+storage/
+
+# Python (legacy backend) & Virtual Environments
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.env
 venv/
 .venv/
 env/
-*.db
-*.sqlite3
-
