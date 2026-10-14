@@ -51,7 +51,7 @@
 
             const url = API_BASE + '/properties' + (params.toString() ? '?' + params.toString() : '');
             const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
-            
+
             if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
             return await res.json();
         } catch (err) {

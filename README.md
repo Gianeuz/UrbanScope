@@ -66,6 +66,9 @@ Mariam-Lobren-Real-Estate/
 ├── index.css                    # Home landing page styles
 ├── index.js                     # Home interactive controls & category filter
 ├── README.md                    # Project Documentation
+├── DATABASE.md                  # SQLite schema, seed data, migrations & Supabase mirror
+├── AGENTS.md                    # Guide for AI coding agents (setup, conventions, known issues)
+├── CLAUDE.md                    # Claude-specific instructions (imports AGENTS.md)
 ├── .gitignore                   # Git ignore patterns (.history, temporary files, pycache, .db)
 │
 ├── backend/                     # 🐍 Python FastAPI & SQLite Backend
