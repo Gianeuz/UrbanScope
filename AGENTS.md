@@ -35,7 +35,7 @@ python run.py            # serves site + API on http://127.0.0.1:8000
 - Frontend also works from VS Code Live Server (`:5500/frontend/`); it calls the API at `http://127.0.0.1:8000/api`.
 - **Reset data:** delete `backend/urbanscope.db` and restart.
 
-Demo logins: admin `admin@cdmiranda.com` / `admin123` · client `client@example.com` / `client123`.
+Demo logins: admin `urbanscope.cvsu@gmail.com` / `urbanscope2026` (or `admin@cdmiranda.com` / `admin123`) · client `client@example.com` / `client123`.
 
 There is **no test suite, linter, or build step**. Verify changes by running the server
 and exercising the page / `/docs` endpoint you touched.

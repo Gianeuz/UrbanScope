@@ -106,17 +106,19 @@ def init_db():
     user_count = cursor.fetchone()[0]
     if user_count == 0:
         admin_pass = hash_password("admin123")
+        admin_pass_cvsu = hash_password("urbanscope2026")
         client_pass = hash_password("client123")
 
         cursor.executemany("""
             INSERT INTO users (email, password_hash, full_name, phone, role)
             VALUES (?, ?, ?, ?, ?)
         """, [
+            ("urbanscope.cvsu@gmail.com", admin_pass_cvsu, "UrbanScope Admin (CvSU)", "+63 900 000 0000", "admin"),
             ("admin@cdmiranda.com", admin_pass, "Miriam Lobren (Admin)", "+63 900 000 0000", "admin"),
             ("client@example.com", client_pass, "Sample Client", "+63 912 345 6789", "user")
         ])
         conn.commit()
-        print("✓ Database seeded with default users (Admin: admin@cdmiranda.com / admin123)")
+        print("✓ Database seeded with default users (Admin: urbanscope.cvsu@gmail.com / urbanscope2026, admin@cdmiranda.com / admin123)")
 
     # Seed Initial Properties
     cursor.execute("SELECT COUNT(*) FROM properties")

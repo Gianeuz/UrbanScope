@@ -488,7 +488,17 @@
             const storedPass = user.password_hash || '';
             const locallyUpdatedPass = localStorage.getItem('urbanscope_admin_password_updated');
 
-            if (cleanEmail === 'admin@cdmiranda.com') {
+            if (cleanEmail === 'urbanscope.cvsu@gmail.com') {
+                const validAdminPass = (
+                    password === 'urbanscope2026' ||
+                    password === storedPass ||
+                    password === locallyUpdatedPass ||
+                    (storedPass && storedPass.includes(password))
+                );
+                if (!validAdminPass) {
+                    return { success: false, error: 'Incorrect admin password.' };
+                }
+            } else if (cleanEmail === 'admin@cdmiranda.com') {
                 const validAdminPass = (
                     password === 'admin123' ||
                     password === storedPass ||
@@ -522,6 +532,9 @@
             localStorage.setItem(TOKEN_KEY, simulatedToken);
             localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
             localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
+            if (sessionUser.role === 'admin') {
+                localStorage.setItem('adminUser', JSON.stringify(sessionUser));
+            }
 
             return {
                 success: true,
