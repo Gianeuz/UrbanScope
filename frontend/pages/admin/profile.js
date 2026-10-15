@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const defaultProfile = {
         name: 'Miriam Lobren',
         title: 'Licensed Real Estate Broker / Agent',
-        email: 'admin@cdmiranda.com',
+        email: 'urbanscope.cvsu@gmail.com',
         phone: '+63 917 555 8888',
         license: 'PRC REB #0031892',
         brokerage: 'CD Miranda Realty',
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 } else {
                     // Fallback
-                    const activePass = localStorage.getItem('adminPassword') || 'admin123';
+                    const activePass = localStorage.getItem('adminPassword') || 'urbanscope';
                     if (curPass !== activePass) {
                         showAlert('Incorrect current password.', 'error');
                         return;
