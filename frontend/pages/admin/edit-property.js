@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("editPropertyForm");
     const saveButton = form?.querySelector(".save-btn");
@@ -12,23 +11,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     const imageInput = document.getElementById("property-images");
     const currentImageContainer = document.querySelector(".current-image");
 
-    const propertyId = new URLSearchParams(window.location.search).get("id");
+    const propertyId = new URLSearchParams(
+        window.location.search
+    ).get("id");
 
     let currentProperty = null;
-    let currentImageUrls = [];
+    let currentImageUrl = "";
 
     if (!form) {
         console.error("Edit property form was not found.");
         return;
     }
 
-    if (typeof supabaseClient === "undefined") {
-        alert("Supabase is not configured. Check your script tags.");
+    const supabase = window.supabaseClient;
+
+    if (!supabase) {
+        alert("Supabase is not configured. Check your script paths.");
         return;
     }
 
-    if (!propertyId) {
-        alert("No property ID was provided.");
+    if (!propertyId || !/^\d+$/.test(propertyId)) {
+        alert("Invalid or missing property ID.");
         window.location.href = "properties.html";
         return;
     }
@@ -72,45 +75,43 @@ document.addEventListener("DOMContentLoaded", async () => {
         return options[normalized] || value || "";
     }
 
-    function renderCurrentImages(urls) {
+    function renderCurrentImages(url) {
         if (!currentImageContainer) return;
 
         currentImageContainer.replaceChildren();
 
-        if (!urls.length) {
+        if (!url) {
             const placeholder = document.createElement("div");
             placeholder.className = "image-placeholder";
-            placeholder.textContent = "No saved images for this property.";
+            placeholder.textContent = "No saved image for this property.";
             currentImageContainer.appendChild(placeholder);
             return;
         }
 
-        urls.forEach((url, index) => {
-            const wrapper = document.createElement("div");
-            const image = document.createElement("img");
+        const wrapper = document.createElement("div");
+        const image = document.createElement("img");
 
-            image.src = url;
-            image.alt = `Current property image ${index + 1}`;
-            image.loading = "lazy";
+        image.src = url;
+        image.alt = "Current property image";
+        image.loading = "lazy";
 
-            image.onerror = () => {
-                wrapper.replaceChildren();
+        image.onerror = () => {
+            wrapper.replaceChildren();
 
-                const placeholder = document.createElement("div");
-                placeholder.className = "image-placeholder";
-                placeholder.textContent = "Image could not be loaded.";
+            const placeholder = document.createElement("div");
+            placeholder.className = "image-placeholder";
+            placeholder.textContent = "Image could not be loaded.";
 
-                wrapper.appendChild(placeholder);
-            };
+            wrapper.appendChild(placeholder);
+        };
 
-            wrapper.appendChild(image);
-            currentImageContainer.appendChild(wrapper);
-        });
+        wrapper.appendChild(image);
+        currentImageContainer.appendChild(wrapper);
     }
 
     async function verifyAdmin() {
         const { data: sessionData, error: sessionError } =
-            await supabaseClient.auth.getSession();
+            await supabase.auth.getSession();
 
         if (sessionError) throw sessionError;
 
@@ -122,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return false;
         }
 
-        const { data: admin, error: adminError } = await supabaseClient
+        const { data: admin, error: adminError } = await supabase
             .from("admin_users")
             .select("user_id")
             .eq("user_id", user.id)
@@ -145,12 +146,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const loading = document.createElement("div");
             loading.className = "image-placeholder";
-            loading.textContent = "Loading current images...";
+            loading.textContent = "Loading current image...";
 
             currentImageContainer.appendChild(loading);
         }
 
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabase
             .from("properties")
             .select("*")
             .eq("id", propertyId)
@@ -164,116 +165,103 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         currentProperty = data;
 
-        setFieldValue("property-name", data.name);
-        setFieldValue("location", data.location);
-        setFieldValue("property-type", normalizeType(data.type));
+        setFieldValue("property-name", data.title);
+        setFieldValue("location", data.location || data.address);
+        setFieldValue("property-type", normalizeType(data.property_type));
         setFieldValue("price", data.price);
         setFieldValue("status", normalizeStatus(data.status));
         setFieldValue("lot-area", data.lot_area);
         setFieldValue("floor-area", data.floor_area);
         setFieldValue("description", data.description);
 
-        const urls = Array.isArray(data.image_urls)
-            ? data.image_urls.filter(
-                (url) => typeof url === "string" && url.trim()
-            )
-            : [];
-
-        if (!urls.length && data.image_url) {
-            urls.push(data.image_url);
-        }
-
-        currentImageUrls = [...new Set(urls)];
-
-        renderCurrentImages(currentImageUrls);
+        currentImageUrl = data.image_url || "";
+        renderCurrentImages(currentImageUrl);
     }
 
     imageInput?.addEventListener("change", () => {
         if (!currentImageContainer) return;
 
         const files = Array.from(imageInput.files || []);
+        const file = files[0];
 
-        if (!files.length) {
-            renderCurrentImages(currentImageUrls);
+        if (!file) {
+            renderCurrentImages(currentImageUrl);
+            return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+            alert("Please select a valid image file.");
+            imageInput.value = "";
+            renderCurrentImages(currentImageUrl);
             return;
         }
 
         currentImageContainer.replaceChildren();
 
-        files.forEach((file, index) => {
-            if (!file.type.startsWith("image/")) return;
+        const wrapper = document.createElement("div");
+        const image = document.createElement("img");
 
-            const wrapper = document.createElement("div");
-            const image = document.createElement("img");
+        image.alt = "Selected replacement image";
+        image.src = URL.createObjectURL(file);
 
-            image.alt = `Selected replacement image ${index + 1}`;
-            image.src = URL.createObjectURL(file);
+        image.onload = () => URL.revokeObjectURL(image.src);
 
-            image.onload = () => {
-                URL.revokeObjectURL(image.src);
-            };
-
-            wrapper.appendChild(image);
-            currentImageContainer.appendChild(wrapper);
-        });
+        wrapper.appendChild(image);
+        currentImageContainer.appendChild(wrapper);
     });
 
-    async function uploadReplacementImages(files, userId) {
-        const uploadedUrls = [];
-
-        for (const file of files) {
-            if (!file.type.startsWith("image/")) {
-                throw new Error(`"${file.name}" is not an image file.`);
-            }
-
-            const safeName = file.name
-                .normalize("NFKD")
-                .replace(/[^a-zA-Z0-9._-]/g, "-");
-
-            const filePath =
-                `${userId}/${propertyId}/${Date.now()}-${safeName}`;
-
-            const { error: uploadError } = await supabaseClient.storage
-                .from("property-images")
-                .upload(filePath, file, {
-                    cacheControl: "3600",
-                    upsert: false,
-                    contentType: file.type
-                });
-
-            if (uploadError) throw uploadError;
-
-            const { data: publicUrlData } = supabaseClient.storage
-                .from("property-images")
-                .getPublicUrl(filePath);
-
-            if (publicUrlData?.publicUrl) {
-                uploadedUrls.push(publicUrlData.publicUrl);
-            }
+    async function uploadReplacementImage(file, userId) {
+        if (!file.type.startsWith("image/")) {
+            throw new Error("Please select a valid image file.");
         }
 
-        return uploadedUrls;
+        const safeName = file.name
+            .normalize("NFKD")
+            .replace(/[^a-zA-Z0-9._-]/g, "-");
+
+        const filePath =
+            `${userId}/${propertyId}/${Date.now()}-${safeName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from("property-images")
+            .upload(filePath, file, {
+                cacheControl: "3600",
+                upsert: false,
+                contentType: file.type
+            });
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicUrlData } = supabase.storage
+            .from("property-images")
+            .getPublicUrl(filePath);
+
+        if (!publicUrlData?.publicUrl) {
+            throw new Error("Could not get the uploaded image URL.");
+        }
+
+        return publicUrlData.publicUrl;
     }
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         if (!currentProperty) {
-            alert("Property information has not loaded yet. Please wait and try again.");
+            alert("Property information has not loaded yet. Please try again.");
             return;
         }
 
-        const name = getField("property-name")?.value.trim();
+        const title = getField("property-name")?.value.trim();
         const location = getField("location")?.value.trim();
-        const type = getField("property-type")?.value;
+        const propertyType = getField("property-type")?.value;
         const priceValue = getField("price")?.value;
         const price = Number(priceValue);
         const status = getField("status")?.value;
 
         if (
-            !name ||
+            !title ||
             !location ||
-            !type ||
+            !propertyType ||
             !status ||
             priceValue === "" ||
             !Number.isFinite(price) ||
@@ -299,7 +287,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        const originalButtonText = saveButton?.textContent || "Save Changes";
+        const originalButtonText =
+            saveButton?.textContent || "Save Changes";
 
         if (saveButton) {
             saveButton.disabled = true;
@@ -308,17 +297,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
             const { data: sessionData, error: sessionError } =
-                await supabaseClient.auth.getSession();
+                await supabase.auth.getSession();
 
             if (sessionError) throw sessionError;
 
             const user = sessionData.session?.user;
 
             if (!user) {
-                throw new Error("Your session has expired. Please log in again.");
+                throw new Error(
+                    "Your session has expired. Please log in again."
+                );
             }
 
-            const { data: admin, error: adminError } = await supabaseClient
+            const { data: admin, error: adminError } = await supabase
                 .from("admin_users")
                 .select("user_id")
                 .eq("user_id", user.id)
@@ -327,42 +318,53 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (adminError) throw adminError;
 
             if (!admin) {
-                throw new Error("Administrator access is required to save changes.");
+                throw new Error(
+                    "Administrator access is required to save changes."
+                );
             }
 
-            let imageUrls = currentImageUrls;
-            const selectedFiles = Array.from(imageInput?.files || []);
+            let imageUrl = currentImageUrl;
+            const selectedFile = imageInput?.files?.[0];
 
-            if (selectedFiles.length) {
-                imageUrls = await uploadReplacementImages(
-                    selectedFiles,
+            if (selectedFile) {
+                imageUrl = await uploadReplacementImage(
+                    selectedFile,
                     user.id
                 );
-
-                if (!imageUrls.length) {
-                    throw new Error("The selected images could not be uploaded.");
-                }
             }
 
             const updates = {
-                name,
-                location,
-                type,
-                price,
-                status,
+                title: title,
+                location: location,
+                property_type: propertyType,
+                price: price,
+                status: status,
                 lot_area: lotArea,
                 floor_area: floorArea,
-                description: getField("description")?.value.trim() || null,
-                image_url: imageUrls[0] || null,
-                image_urls: imageUrls
+                description:
+                    getField("description")?.value.trim() || null,
+                image_url: imageUrl || null,
+                updated_at: new Date().toISOString()
             };
 
-            const { error: updateError } = await supabaseClient
+            // Keep address in sync with the edited location if it exists.
+            if ("address" in currentProperty) {
+                updates.address = location;
+            }
+
+            const { data: updatedRows, error: updateError } = await supabase
                 .from("properties")
                 .update(updates)
-                .eq("id", propertyId);
+                .eq("id", propertyId)
+                .select("id");
 
             if (updateError) throw updateError;
+
+            if (!updatedRows || updatedRows.length === 0) {
+                throw new Error(
+                    "No property was updated. Check your property ID and Supabase UPDATE policy."
+                );
+            }
 
             alert("Property updated successfully!");
             window.location.href = "properties.html";
@@ -421,7 +423,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            await supabaseClient.auth.signOut();
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
         } catch (error) {
             console.error("Logout error:", error);
         }
@@ -476,7 +479,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const placeholder = document.createElement("div");
             placeholder.className = "image-placeholder";
-            placeholder.textContent = "Unable to load images.";
+            placeholder.textContent = "Unable to load image.";
 
             currentImageContainer.appendChild(placeholder);
         }
