@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (typeof apiUpdateAdminPassword === 'function') {
                     const result = await apiUpdateAdminPassword(curPass, newPass);
                     if (!result || !result.success) {
-                        showAlert(result?.message || 'Incorrect current password. Please try again.', 'error');
+                        showAlert(result?.error || result?.message || 'Incorrect current password. Please try again.', 'error');
                         return;
                     }
                 } else {

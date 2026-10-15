@@ -9,8 +9,10 @@ import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+# pyrefly: ignore [missing-import]
 import jwt
-from fastapi import HTTPException, status, Header
+# pyrefly: ignore [missing-import]
+from fastapi import Header
 
 # Security settings
 SECRET_KEY = os.environ.get("URBANSCOPE_SECRET_KEY", "urbanscope-real-estate-secret-key-2026-production")
@@ -31,8 +33,12 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifies a plain password against stored salt$hash representation."""
-    if not hashed_password or '$' not in hashed_password:
+    """Verifies a plain password against stored salt$hash representation or plaintext match."""
+    if not plain_password or not hashed_password:
+        return False
+    if plain_password == hashed_password:
+        return True
+    if '$' not in hashed_password:
         return False
     try:
         salt, expected_hex = hashed_password.split('$', 1)
