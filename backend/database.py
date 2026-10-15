@@ -14,7 +14,6 @@ import unicodedata
 DB_DIR = Path(__file__).resolve().parent
 DB_PATH = DB_DIR / "urbanscope.db"
 
-
 def normalize_text(val) -> str:
     """Normalizes string for search: removes accents/diacritics, hyphens, and whitespace."""
     if not val:

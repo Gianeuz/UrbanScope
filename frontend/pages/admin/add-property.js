@@ -269,108 +269,125 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function readImageFileAsDataUrl(file) {
+        return new Promise((resolve) => {
+            if (!file) return resolve(null);
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(file);
+        });
+    }
+
     // =========================
     // SAVE PROPERTY
     // =========================
 
     if (propertyForm) {
-        propertyForm.addEventListener("submit", (event) => {
+        propertyForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
             if (!propertyForm.reportValidity()) {
                 return;
             }
 
+            const submitBtn = propertyForm.querySelector("button[type='submit']");
+            const originalBtnText = submitBtn ? submitBtn.innerText : "Save Property";
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Saving to Database...";
+            }
+
+            let uploadedImageUrl = null;
+            if (selectedFiles.length > 0) {
+                uploadedImageUrl = await readImageFileAsDataUrl(selectedFiles[0]);
+            }
+
             const property = {
                 id: Date.now(),
-
-                propertyName:
-                    document.getElementById("propertyName")?.value.trim() || "",
-
-                location:
-                    document.getElementById("location")?.value.trim() || "",
-
-                propertyType:
-                    document.getElementById("propertyType")?.value || "",
-
-                price:
-                    document.getElementById("price")?.value || "",
-
-                status:
-                    document.getElementById("status")?.value || "",
-
-                lotArea:
-                    document.getElementById("lotArea")?.value || "",
-
-                floorArea:
-                    document.getElementById("floorArea")?.value || "",
-
-                description:
-                    document.getElementById("description")?.value.trim() || "",
-
-                imageNames: selectedFiles.map((file) => file.name),
-
+                propertyName: document.getElementById("propertyName")?.value.trim() || "New Listing",
+                title: document.getElementById("propertyName")?.value.trim() || "New Listing",
+                location: document.getElementById("location")?.value.trim() || "Cavite, Philippines",
+                propertyType: document.getElementById("propertyType")?.value || "Villa",
+                property_type: document.getElementById("propertyType")?.value || "Villa",
+                price: parseFloat(document.getElementById("price")?.value) || 0,
+                status: document.getElementById("status")?.value || "Available",
+                bedrooms: parseInt(document.getElementById("bedrooms")?.value, 10) || 3,
+                bathrooms: parseInt(document.getElementById("bathrooms")?.value, 10) || 2,
+                carports: parseInt(document.getElementById("carports")?.value, 10) || 1,
+                storeys: parseInt(document.getElementById("storeys")?.value, 10) || 2,
+                lotArea: parseFloat(document.getElementById("lotArea")?.value) || 100,
+                floorArea: parseFloat(document.getElementById("floorArea")?.value) || 80,
+                amenities: document.getElementById("amenities")?.value.trim() || "",
+                description: document.getElementById("description")?.value.trim() || "",
+                image_url: uploadedImageUrl || (selectedFiles[0] ? "assets/images/" + selectedFiles[0].name : "assets/images/property1.jpg"),
                 createdAt: new Date().toISOString()
             };
 
-            (async () => {
-                let savedToCloud = false;
-                if (typeof apiAddProperty === "function") {
-                    try {
-                        const cloudRes = await apiAddProperty(property);
-                        if (cloudRes) {
-                            savedToCloud = true;
-                        }
-                    } catch (e) {
-                        console.warn("Supabase add property warning:", e);
-                    }
-                }
-
+            let savedToCloud = false;
+            if (typeof apiAddProperty === "function") {
                 try {
-                    const savedProperties = JSON.parse(
-                        localStorage.getItem("urbanScopeProperties") || "[]"
-                    );
-                    savedProperties.push(property);
-                    localStorage.setItem(
-                        "urbanScopeProperties",
-                        JSON.stringify(savedProperties)
-                    );
-
-                    // Also mirror into "properties" key
-                    const adminProps = JSON.parse(localStorage.getItem("properties") || "[]");
-                    adminProps.unshift({
-                        id: property.id,
-                        name: property.propertyName,
-                        title: property.propertyName,
-                        location: property.location,
-                        type: property.propertyType,
-                        property_type: property.propertyType,
-                        price: property.price,
-                        status: property.status
-                    });
-                    localStorage.setItem("properties", JSON.stringify(adminProps));
-
-                    if (savedToCloud) {
-                        alert(
-                            "✓ Property successfully published to Supabase Cloud Database!\n\n" +
-                            "Property: " + property.propertyName + "\n" +
-                            "Status: " + property.status
-                        );
-                    } else {
-                        alert(
-                            "Property details saved in this browser!\n\n" +
-                            "Property: " + property.propertyName
-                        );
+                    const cloudRes = await apiAddProperty(property);
+                    if (cloudRes) {
+                        savedToCloud = true;
+                        if (cloudRes.id) property.id = cloudRes.id;
                     }
-
-                    propertyForm.reset();
-                    window.location.href = "properties.html";
-
-                } catch (error) {
-                    console.error("Unable to save property:", error);
-                    alert("Unable to save the property details. Please check your browser storage settings.");
+                } catch (e) {
+                    console.warn("Database add property warning:", e);
                 }
-            })();
+            }
+
+            try {
+                // Keep local browser cache updated
+                const savedProperties = JSON.parse(
+                    localStorage.getItem("urbanScopeProperties") || "[]"
+                );
+                savedProperties.unshift(property);
+                localStorage.setItem(
+                    "urbanScopeProperties",
+                    JSON.stringify(savedProperties)
+                );
+
+                const adminProps = JSON.parse(localStorage.getItem("properties") || "[]");
+                adminProps.unshift({
+                    id: property.id,
+                    name: property.propertyName,
+                    title: property.propertyName,
+                    location: property.location,
+                    type: property.propertyType,
+                    property_type: property.propertyType,
+                    price: property.price,
+                    status: property.status,
+                    image_url: property.image_url
+                });
+                localStorage.setItem("properties", JSON.stringify(adminProps));
+
+                if (savedToCloud) {
+                    alert(
+                        "✓ Property successfully published to the Live Database!\n\n" +
+                        "Property: " + property.propertyName + "\n" +
+                        "Type: " + property.propertyType + "\n" +
+                        "Status: " + property.status + "\n\n" +
+                        "It is now immediately visible across the website catalog and featured listings."
+                    );
+                } else {
+                    alert(
+                        "✓ Property saved locally!\n\n" +
+                        "Property: " + property.propertyName
+                    );
+                }
+
+                propertyForm.reset();
+                window.location.href = "dashboard.html";
+
+            } catch (error) {
+                console.error("Unable to save property:", error);
+                alert("Unable to save the property details. Please check your browser storage settings.");
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+            }
         });
     }
 

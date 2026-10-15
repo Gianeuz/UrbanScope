@@ -108,7 +108,7 @@
                 
                 
                 <div class="profile-dropdown-divider"></div>
-                <a href="#" role="menuitem" data-profile-action><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile</span></a>
+                <a href="profile.html" role="menuitem"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile Settings</span></a>
                 <a href="login.html" role="menuitem" class="profile-signout"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path></svg><span>Sign Out</span></a>
             </div>
         </div>
@@ -178,11 +178,7 @@
                 <span>Properties</span>
             </a>
 
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('Client Management coming in v2.0'); return false;"
-            >
+            <a href="clients.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -193,19 +189,15 @@
                 <span>Clients</span>
             </a>
 
-
             <!-- INQUIRIES SUB-MENU -->
-            <div class="nav-group open">
-
-                <div class="nav-item group-header">
+            <div class="nav-group open" id="inquiriesGroup">
+                <div class="nav-item group-header" id="inquiriesToggle">
                     <svg width="20" height="20" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
-
                     <span>Inquiries</span>
-
                     <svg class="chevron" width="16" height="16"
                         viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -214,38 +206,22 @@
                 </div>
 
                 <div class="sub-menu">
-                    <a href="#" class="sub-item">
+                    <a href="clients.html" class="sub-item">
                         <span>All Inquiries</span>
                     </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Under%20Review" class="sub-item">
                         <span>Pending Review</span>
-                        <span class="count-badge orange">5</span>
                     </a>
-
-                    <a href="#" class="sub-item">
-                        <span>For Resubmission</span>
-                        <span class="count-badge gray">2</span>
-                    </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Approved" class="sub-item">
                         <span>Approved</span>
-                        <span class="count-badge green">8</span>
                     </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Completed" class="sub-item">
                         <span>Completed</span>
-                        <span class="count-badge dark-green">12</span>
                     </a>
                 </div>
             </div>
 
-
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('User Management coming in v2.0'); return false;"
-            >
+            <a href="users.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -254,31 +230,13 @@
                 <span>Users</span>
             </a>
 
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('Analytics Reports coming in v2.0'); return false;"
-            >
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <span>Reports</span>
-            </a>
-
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('System Settings'); return false;"
-            >
+            <a href="profile.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"></circle>
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
-                <span>Settings</span>
+                <span>Profile Settings</span>
             </a>
 
         </nav>
@@ -411,24 +369,36 @@
                                         Select property type
                                     </option>
 
-                                    <option value="House & Lot">
-                                        House & Lot
+                                    <option value="Villa">
+                                        Villa
+                                    </option>
+
+                                    <option value="Apartment">
+                                        Apartment
                                     </option>
 
                                     <option value="Townhouse">
                                         Townhouse
                                     </option>
 
-                                    <option value="Duplex">
-                                        Duplex
+                                    <option value="Subdivision">
+                                        Subdivision
                                     </option>
 
                                     <option value="Condominium">
                                         Condominium
                                     </option>
 
-                                    <option value="Lot Only">
-                                        Lot Only
+                                    <option value="House & Lot">
+                                        House &amp; Lot
+                                    </option>
+
+                                    <option value="Triplex">
+                                        Triplex
+                                    </option>
+
+                                    <option value="Single Attached">
+                                        Single Attached
                                     </option>
 
                                     <option value="Other">
@@ -481,24 +451,20 @@
                                     required
                                 >
 
-                                    <option value="">
-                                        Select status
-                                    </option>
-
-                                    <option value="Available">
+                                    <option value="Available" selected>
                                         Available
                                     </option>
 
-                                    <option value="Pending">
-                                        Pending
+                                    <option value="Under Review">
+                                        Under Review (Pending)
+                                    </option>
+
+                                    <option value="Reserved">
+                                        Reserved
                                     </option>
 
                                     <option value="Sold">
                                         Sold
-                                    </option>
-
-                                    <option value="Unavailable">
-                                        Unavailable
                                     </option>
 
                                 </select>
@@ -520,13 +486,93 @@
                         <h2>Property Details</h2>
 
                         <p>
-                            Add information about the size and features of the property.
+                            Add information about the size and architectural features of the property.
                         </p>
 
                     </div>
 
 
                     <div class="form-content">
+
+                        <div class="form-row">
+
+                            <!-- BEDROOMS -->
+                            <div class="form-group">
+
+                                <label for="bedrooms">
+                                    Bedrooms
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="bedrooms"
+                                    name="bedrooms"
+                                    min="0"
+                                    value="3"
+                                    placeholder="3"
+                                >
+
+                            </div>
+
+                            <!-- BATHROOMS -->
+                            <div class="form-group">
+
+                                <label for="bathrooms">
+                                    Bathrooms
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="bathrooms"
+                                    name="bathrooms"
+                                    min="0"
+                                    value="2"
+                                    placeholder="2"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-row">
+
+                            <!-- CARPORTS -->
+                            <div class="form-group">
+
+                                <label for="carports">
+                                    Carports / Garage
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="carports"
+                                    name="carports"
+                                    min="0"
+                                    value="1"
+                                    placeholder="1"
+                                >
+
+                            </div>
+
+                            <!-- STOREYS -->
+                            <div class="form-group">
+
+                                <label for="storeys">
+                                    Storeys
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="storeys"
+                                    name="storeys"
+                                    min="1"
+                                    value="2"
+                                    placeholder="2"
+                                >
+
+                            </div>
+
+                        </div>
 
                         <div class="form-row">
 
@@ -543,7 +589,7 @@
                                         type="number"
                                         id="lotArea"
                                         name="lotArea"
-                                        placeholder="e.g. 50"
+                                        placeholder="e.g. 100"
                                     >
 
                                     <span>sqm</span>
@@ -566,7 +612,7 @@
                                         type="number"
                                         id="floorArea"
                                         name="floorArea"
-                                        placeholder="e.g. 44"
+                                        placeholder="e.g. 80"
                                     >
 
                                     <span>sqm</span>
@@ -574,6 +620,22 @@
                                 </div>
 
                             </div>
+
+                        </div>
+
+                        <!-- AMENITIES -->
+                        <div class="form-group full-width" style="margin-bottom: 18px;">
+
+                            <label for="amenities">
+                                Amenities &amp; Key Features
+                            </label>
+
+                            <input
+                                type="text"
+                                id="amenities"
+                                name="amenities"
+                                placeholder="e.g. 24/7 Security, Clubhouse, Swimming Pool, Built-in Garage"
+                            >
 
                         </div>
 

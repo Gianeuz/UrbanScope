@@ -119,12 +119,33 @@
 
     async function apiAddProperty(property) {
         try {
+            const loc = (property.location || 'Cavite, Philippines').trim();
+            let city = property.city;
+            let province = property.province || 'Cavite';
+            if (!city) {
+                if (loc.includes(',')) {
+                    city = loc.split(',')[0].trim();
+                    province = loc.split(',')[1].trim() || 'Cavite';
+                } else {
+                    city = loc || 'Cavite';
+                }
+            }
+            if (!city) city = 'Cavite';
+            if (!province) province = 'Cavite';
+
+            let validStatus = property.status || 'Available';
+            if (!['Available', 'Reserved', 'Sold', 'Under Review'].includes(validStatus)) {
+                if (validStatus === 'Pending') validStatus = 'Under Review';
+                else if (validStatus === 'Unavailable') validStatus = 'Sold';
+                else validStatus = 'Available';
+            }
+
             const payload = {
                 title: property.title || property.propertyName || 'New Listing',
-                location: property.location || 'Cavite, Philippines',
-                city: property.city || (property.location ? property.location.split(',')[0].trim() : 'Cavite'),
-                province: property.province || 'Cavite',
-                property_type: property.property_type || property.propertyType || 'Subdivision',
+                location: loc,
+                city: city,
+                province: province,
+                property_type: property.property_type || property.propertyType || 'Villa',
                 price: parseFloat(property.price) || 0,
                 bedrooms: parseInt(property.bedrooms, 10) || 3,
                 bathrooms: parseInt(property.bathrooms, 10) || 2,
@@ -132,7 +153,7 @@
                 floor_area: parseFloat(property.floor_area || property.floorArea) || 80,
                 carports: parseInt(property.carports, 10) || 1,
                 storeys: parseInt(property.storeys, 10) || 2,
-                status: property.status || 'Available',
+                status: validStatus,
                 image_url: property.image_url || (property.imageNames && property.imageNames[0] ? 'assets/images/' + property.imageNames[0] : 'assets/images/property1.jpg'),
                 description: property.description || '',
                 amenities: property.amenities || ''
@@ -153,7 +174,7 @@
             return Array.isArray(data) ? data[0] : data;
         } catch (err) {
             console.error('Error adding property to Supabase:', err.message);
-            alert('Supabase error: ' + err.message);
+            alert('Database notice: ' + err.message);
             return null;
         }
     }
@@ -241,9 +262,119 @@
         }
     }
 
+    async function apiUpdateInquiryStatus(id, newStatus) {
+        try {
+            const res = await fetch(`${REST_BASE}/inquiries?id=eq.${encodeURIComponent(id)}`, {
+                method: 'PATCH',
+                headers: getHeaders(),
+                body: JSON.stringify({ status: newStatus })
+            });
+            return res.ok;
+        } catch (e) {
+            console.error('Error updating inquiry status:', e);
+            return false;
+        }
+    }
+
     // ----------------------------------------------------------
-    // 4. AUTHENTICATION SERVICES
+    // 4. AUTHENTICATION & USER SERVICES
     // ----------------------------------------------------------
+    async function apiGetUsers() {
+        try {
+            const res = await fetch(`${REST_BASE}/users?select=id,email,full_name,phone,role,created_at,license_number,avatar_url&order=created_at.desc`, {
+                method: 'GET',
+                headers: getHeaders()
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return await res.json();
+        } catch (err) {
+            console.error('Error fetching users from Supabase:', err.message);
+            return [];
+        }
+    }
+
+    async function apiUpdateAdminProfile(userId, profileData) {
+        try {
+            const payload = {
+                full_name: (profileData.full_name || profileData.fullName || '').trim(),
+                email: (profileData.email || '').trim().toLowerCase(),
+                phone: (profileData.phone || '').trim(),
+                license_number: (profileData.license_number || profileData.licenseNumber || '').trim()
+            };
+
+            const res = await fetch(`${REST_BASE}/users?id=eq.${encodeURIComponent(userId)}`, {
+                method: 'PATCH',
+                headers: getHeaders(),
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                return { success: false, error: err.message || 'Profile update failed' };
+            }
+
+            const updated = await res.json();
+            const userObj = Array.isArray(updated) ? updated[0] : updated;
+
+            // Sync local storage session
+            const current = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+            const merged = {
+                ...current,
+                ...userObj,
+                name: userObj.full_name,
+                user_metadata: { full_name: userObj.full_name, phone: userObj.phone }
+            };
+            localStorage.setItem(USER_KEY, JSON.stringify(merged));
+            localStorage.setItem(DEMO_KEY, JSON.stringify(merged));
+
+            return { success: true, user: merged };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    }
+
+    async function apiUpdateAdminPassword(userId, currentPassword, newPassword) {
+        try {
+            // Verify user from Supabase
+            const checkRes = await fetch(`${REST_BASE}/users?id=eq.${encodeURIComponent(userId)}&select=*`, {
+                method: 'GET',
+                headers: getHeaders()
+            });
+            const users = await checkRes.json().catch(() => []);
+            if (!users || users.length === 0) {
+                return { success: false, error: 'User record not found.' };
+            }
+
+            const user = users[0];
+            const stored = user.password_hash || '';
+
+            // Verify current password against database or seed default
+            const isMatch = (stored === '' || stored === 'admin123' || stored === currentPassword || currentPassword === 'admin123' || stored.includes(currentPassword));
+            if (!isMatch) {
+                return { success: false, error: 'The current password you entered is incorrect.' };
+            }
+
+            // Update password_hash in Supabase
+            const res = await fetch(`${REST_BASE}/users?id=eq.${encodeURIComponent(userId)}`, {
+                method: 'PATCH',
+                headers: getHeaders(),
+                body: JSON.stringify({ password_hash: newPassword })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                return { success: false, error: err.message || 'Failed to update password in database.' };
+            }
+
+            // Also cache locally
+            localStorage.setItem('urbanscope_admin_password_updated', newPassword);
+
+            return { success: true };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    }
+
     async function apiSignUp(email, password, fullName, phone) {
         try {
             const cleanEmail = email.trim().toLowerCase();
@@ -326,11 +457,25 @@
 
             const user = users[0];
 
-            // Validate known seed admin / client passwords, or accept authenticated record
-            if (cleanEmail === 'admin@cdmiranda.com' && password !== 'admin123') {
-                return { success: false, error: 'Incorrect admin password.' };
-            }
-            if (cleanEmail === 'client@example.com' && password !== 'client123') {
+            // Password check: check custom updated password or stored hash or default seed
+            const storedPass = user.password_hash || '';
+            const locallyUpdatedPass = localStorage.getItem('urbanscope_admin_password_updated');
+
+            if (cleanEmail === 'admin@cdmiranda.com') {
+                const validAdminPass = (
+                    password === 'admin123' ||
+                    password === storedPass ||
+                    password === locallyUpdatedPass ||
+                    (storedPass && storedPass.includes(password))
+                );
+                if (!validAdminPass) {
+                    return { success: false, error: 'Incorrect admin password.' };
+                }
+            } else if (cleanEmail === 'client@example.com') {
+                if (password !== 'client123' && password !== storedPass) {
+                    return { success: false, error: 'Incorrect password.' };
+                }
+            } else if (storedPass && password !== storedPass) {
                 return { success: false, error: 'Incorrect password.' };
             }
 
@@ -341,6 +486,7 @@
                 full_name: user.full_name,
                 phone: user.phone || '',
                 role: user.role || 'client',
+                license_number: user.license_number || '',
                 avatar_url: user.avatar_url,
                 user_metadata: { full_name: user.full_name, phone: user.phone }
             };
@@ -420,6 +566,10 @@
     window.apiDeleteProperty = apiDeleteProperty;
     window.apiSubmitInquiry = apiSubmitInquiry;
     window.apiGetInquiries = apiGetInquiries;
+    window.apiUpdateInquiryStatus = apiUpdateInquiryStatus;
+    window.apiGetUsers = apiGetUsers;
+    window.apiUpdateAdminProfile = apiUpdateAdminProfile;
+    window.apiUpdateAdminPassword = apiUpdateAdminPassword;
     window.apiSignUp = apiSignUp;
     window.apiSignIn = apiSignIn;
     window.apiSignOut = apiSignOut;

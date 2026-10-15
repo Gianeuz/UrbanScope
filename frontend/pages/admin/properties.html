@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Manage Properties | Miriam Lobren</title>
-
-    <link rel="stylesheet" href="properties.css">
+    <title>Add Property | Miriam Lobren</title>
+    <link rel="stylesheet" href="add-property.css">
 </head>
-
 <body>
-
     <!-- TOP NAVIGATION BAR -->
     <header class="admin-topbar">
 
@@ -34,8 +31,7 @@
                     src="../../assets/images/logo-urban.png"
                     alt="Miriam Lobren Real Estate"
                     class="logo-icon"
-                    onerror="this.style.display='none'"
-                >
+                    onerror="this.style.display='none'">
 
                 <div class="brand-text">
                     <h1>Miriam Lobren</h1>
@@ -84,8 +80,7 @@
     <img
         src="../../assets/images/agent.jpg"
         alt="Miriam Lobren"
-        class="avatar-circle"
-    >
+        class="avatar-circle">
 
     <svg class="profile-chevron"
         width="18"
@@ -98,8 +93,7 @@
         <polyline points="6 9 12 15 18 9"></polyline>
     </svg>
 </button>
-
-            
+     
             <div class="profile-dropdown" id="profileDropdown" role="menu" hidden>
                 
                 <div class="profile-dropdown-info">
@@ -114,7 +108,7 @@
                 
                 
                 <div class="profile-dropdown-divider"></div>
-                <a href="#" role="menuitem" data-profile-action><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile</span></a>
+                <a href="profile.html" role="menuitem"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile Settings</span></a>
                 <a href="login.html" role="menuitem" class="profile-signout"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path></svg><span>Sign Out</span></a>
             </div>
         </div>
@@ -184,11 +178,7 @@
                 <span>Properties</span>
             </a>
 
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('Client Management coming in v2.0'); return false;"
-            >
+            <a href="clients.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -199,19 +189,15 @@
                 <span>Clients</span>
             </a>
 
-
             <!-- INQUIRIES SUB-MENU -->
-            <div class="nav-group open">
-
-                <div class="nav-item group-header">
+            <div class="nav-group open" id="inquiriesGroup">
+                <div class="nav-item group-header" id="inquiriesToggle">
                     <svg width="20" height="20" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
-
                     <span>Inquiries</span>
-
                     <svg class="chevron" width="16" height="16"
                         viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -220,38 +206,22 @@
                 </div>
 
                 <div class="sub-menu">
-                    <a href="#" class="sub-item">
+                    <a href="clients.html" class="sub-item">
                         <span>All Inquiries</span>
                     </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Under%20Review" class="sub-item">
                         <span>Pending Review</span>
-                        <span class="count-badge orange">5</span>
                     </a>
-
-                    <a href="#" class="sub-item">
-                        <span>For Resubmission</span>
-                        <span class="count-badge gray">2</span>
-                    </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Approved" class="sub-item">
                         <span>Approved</span>
-                        <span class="count-badge green">8</span>
                     </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Completed" class="sub-item">
                         <span>Completed</span>
-                        <span class="count-badge dark-green">12</span>
                     </a>
                 </div>
             </div>
 
-
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('User Management coming in v2.0'); return false;"
-            >
+            <a href="users.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -260,31 +230,13 @@
                 <span>Users</span>
             </a>
 
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('Analytics Reports coming in v2.0'); return false;"
-            >
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <span>Reports</span>
-            </a>
-
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('System Settings'); return false;"
-            >
+            <a href="profile.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"></circle>
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
-                <span>Settings</span>
+                <span>Profile Settings</span>
             </a>
 
         </nav>
@@ -308,333 +260,495 @@
 
     </aside>
 
+                </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
+            </div>
 
+        </header>
+
+
+
+        <!-- PAGE CONTENT -->
         <section class="content">
 
             <!-- PAGE HEADER -->
             <div class="page-header">
 
                 <div>
-                    <h1>Manage Properties</h1>
-                    <p>Add, edit, and manage your property listings.</p>
+                    <h1>Add Property</h1>
+
+                    <p>
+                        Add a new property to your listings.
+                    </p>
                 </div>
 
-                <a href="add-property.html" class="add-btn">
-                    + Add Property
+                <a href="properties.html" class="back-btn">
+                    ← Back to Properties
                 </a>
 
             </div>
 
 
-            <!-- SEARCH AND FILTER -->
-            <div class="property-tools">
-
-                <div class="search-box">
-                    <span>⌕</span>
-
-                    <input
-                        type="text"
-                        id="propertySearch"
-                        placeholder="Search property name or location"
-                    >
-                </div>
-
-                <select class="status-filter" id="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="available">Available</option>
-                    <option value="pending">Pending</option>
-                    <option value="sold">Sold</option>
-                </select>
-
-            </div>
+            <!-- FORM -->
+            <form class="property-form" id="addPropertyForm">
 
 
-            <!-- PROPERTY TABLE -->
-            <div class="property-card">
+                <!-- BASIC INFORMATION -->
+                <div class="form-card">
 
-                <div class="card-header">
-                    <div>
-                        <h2>Property Listings</h2>
-                        <p>Manage your available property records.</p>
+                    <div class="form-card-header">
+                        <h2>Basic Information</h2>
+
+                        <p>
+                            Enter the basic details of the property.
+                        </p>
                     </div>
-                </div>
 
 
-                <div class="table-container">
+                    <div class="form-content">
 
-                    <table>
+                        <div class="form-row">
 
-                        <thead>
-                            <tr>
-                                <th>Property</th>
-                                <th>Location</th>
-                                <th>Type</th>
-                                <th>Price</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
+                            <!-- PROPERTY NAME -->
+                            <div class="form-group full-width">
 
+                                <label for="propertyName">
+                                    Property Name
+                                    <span>*</span>
+                                </label>
 
-                        <tbody id="propertyTableBody">
+                                <input
+                                    type="text"
+                                    id="propertyName"
+                                    name="propertyName"
+                                    placeholder="e.g. Liora Homes"
+                                    required
+                                >
 
-                            <!-- PROPERTY 1 -->
-                            <tr data-status="pending">
+                            </div>
 
-                                <td>
-                                    <div class="property-name">
-
-                                        <div class="property-image">
-                                            <img
-                                                src="../../assets/images/property1.jpg"
-                                                alt="Prime Living Location"
-                                                loading="lazy"
-                                            >
-                                        </div>
-
-                                        <div>
-                                            <strong>Prime Living Location</strong>
-                                            <small>Property Listing</small>
-                                        </div>
-
-                                    </div>
-                                </td>
-
-                                <td>Las Piñas</td>
-                                <td>Residential</td>
-                                <td>—</td>
-
-                                <td>
-                                    <span class="status status-update">
-                                        To be updated
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <div class="actions">
-
-                                        <button
-                                            type="button"
-                                            class="view-btn"
-                                            data-id="1"
-                                        >
-                                            View
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            class="edit-btn"
-                                            data-id="1"
-                                        >
-                                            Edit
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            class="delete-btn"
-                                            data-id="1"
-                                        >
-                                            Delete
-                                        </button>
-
-                                    </div>
-                                </td>
-
-                            </tr>
+                        </div>
 
 
-                            <!-- PROPERTY 2 -->
-                            <tr data-status="pending">
+                        <div class="form-row">
 
-                                <td>
-                                    <div class="property-name">
+                            <!-- LOCATION -->
+                            <div class="form-group">
 
-                                        <div class="property-image">
-                                            <img
-                                                src="../../assets/images/property2.jpg"
-                                                alt="Liora Homes"
-                                                loading="lazy"
-                                            >
-                                        </div>
+                                <label for="location">
+                                    Location
+                                    <span>*</span>
+                                </label>
 
-                                        <div>
-                                            <strong>Liora Homes</strong>
-                                            <small>Naic, Cavite</small>
-                                        </div>
+                                <input
+                                    type="text"
+                                    id="location"
+                                    name="location"
+                                    placeholder="e.g. Naic, Cavite"
+                                    required
+                                >
 
-                                    </div>
-                                </td>
+                            </div>
 
-                                <td>Naic, Cavite</td>
-                                <td>House &amp; Lot</td>
-                                <td>₱2,462,400</td>
 
-                                <td>
-                                    <span class="status status-update">
-                                        To be updated
-                                    </span>
-                                </td>
+                            <!-- PROPERTY TYPE -->
+                            <div class="form-group">
 
-                                <td>
-                                    <div class="actions">
+                                <label for="propertyType">
+                                    Property Type
+                                    <span>*</span>
+                                </label>
 
-                                        <button
-                                            type="button"
-                                            class="view-btn"
-                                            data-id="2"
-                                        >
-                                            View
-                                        </button>
+                                <select
+                                    id="propertyType"
+                                    name="propertyType"
+                                    required
+                                >
 
-                                        <button
-                                            type="button"
-                                            class="edit-btn"
-                                            data-id="2"
-                                        >
-                                            Edit
-                                        </button>
+                                    <option value="">
+                                        Select property type
+                                    </option>
 
-                                        <button
-                                            type="button"
-                                            class="delete-btn"
-                                            data-id="2"
-                                        >
-                                            Delete
-                                        </button>
+                                    <option value="Villa">
+                                        Villa
+                                    </option>
 
-                                    </div>
-                                </td>
+                                    <option value="Apartment">
+                                        Apartment
+                                    </option>
 
-                            </tr>
-                            
-                            
-                       <!-- PROPERTY 3 -->
-                            <tr data-status="pending">
+                                    <option value="Townhouse">
+                                        Townhouse
+                                    </option>
 
-                                <td>
-                                    <div class="property-name">
+                                    <option value="Subdivision">
+                                        Subdivision
+                                    </option>
 
-                                        <div class="property-image">
-                                            <img
-                                                src="../../assets/images/property3.jpg"
-                                                alt="Town House in Trece"
-                                                loading="lazy"
-                                            >
-                                        </div>
+                                    <option value="Condominium">
+                                        Condominium
+                                    </option>
 
-                                        <div>
-                                            <strong>Town House</strong>
-                                            <small>Trece</small>
-                                        </div>
+                                    <option value="House & Lot">
+                                        House &amp; Lot
+                                    </option>
 
-                                    </div>
-                                </td>
+                                    <option value="Triplex">
+                                        Triplex
+                                    </option>
 
-                                <td>Trece</td>
-                                <td>Townhouse</td>
-                                <td>—</td>
+                                    <option value="Single Attached">
+                                        Single Attached
+                                    </option>
 
-                                <td>
-                                    <span class="status status-update">
-                                        To be updated
-                                    </span>
-                                </td>
+                                    <option value="Other">
+                                        Other
+                                    </option>
 
-                                <td>
-                                    <div class="actions">
+                                </select>
 
-                                        <button
-                                            type="button"
-                                            class="view-btn"
-                                            data-id="3"
-                                        >
-                                            View
-                                        </button>
+                            </div>
 
-                                        <button
-                                            type="button"
-                                            class="edit-btn"
-                                            data-id="3"
-                                        >
-                                            Edit
-                                        </button>
+                        </div>
 
-                                        <button
-                                            type="button"
-                                            class="delete-btn"
-                                            data-id="3"
-                                        >
-                                            Delete
-                                        </button>
 
-                                    </div>
-                                </td>
+                        <div class="form-row">
 
-                            </tr>
+                            <!-- PRICE -->
+                            <div class="form-group">
 
-                        </tbody>
+                                <label for="price">
+                                    Price
+                                </label>
 
-                    </table>
+                                <div class="input-with-prefix">
+
+                                    <span>₱</span>
+
+                                    <input
+                                        type="number"
+                                        id="price"
+                                        name="price"
+                                        placeholder="0.00"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+                            <div class="form-group">
+
+                                <label for="status">
+                                    Status
+                                    <span>*</span>
+                                </label>
+
+                                <select
+                                    id="status"
+                                    name="status"
+                                    required
+                                >
+
+                                    <option value="Available" selected>
+                                        Available
+                                    </option>
+
+                                    <option value="Under Review">
+                                        Under Review (Pending)
+                                    </option>
+
+                                    <option value="Reserved">
+                                        Reserved
+                                    </option>
+
+                                    <option value="Sold">
+                                        Sold
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
+
+                <!-- PROPERTY DETAILS -->
+                <div class="form-card">
+
+                    <div class="form-card-header">
+
+                        <h2>Property Details</h2>
+
+                        <p>
+                            Add information about the size and architectural features of the property.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-content">
+
+                        <div class="form-row">
+
+                            <!-- BEDROOMS -->
+                            <div class="form-group">
+
+                                <label for="bedrooms">
+                                    Bedrooms
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="bedrooms"
+                                    name="bedrooms"
+                                    min="0"
+                                    value="3"
+                                    placeholder="3"
+                                >
+
+                            </div>
+
+                            <!-- BATHROOMS -->
+                            <div class="form-group">
+
+                                <label for="bathrooms">
+                                    Bathrooms
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="bathrooms"
+                                    name="bathrooms"
+                                    min="0"
+                                    value="2"
+                                    placeholder="2"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-row">
+
+                            <!-- CARPORTS -->
+                            <div class="form-group">
+
+                                <label for="carports">
+                                    Carports / Garage
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="carports"
+                                    name="carports"
+                                    min="0"
+                                    value="1"
+                                    placeholder="1"
+                                >
+
+                            </div>
+
+                            <!-- STOREYS -->
+                            <div class="form-group">
+
+                                <label for="storeys">
+                                    Storeys
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="storeys"
+                                    name="storeys"
+                                    min="1"
+                                    value="2"
+                                    placeholder="2"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-row">
+
+                            <!-- LOT AREA -->
+                            <div class="form-group">
+
+                                <label for="lotArea">
+                                    Lot Area
+                                </label>
+
+                                <div class="input-with-suffix">
+
+                                    <input
+                                        type="number"
+                                        id="lotArea"
+                                        name="lotArea"
+                                        placeholder="e.g. 100"
+                                    >
+
+                                    <span>sqm</span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- FLOOR AREA -->
+                            <div class="form-group">
+
+                                <label for="floorArea">
+                                    Floor Area
+                                </label>
+
+                                <div class="input-with-suffix">
+
+                                    <input
+                                        type="number"
+                                        id="floorArea"
+                                        name="floorArea"
+                                        placeholder="e.g. 80"
+                                    >
+
+                                    <span>sqm</span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- AMENITIES -->
+                        <div class="form-group full-width" style="margin-bottom: 18px;">
+
+                            <label for="amenities">
+                                Amenities &amp; Key Features
+                            </label>
+
+                            <input
+                                type="text"
+                                id="amenities"
+                                name="amenities"
+                                placeholder="e.g. 24/7 Security, Clubhouse, Swimming Pool, Built-in Garage"
+                            >
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+                        <div class="form-group full-width">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="6"
+                                placeholder="Enter a description of the property..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+<!-- PROPERTY IMAGES -->
+<div class="form-card">
+
+    <div class="form-card-header">
+
+        <h2>Property Images</h2>
+
+        <p>
+            Upload images of the property.
+        </p>
+
+    </div>
+
+    <div class="form-content">
+
+        <div class="upload-area">
+
+            <div class="upload-icon">
+                ↑
             </div>
+
+            <h3>Upload Property Images</h3>
+
+            <p>
+                Choose one or more images from your device.
+            </p>
+
+            <label
+                for="propertyImages"
+                class="upload-btn"
+            >
+                Choose Images
+            </label>
+
+            <input
+                type="file"
+                id="propertyImages"
+                name="propertyImages"
+                accept="image/*"
+                multiple
+                hidden
+            >
+
+            <small>
+                You can upload multiple images for this property.
+            </small>
+
+        </div>
+
+
+        <!-- IMAGE PREVIEW -->
+        <div
+            class="image-preview"
+            id="imagePreview"
+        ></div>
+
+    </div>
+
+</div>
+                <!-- FORM ACTIONS -->
+                <div class="form-actions">
+
+                    <a
+                        href="properties.html"
+                        class="cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="save-btn"
+                    >
+                        Save Property
+                    </button>
+
+                </div>
+
+
+            </form>
 
         </section>
 
     </main>
 
 
-    <!-- DELETE CONFIRMATION MODAL -->
-    <div class="delete-modal" id="deleteModal">
-
-        <div class="delete-modal-content">
-
-            <div class="delete-icon">!</div>
-
-            <h2>Delete Property?</h2>
-
-            <p>
-                Are you sure you want to delete
-                <strong id="propertyToDelete">this property</strong>?
-            </p>
-
-            <span class="delete-warning">
-                This action cannot be undone.
-            </span>
-
-            <div class="delete-actions">
-
-                <button
-                    type="button"
-                    class="cancel-delete"
-                    id="cancelDelete"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    type="button"
-                    class="confirm-delete"
-                    id="confirmDelete"
-                >
-                    Delete Property
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
+    <!-- JAVASCRIPT -->
     <script src="../../shared/js/supabase.js"></script>
-    <script src="properties.js"></script>
+    <script src="add-property.js"></script>
 </body>
 </html>
-
-
-
