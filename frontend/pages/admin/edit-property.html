@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Property | Yamm Lobren</title>
+
+    <link rel="stylesheet" href="edit-property.css">
+</head>
+<body>
+    
+        <!-- PAGE CONTENT -->
+        <section class="content">
+
+            <div class="page-header">
+                <div class="page-heading">
+                    <div class="eyebrow">PROPERTY MANAGEMENT</div>
+                    <h1>Edit Property</h1>
+                    <p>Update the details, pricing, and images of your property listing.</p>
+                </div>
+
+                <a href="properties.html" class="back-btn">
+                    <span aria-hidden="true">←</span>
+                    Back to Properties
+                </a>
+            </div>
+
+            <form class="property-form" id="editPropertyForm">
+
+                <!-- BASIC INFORMATION -->
+                <section class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon">⌂</div>
+                        <div>
+                            <h2>Basic Information</h2>
+                            <p>Update the main information shown in your listing.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-content">
+                        <div class="form-group full-width">
+                            <label for="property-name">
+                                Property Name <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="property-name"
+                                name="property-name"
+                                placeholder="Enter property name"
+                                autocomplete="off"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="location">
+                                    Location <span class="required">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="location"
+                                    name="location"
+                                    placeholder="e.g. Naic, Cavite"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="property-type">
+                                    Property Type <span class="required">*</span>
+                                </label>
+                                <select id="property-type" name="property-type" required>
+                                    <option value="">Select property type</option>
+                                    <option value="house-lot">House &amp; Lot</option>
+                                    <option value="townhouse">Townhouse</option>
+                                    <option value="duplex">Duplex</option>
+                                    <option value="condominium">Condominium</option>
+                                    <option value="lot">Lot Only</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="price">Price <span class="required">*</span></label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">₱</span>
+                                    <input
+                                        type="number"
+                                        id="price"
+                                        name="price"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="Enter property price"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="status">
+                                    Listing Status <span class="required">*</span>
+                                </label>
+                                <select id="status" name="status" required>
+                                    <option value="">Select status</option>
+                                    <option value="Available">Available</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Sold">Sold</option>
+                                    <option value="Unavailable">Unavailable</option>
+                                </select>
+                                <small class="field-note">Choose the current status of this property.</small>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PROPERTY DETAILS -->
+                <section class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon">▤</div>
+                        <div>
+                            <h2>Property Details</h2>
+                            <p>Update the property size and description.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-content">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="lot-area">Lot Area</label>
+                                <div class="input-with-suffix">
+                                    <input
+                                        type="number"
+                                        id="lot-area"
+                                        name="lot-area"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="e.g. 50"
+                                    >
+                                    <span class="input-suffix">sqm</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="floor-area">Floor Area</label>
+                                <div class="input-with-suffix">
+                                    <input
+                                        type="number"
+                                        id="floor-area"
+                                        name="floor-area"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="e.g. 44"
+                                    >
+                                    <span class="input-suffix">sqm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="description">Property Description</label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="6"
+                                placeholder="Describe the property, features, nearby establishments, and other important details..."
+                            ></textarea>
+                            <small class="field-note">Write clear information to help clients understand the listing.</small>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PROPERTY IMAGES -->
+                <section class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon">▧</div>
+                        <div>
+                            <h2>Property Images</h2>
+                            <p>View the current images or select replacements.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-content">
+                        <div class="image-section">
+                            <div class="image-section-heading">
+                                <h3>Current Images</h3>
+                                <span class="image-status">Saved listing images</span>
+                            </div>
+
+                            <div class="current-image">
+                                <div class="image-placeholder">Loading current images...</div>
+                            </div>
+                        </div>
+
+                        <div class="upload-area">
+                            <div class="upload-symbol">↑</div>
+                            <h3>Replace Property Images</h3>
+                            <p>Select one or more image files from your device.</p>
+
+                            <input
+                                type="file"
+                                id="property-images"
+                                name="property-images"
+                                accept="image/*"
+                                multiple
+                            >
+
+                            <label for="property-images" class="upload-btn">
+                                Choose New Images
+                            </label>
+
+                            <small class="upload-note">
+                                Leave this empty to keep the current images.
+                                Selecting new images replaces the current image set.
+                            </small>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FORM ACTIONS -->
+                <div class="form-actions">
+                    <a href="properties.html" class="cancel-btn">Cancel</a>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+
+            </form>
+
+
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="edit-property.js"></script>
+
+</body>
+</html>
