@@ -545,6 +545,8 @@ async function loadDashboardData() {
                     overviewCountEl.textContent = properties.length;
                 }
             }
+        }
+
         if (typeof apiGetDashboardKPIs === "function") {
             const kpis = await apiGetDashboardKPIs();
             if (kpis && kpis.total_clients !== undefined) {

@@ -1,0 +1,10 @@
+# Ignore unfinished Next.js prototype and python backend during Vercel static deployment
+next-app/
+backend/
+__pycache__/
+*.py
+*.db
+*.db-journal
+*.sqlite3
+.env
+run.py

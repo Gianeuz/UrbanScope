@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
+  "redirects": [
+    { "source": "/properties/:path*", "destination": "/pages/properties/:path*", "permanent": true },
+    { "source": "/inquiry/:path*", "destination": "/pages/inquiry/:path*", "permanent": true },
+    { "source": "/auth/:path*", "destination": "/pages/auth/:path*", "permanent": true },
+    { "source": "/admin/:path*", "destination": "/pages/admin/:path*", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/frontend/index.html" },
+    { "source": "/index.html", "destination": "/frontend/index.html" },
+    { "source": "/index.css", "destination": "/frontend/index.css" },
+    { "source": "/index.js", "destination": "/frontend/index.js" },
+    { "source": "/favicon.ico", "destination": "/frontend/assets/images/favicon.jpg" },
+    { "source": "/pages/:path*", "destination": "/frontend/pages/:path*" },
+    { "source": "/shared/:path*", "destination": "/frontend/shared/:path*" },
+    { "source": "/assets/:path*", "destination": "/frontend/assets/:path*" }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
+  "redirects": [
+    { "source": "/properties/:path*", "destination": "/pages/properties/:path*", "permanent": true },
+    { "source": "/inquiry/:path*", "destination": "/pages/inquiry/:path*", "permanent": true },
+    { "source": "/auth/:path*", "destination": "/pages/auth/:path*", "permanent": true },
+    { "source": "/admin/:path*", "destination": "/pages/admin/:path*", "permanent": true }
+  ]
+}
