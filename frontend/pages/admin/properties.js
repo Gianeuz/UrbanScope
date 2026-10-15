@@ -10,17 +10,29 @@ const propertyTableBody =
 // LOAD SAVED PROPERTIES
 // ================================
 
-function loadSavedProperties() {
+async function loadSavedProperties() {
+    if (!propertyTableBody) return;
+    propertyTableBody.innerHTML = "";
 
-    const properties =
-        JSON.parse(localStorage.getItem("properties")) || [];
+    let properties = [];
+    if (typeof apiGetProperties === "function") {
+        try {
+            const liveProps = await apiGetProperties();
+            if (Array.isArray(liveProps) && liveProps.length > 0) {
+                properties = liveProps;
+            }
+        } catch (e) {
+            console.warn("Could not load from Supabase:", e);
+        }
+    }
+
+    if (properties.length === 0) {
+        properties = JSON.parse(localStorage.getItem("properties")) || [];
+    }
 
     properties.forEach(function (property) {
-
         addPropertyRow(property);
-
     });
-
 }
 
 
@@ -29,85 +41,47 @@ function loadSavedProperties() {
 // ================================
 
 function addPropertyRow(property) {
+    const title = property.title || property.name || property.propertyName || "Listing";
+    const type = property.property_type || property.type || property.propertyType || "—";
+    const loc = property.location || "—";
+    const priceStr = property.price ? "₱" + Number(property.price).toLocaleString() : "—";
+    const status = property.status || "Available";
+    const imgSrc = property.image_url ? 
+        (property.image_url.startsWith('http') ? property.image_url : '../../' + property.image_url.replace(/^(\.\.\/)+/, '')) : 
+        '../../assets/images/property1.jpg';
 
-    console.log("ADDING PROPERTY:", property);
-    console.log("PROPERTY ID:", property.id);
-
-    const row =
-        document.createElement("tr");
+    const row = document.createElement("tr");
 
     row.innerHTML = `
         <td>
             <div class="property-name">
-
-                <div class="property-image">
-                    IMG
+                <div class="property-image" style="width:48px;height:48px;overflow:hidden;border-radius:6px;">
+                    <img src="${imgSrc}" alt="${title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='../../assets/images/property1.jpg'">
                 </div>
-
                 <div>
-                    <strong>${property.name}</strong>
-                    <small>Property Listing</small>
+                    <strong>${title}</strong>
+                    <small>ID #${property.id}</small>
                 </div>
-
             </div>
         </td>
-
-        <td>
-            ${property.location || "—"}
-        </td>
-
-        <td>
-            ${property.type || "—"}
-        </td>
-
-        <td>
-            ${
-                property.price
-                ? "₱" +
-                  Number(property.price).toLocaleString()
-                : "—"
-            }
-        </td>
-
+        <td>${loc}</td>
+        <td>${type}</td>
+        <td>${priceStr}</td>
         <td>
             <span class="status status-update">
-                ${property.status || "—"}
+                ${status}
             </span>
         </td>
-
         <td>
             <div class="actions">
-
-                <button
-                    type="button"
-                    class="view-btn"
-                    data-id="${property.id}"
-                >
-                    View
-                </button>
-
-                <button
-                    type="button"
-                    class="edit-btn"
-                    data-id="${property.id}"
-                >
-                    Edit
-                </button>
-
-                <button
-                    type="button"
-                    class="delete-btn"
-                    data-id="${property.id}"
-                >
-                    Delete
-                </button>
-
+                <button type="button" class="view-btn" data-id="${property.id}">View</button>
+                <button type="button" class="edit-btn" data-id="${property.id}">Edit</button>
+                <button type="button" class="delete-btn" data-id="${property.id}">Delete</button>
             </div>
         </td>
     `;
 
     propertyTableBody.appendChild(row);
-
 }
 
 
@@ -157,7 +131,7 @@ document.addEventListener(
             );
 
             window.location.href =
-                "property-details.html?id=" +
+                "../properties/property-detail.html?id=" +
                 encodeURIComponent(propertyId);
 
             return;
@@ -270,7 +244,7 @@ cancelDelete.addEventListener(
 
 confirmDelete.addEventListener(
     "click",
-    function () {
+    async function () {
 
         if (
             selectedPropertyId === null
@@ -278,6 +252,13 @@ confirmDelete.addEventListener(
             return;
         }
 
+        if (typeof apiDeleteProperty === "function") {
+            try {
+                await apiDeleteProperty(selectedPropertyId);
+            } catch (err) {
+                console.warn("Supabase delete notice:", err);
+            }
+        }
 
         let properties =
             JSON.parse(
@@ -285,7 +266,6 @@ confirmDelete.addEventListener(
                     "properties"
                 )
             ) || [];
-
 
         properties =
             properties.filter(
@@ -297,22 +277,18 @@ confirmDelete.addEventListener(
                 }
             );
 
-
         localStorage.setItem(
             "properties",
             JSON.stringify(properties)
         );
 
-
         deleteModal.classList.remove(
             "show"
         );
 
-
         selectedPropertyId = null;
 
-
-        location.reload();
+        await loadSavedProperties();
 
     }
 );

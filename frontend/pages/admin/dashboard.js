@@ -545,6 +545,37 @@ async function loadDashboardData() {
                     overviewCountEl.textContent = properties.length;
                 }
             }
+        if (typeof apiGetDashboardKPIs === "function") {
+            const kpis = await apiGetDashboardKPIs();
+            if (kpis && kpis.total_clients !== undefined) {
+                const totalClientsEl = document.getElementById("kpiTotalClients");
+                if (totalClientsEl) {
+                    totalClientsEl.textContent = kpis.total_clients;
+                }
+            }
+        }
+
+        if (typeof apiGetAppointments === "function") {
+            const appointmentsList = await apiGetAppointments();
+            if (Array.isArray(appointmentsList) && appointmentsList.length > 0) {
+                appointmentsList.forEach(apt => {
+                    const dateKey = apt.appointment_date;
+                    if (!sampleAppointments[dateKey]) {
+                        sampleAppointments[dateKey] = [];
+                    }
+                    // Avoid duplicate
+                    const exists = sampleAppointments[dateKey].some(a => a.title === apt.title);
+                    if (!exists) {
+                        sampleAppointments[dateKey].push({
+                            time: apt.appointment_time,
+                            title: apt.title,
+                            description: apt.description || "Client property consultation & viewing walkthrough."
+                        });
+                    }
+                });
+                renderCalendar();
+                renderAgenda();
+            }
         }
     } catch (error) {
         console.error("Unable to load dashboard data:", error);

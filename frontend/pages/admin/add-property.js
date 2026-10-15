@@ -313,43 +313,64 @@ document.addEventListener("DOMContentLoaded", () => {
                 createdAt: new Date().toISOString()
             };
 
-            try {
-                const savedProperties = JSON.parse(
-                    localStorage.getItem("urbanScopeProperties") || "[]"
-                );
-
-                if (!Array.isArray(savedProperties)) {
-                    throw new Error("Invalid saved property data.");
+            (async () => {
+                let savedToCloud = false;
+                if (typeof apiAddProperty === "function") {
+                    try {
+                        const cloudRes = await apiAddProperty(property);
+                        if (cloudRes) {
+                            savedToCloud = true;
+                        }
+                    } catch (e) {
+                        console.warn("Supabase add property warning:", e);
+                    }
                 }
 
-                savedProperties.push(property);
+                try {
+                    const savedProperties = JSON.parse(
+                        localStorage.getItem("urbanScopeProperties") || "[]"
+                    );
+                    savedProperties.push(property);
+                    localStorage.setItem(
+                        "urbanScopeProperties",
+                        JSON.stringify(savedProperties)
+                    );
 
-                localStorage.setItem(
-                    "urbanScopeProperties",
-                    JSON.stringify(savedProperties)
-                );
+                    // Also mirror into "properties" key
+                    const adminProps = JSON.parse(localStorage.getItem("properties") || "[]");
+                    adminProps.unshift({
+                        id: property.id,
+                        name: property.propertyName,
+                        title: property.propertyName,
+                        location: property.location,
+                        type: property.propertyType,
+                        property_type: property.propertyType,
+                        price: property.price,
+                        status: property.status
+                    });
+                    localStorage.setItem("properties", JSON.stringify(adminProps));
 
-                alert(
-                    "Property details saved in this browser!\n\n" +
-                    "Property: " + property.propertyName +
-                    "\n\nNote: This is a frontend demo. " +
-                    "Image files are not uploaded, and the property " +
-                    "is not saved to a server or shared database."
-                );
+                    if (savedToCloud) {
+                        alert(
+                            "✓ Property successfully published to Supabase Cloud Database!\n\n" +
+                            "Property: " + property.propertyName + "\n" +
+                            "Status: " + property.status
+                        );
+                    } else {
+                        alert(
+                            "Property details saved in this browser!\n\n" +
+                            "Property: " + property.propertyName
+                        );
+                    }
 
-                propertyForm.reset();
+                    propertyForm.reset();
+                    window.location.href = "properties.html";
 
-            } catch (error) {
-                console.error(
-                    "Unable to save property:",
-                    error
-                );
-
-                alert(
-                    "Unable to save the property details. " +
-                    "Please check your browser storage settings."
-                );
-            }
+                } catch (error) {
+                    console.error("Unable to save property:", error);
+                    alert("Unable to save the property details. Please check your browser storage settings.");
+                }
+            })();
         });
     }
 
