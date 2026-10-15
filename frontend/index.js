@@ -117,26 +117,90 @@ function renderFeaturedGrid(list) {
     }).join('');
 }
 
-async function loadHomeProperties(category = 'all') {
-    if (typeof apiGetProperties === 'function') {
-        const filter = {};
-        if (category && category !== 'all') {
-            filter.type = category;
+let allCachedProperties = [];
+let activeCategory = 'all';
+let activeSort = 'featured';
+
+function filterPropertyList(list, category) {
+    if (!list || !Array.isArray(list)) return [];
+    if (!category || category === 'all') return [...list];
+
+    const c = category.toLowerCase().trim();
+    return list.filter(item => {
+        const type = (item.property_type || '').toLowerCase();
+        const title = (item.title || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        const price = Number(item.price) || 0;
+
+        if (c === 'villas' || c === 'villa') {
+            return type.includes('villa') || title.includes('villa');
         }
-        const data = await apiGetProperties(filter);
-        if (data && Array.isArray(data)) {
-            homepageProperties = data;
-            renderFeaturedGrid(data);
-            return;
+        if (c === 'apartments' || c === 'apartment') {
+            return type.includes('apartment') || type.includes('condo') || title.includes('apartment') || title.includes('condo');
+        }
+        if (c === 'townhouses' || c === 'townhouse') {
+            return type.includes('townhouse') || type.includes('triplex') || title.includes('townhouse');
+        }
+        if (c === 'luxury') {
+            return type.includes('villa') || price >= 5000000 || title.includes('luxury') || desc.includes('luxury');
+        }
+        if (c === 'house-lot' || c === 'house & lot') {
+            return type.includes('house') || type.includes('townhouse') || type.includes('subdivision') || type.includes('single attached') || type.includes('triplex') || type.includes('villa');
+        }
+        if (c === 'subdivision') {
+            return type.includes('subdivision') || title.includes('subdivision') || (item.subdivision_name && item.subdivision_name.trim().length > 0);
+        }
+        return type.includes(c) || title.includes(c);
+    });
+}
+
+function sortPropertyList(list, sortKey) {
+    const sorted = [...list];
+    if (sortKey === 'price-low') {
+        sorted.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+    } else if (sortKey === 'price-high') {
+        sorted.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+    } else if (sortKey === 'newest') {
+        sorted.sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
+    }
+    return sorted;
+}
+
+function applyCurrentFiltersAndRender() {
+    let filtered = filterPropertyList(allCachedProperties, activeCategory);
+    filtered = sortPropertyList(filtered, activeSort);
+    renderFeaturedGrid(filtered);
+}
+
+async function loadHomeProperties(category = 'all') {
+    activeCategory = category;
+
+    // If we already have cached properties, render immediately for instant feedback
+    if (allCachedProperties.length > 0) {
+        applyCurrentFiltersAndRender();
+    }
+
+    if (typeof apiGetProperties === 'function') {
+        try {
+            // Fetch live dataset from Supabase
+            const data = await apiGetProperties({});
+            if (data && Array.isArray(data) && data.length > 0) {
+                allCachedProperties = data;
+                applyCurrentFiltersAndRender();
+                return;
+            }
+        } catch (e) {
+            console.warn('Live property fetch notice:', e);
         }
     }
 }
 
-// Category tabs click listeners
+// Category tabs click listeners and initialization
 document.addEventListener('DOMContentLoaded', () => {
     // Initial load from live database
     loadHomeProperties('all');
 
+    // Category tabs interaction
     document.querySelectorAll('.cat-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
@@ -145,4 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
             loadHomeProperties(category);
         });
     });
+
+    // Optional sort dropdown if present
+    const sortSelect = document.getElementById('homeSortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+            activeSort = e.target.value;
+            applyCurrentFiltersAndRender();
+        });
+    }
 });

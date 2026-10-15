@@ -544,6 +544,8 @@ async function loadDashboardData() {
                 if (overviewCountEl) {
                     overviewCountEl.textContent = properties.length;
                 }
+
+                renderDashboardProperties(properties);
             }
         }
 
@@ -565,7 +567,6 @@ async function loadDashboardData() {
                     if (!sampleAppointments[dateKey]) {
                         sampleAppointments[dateKey] = [];
                     }
-                    // Avoid duplicate
                     const exists = sampleAppointments[dateKey].some(a => a.title === apt.title);
                     if (!exists) {
                         sampleAppointments[dateKey].push({
@@ -583,6 +584,67 @@ async function loadDashboardData() {
         console.error("Unable to load dashboard data:", error);
     }
 }
+
+function renderDashboardProperties(list) {
+    const tbody = document.getElementById("dashboardPropertyTableBody");
+    if (!tbody) return;
+
+    if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:#6b7f70;">No property records found. Click "+ Add Property" to create one.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = list.map(p => {
+        const title = p.title || p.propertyName || "Listing";
+        const type = p.property_type || "—";
+        const loc = p.location || "—";
+        const price = p.price ? "₱" + Number(p.price).toLocaleString() : "—";
+        const status = p.status || "Available";
+        const imgSrc = p.image_url ? 
+            (p.image_url.startsWith('http') || p.image_url.startsWith('data:') ? p.image_url : '../../' + p.image_url.replace(/^(\.\.\/)+/, '')) : 
+            '../../assets/images/property1.jpg';
+
+        return `
+        <tr>
+            <td>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="${imgSrc}" alt="${title}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" onerror="this.src='../../assets/images/property1.jpg'">
+                    <div>
+                        <strong style="color:#1b2e21; font-size:0.92rem;">${title}</strong><br>
+                        <small style="color:#6b7f70;">ID #${p.id}</small>
+                    </div>
+                </div>
+            </td>
+            <td style="color:#2d3748; font-size:0.9rem;">${loc}</td>
+            <td><span style="padding:4px 9px; border-radius:4px; background:#eef5ef; color:#1a3b23; font-size:0.8rem; font-weight:600;">${type}</span></td>
+            <td style="font-weight:700; color:#1b2e21;">${price}</td>
+            <td><span style="padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:600; background:#e8f5e9; color:#2e7d32;">${status}</span></td>
+            <td>
+                <div style="display:flex; gap:8px;">
+                    <a href="../properties/property-detail.html?id=${p.id}" target="_blank" style="padding:5px 12px; border-radius:4px; background:#eef5ef; color:#1a3b23; text-decoration:none; font-size:0.82rem; font-weight:600;">View</a>
+                    <button type="button" onclick="deletePropertyFromHome(${p.id}, '${title.replace(/'/g, "\\'")}')" style="padding:5px 12px; border-radius:4px; background:#fee2e2; color:#b91c1c; border:none; cursor:pointer; font-size:0.82rem; font-weight:600;">Delete</button>
+                </div>
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+window.deletePropertyFromHome = async function(id, name) {
+    if (!confirm(`Are you sure you want to delete property "${name}"? This action cannot be undone.`)) {
+        return;
+    }
+
+    if (typeof apiDeleteProperty === 'function') {
+        const ok = await apiDeleteProperty(id);
+        if (ok) {
+            alert(`✓ Property "${name}" has been deleted.`);
+            loadDashboardData();
+        } else {
+            alert('Failed to delete property. Please check your connection.');
+        }
+    }
+};
 
 /* INITIALIZE */
 

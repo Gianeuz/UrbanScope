@@ -116,7 +116,7 @@
                 
                 
                 <div class="profile-dropdown-divider"></div>
-                <a href="#" role="menuitem" data-profile-action><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile</span></a>
+                <a href="profile.html" role="menuitem"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile Settings</span></a>
                 <a href="login.html" role="menuitem" class="profile-signout"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path></svg><span>Sign Out</span></a>
             </div>
         </div>
@@ -159,7 +159,7 @@
 
         <nav class="sidebar-nav">
 
-            <a href="dashboard.html" class="nav-item">
+            <a href="dashboard.html" class="nav-item active">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -168,7 +168,7 @@
                 <span>Home</span>
             </a>
 
-            <a href="properties.html" class="nav-item active">
+            <a href="properties.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="4" y="2" width="16" height="20" rx="2"></rect>
@@ -186,11 +186,7 @@
                 <span>Properties</span>
             </a>
 
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('Client Management coming in v2.0'); return false;"
-            >
+            <a href="clients.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -201,19 +197,15 @@
                 <span>Clients</span>
             </a>
 
-
             <!-- INQUIRIES SUB-MENU -->
-            <div class="nav-group open">
-
-                <div class="nav-item group-header">
+            <div class="nav-group open" id="inquiriesGroup">
+                <div class="nav-item group-header" id="inquiriesToggle">
                     <svg width="20" height="20" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
-
                     <span>Inquiries</span>
-
                     <svg class="chevron" width="16" height="16"
                         viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -222,38 +214,22 @@
                 </div>
 
                 <div class="sub-menu">
-                    <a href="#" class="sub-item">
+                    <a href="clients.html" class="sub-item">
                         <span>All Inquiries</span>
                     </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Under%20Review" class="sub-item">
                         <span>Pending Review</span>
-                        <span class="count-badge orange">5</span>
                     </a>
-
-                    <a href="#" class="sub-item">
-                        <span>For Resubmission</span>
-                        <span class="count-badge gray">2</span>
-                    </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Approved" class="sub-item">
                         <span>Approved</span>
-                        <span class="count-badge green">8</span>
                     </a>
-
-                    <a href="#" class="sub-item">
+                    <a href="clients.html?status=Completed" class="sub-item">
                         <span>Completed</span>
-                        <span class="count-badge dark-green">12</span>
                     </a>
                 </div>
             </div>
 
-
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('User Management coming in v2.0'); return false;"
-            >
+            <a href="users.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -262,31 +238,13 @@
                 <span>Users</span>
             </a>
 
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('Analytics Reports coming in v2.0'); return false;"
-            >
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <span>Reports</span>
-            </a>
-
-            <a
-                href="#"
-                class="nav-item"
-                onclick="alert('System Settings'); return false;"
-            >
+            <a href="profile.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"></circle>
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
-                <span>Settings</span>
+                <span>Profile Settings</span>
             </a>
 
         </nav>
@@ -597,53 +555,69 @@
         
         
         
-            <div class="panel table-panel">
-                
-     <div class="panel-heading">
-      <div>
-       <h2>
-        Recent Inquiries
-       </h2>
-       <p>
-        Keep track of your latest client requests
-       </p>
-      </div>
-      
-      <button class="text-button" data-go="inquiries">
-       View All Inquiries &rarr;
-      </button>
-      
-     </div>
-     <div class="table-scroll">
-      <table>
-       <thead>
-        <tr>
-         <th>
-          INQUIRY ID
-         </th>
-         <th>
-          CLIENT NAME
-         </th>
-         <th>
-          PROPERTY
-         </th>
-         <th>
-          DATE SUBMITTED
-         </th>
-         <th>
-          STATUS
-         </th>
-         <th>
-          ACTION
-         </th>
-        </tr>
-       </thead>
-       <tbody id="recentInquiryRows">
-       </tbody>
-      </table>
-     </div>
-    </div>
-   </section>
+        <!-- MANAGED PROPERTY LISTINGS TABLE -->
+        <section class="panel table-panel" id="managedPropertiesPanel" style="margin-top: 24px;">
+            <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h2>Managed Property Listings</h2>
+                    <p>Review and manage all real estate inventory published on your platform</p>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a href="properties.html" class="primary-action-btn" style="padding: 8px 16px; font-size: 0.88rem; text-decoration: none; border-radius: 6px; background: var(--green); color: #fff; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                        + Add Property
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PROPERTY</th>
+                            <th>LOCATION</th>
+                            <th>TYPE</th>
+                            <th>PRICE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardPropertyTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 24px; color: #6b7f70;">Loading listings...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- RECENT INQUIRIES -->
+        <section class="panel table-panel" style="margin-top: 24px;">
+            <div class="panel-heading">
+                <div>
+                    <h2>Recent Inquiries</h2>
+                    <p>Keep track of your latest client requests</p>
+                </div>
+                <button class="text-button" type="button" onclick="location.href='clients.html'">
+                    View All Inquiries &rarr;
+                </button>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>INQUIRY ID</th>
+                            <th>CLIENT NAME</th>
+                            <th>PROPERTY</th>
+                            <th>DATE SUBMITTED</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentInquiryRows">
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
     </main>
 
