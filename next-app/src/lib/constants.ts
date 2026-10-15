@@ -85,7 +85,7 @@ export const CITIES = [
 ] as const;
 
 export const SITE = {
-  name: "Mariam Lobren",
+  name: "Miriam Lobren",
   tagline: "Real Estate Agent",
   brokerage: "CD Miranda Realty",
   platform: "UrbanScope",

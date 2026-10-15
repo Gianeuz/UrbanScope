@@ -51,7 +51,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="UrbanScope Real Estate API",
-    description="Python Backend for CD Miranda Realty & Mariam Lobren Real Estate Platform",
+    description="Python Backend for CD Miranda Realty & Miriam Lobren Real Estate Platform",
     version="1.0.0",
     lifespan=lifespan
 )

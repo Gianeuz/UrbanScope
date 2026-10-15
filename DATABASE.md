@@ -230,7 +230,7 @@ Seeding happens inside `init_db()` **only when the table is empty**, per table.
 
 | Email | Password | Role | Name |
 | :--- | :--- | :--- | :--- |
-| `admin@cdmiranda.com` | `admin123` | `admin` | Mariam Lobren (Admin) |
+| `admin@cdmiranda.com` | `admin123` | `admin` | Miriam Lobren (Admin) |
 | `client@example.com` | `client123` | `user` | Sample Client |
 
 **Properties (6)**

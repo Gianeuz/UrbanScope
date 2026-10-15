@@ -2,7 +2,7 @@
   "name": "urbanscope",
   "version": "2.0.0",
   "private": true,
-  "description": "UrbanScope — CD Miranda Realty & Mariam Lobren real estate platform (Next.js + Prisma)",
+  "description": "UrbanScope — CD Miranda Realty & Miriam Lobren real estate platform (Next.js + Prisma)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -113,7 +113,7 @@ def init_db():
             INSERT INTO users (email, password_hash, full_name, phone, role)
             VALUES (?, ?, ?, ?, ?)
         """, [
-            ("admin@cdmiranda.com", admin_pass, "Mariam Lobren (Admin)", "+63 900 000 0000", "admin"),
+            ("admin@cdmiranda.com", admin_pass, "Miriam Lobren (Admin)", "+63 900 000 0000", "admin"),
             ("client@example.com", client_pass, "Sample Client", "+63 912 345 6789", "user")
         ])
         conn.commit()

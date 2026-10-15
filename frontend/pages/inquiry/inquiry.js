@@ -27,7 +27,7 @@ async function submitInquiry() {
     }
 
     if (result && result.success) {
-        alert('✓ Your inquiry has been successfully sent to Mariam Lobren Realty!\nReference: INQ-2026-009');
+        alert('✓ Your inquiry has been successfully sent to Miriam Lobren Realty!\nReference: INQ-2026-009');
         window.location.href = '../../index.html';
     } else {
         alert('Submission error: ' + (result ? (result.error || 'Please try again.') : 'Please try again.'));

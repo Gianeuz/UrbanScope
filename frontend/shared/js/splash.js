@@ -1,6 +1,6 @@
 /**
  * UrbanScope - Welcome Splash
- * Shows the "Mariam Lobren - Real Estate Agent" intro animation the first
+ * Shows the "Miriam Lobren - Real Estate Agent" intro animation the first
  * time the site is opened in a browser tab (once per session).
  * Tip: run  sessionStorage.removeItem('urbanscope_splash_seen')  in the
  * browser console (or open a new tab) to see it again.
@@ -36,13 +36,13 @@
         var el = document.createElement('div');
         el.id = 'splash';
         el.setAttribute('role', 'status');
-        el.setAttribute('aria-label', 'Mariam Lobren, Real Estate Agent');
+        el.setAttribute('aria-label', 'Miriam Lobren, Real Estate Agent');
         el.innerHTML =
             '<span class="splash-orb o1"></span>' +
             '<span class="splash-orb o2"></span>' +
             '<div class="splash-inner">' +
                 '<div class="splash-logo-ring"><img src="' + basePath + 'assets/images/logo.png" alt=""></div>' +
-                '<div class="splash-name" aria-hidden="true">' + letters('Mariam Lobren') + '</div>' +
+                '<div class="splash-name" aria-hidden="true">' + letters('Miriam Lobren') + '</div>' +
                 '<div class="splash-line"></div>' +
                 '<p class="splash-role">REAL ESTATE AGENT</p>' +
                 '<p class="splash-tag">Better Homes, Brighter Futures</p>' +

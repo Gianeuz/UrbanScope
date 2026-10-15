@@ -8,7 +8,7 @@ product overview and [DATABASE.md](DATABASE.md) for the data layer.
 
 ## Project at a Glance
 
-**UrbanScope** — a real estate website for **CD Miranda Realty** / agent **Mariam Lobren**
+**UrbanScope** — a real estate website for **CD Miranda Realty** / agent **Miriam Lobren**
 (Las Piñas & Cavite, Philippines). Public property catalog, client accounts and inquiries,
 an admin dashboard, and the "Mira" chatbot.
 

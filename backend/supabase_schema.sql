@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- URBANSCOPE REAL ESTATE PLATFORM - SUPABASE DATABASE SCHEMA & SEED SCRIPT
--- CD Miranda Realty & Mariam Lobren
+-- CD Miranda Realty & Miriam Lobren
 -- ==============================================================================
 -- How to apply this in Supabase:
 -- 1. Log in to your Supabase Dashboard (https://supabase.com/dashboard)
@@ -254,7 +254,7 @@ INSERT INTO users (email, password_hash, full_name, phone, role) VALUES
 (
     'admin@cdmiranda.com',
     '8ca49701e51a970c409cf0ecdb2e5fdc$84c9e645bcb59437d2cf899b39f5424f1482d4c24d412fec1017500e739c9e95',
-    'Mariam Lobren (Admin)',
+    'Miriam Lobren (Admin)',
     '+63 900 000 0000',
     'admin'
 ),

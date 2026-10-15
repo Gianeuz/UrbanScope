@@ -7,7 +7,7 @@
 
 ## 📌 Project Overview
 
-**UrbanScope** is a comprehensive real estate solution tailored for **CD Miranda Realty** and real estate agent **Mariam Lobren**. The platform enables homebuyers and investors to browse curated listings, filter by property type and location, explore detailed property specifications with interactive photo galleries, and submit formal inquiries. It also features a dedicated **Administrator Suite** for tracking KPIs, monthly inquiries, status breakdowns, and property records.
+**UrbanScope** is a comprehensive real estate solution tailored for **CD Miranda Realty** and real estate agent **Miriam Lobren**. The platform enables homebuyers and investors to browse curated listings, filter by property type and location, explore detailed property specifications with interactive photo galleries, and submit formal inquiries. It also features a dedicated **Administrator Suite** for tracking KPIs, monthly inquiries, status breakdowns, and property records.
 
 ---
 
@@ -29,7 +29,7 @@
   - Inquiry card leading to direct inquiry submission.
 - **Client Submit Inquiry:** Pre-filled client account information, property summary snapshot, custom message field, and submission feedback.
 - **🤖 Mira — AI Real Estate Concierge (Chatbot):**
-  - Always-available floating assistant customized specifically for CD Miranda Realty & Mariam Lobren.
+  - Always-available floating assistant customized specifically for CD Miranda Realty & Miriam Lobren.
   - Interactive website navigation (shortcuts to Home, Catalog, Consultations, Account).
   - Natural language property queries by location (Las Piñas, Dasmariñas, Bacoor, Imus, Naic), price budget (e.g. "under 5M"), and property type (villas, townhouses, subdivisions).
   - Rich interactive property cards directly inside chat bubbles with pricing and "View Details" links.
@@ -138,7 +138,7 @@ Mariam-Lobren-Real-Estate/
 │           ├── favicon.jpg          # Browser tab icon
 │           ├── home-bg.png          # Hero backdrop photography
 │           ├── Urban.jpg            # Authentication showcase photography
-│           ├── agent.jpg            # Agent portrait (Mariam Lobren)
+│           ├── agent.jpg            # Agent portrait (Miriam Lobren)
 │           ├── property1.jpg        # Property showcase 1 (Velemont)
 │           ├── property2.jpg        # Property showcase 2 (Green Valley)
 │           ├── property3.jpg        # Property showcase 3 (Horizon Heights)
@@ -249,6 +249,6 @@ When served by `run.py`, each file's URL is its path with `frontend/` removed
 ## 📄 License & Credits
 
 - **Realty:** CD Miranda Realty
-- **Agent:** Mariam Lobren
+- **Agent:** Miriam Lobren
 - **Platform:** UrbanScope Real Estate System
 - &copy; 2026 CD Miranda Realty. All rights reserved.

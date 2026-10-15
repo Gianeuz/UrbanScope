@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 60)
     print(" 🏙️  URBANSCOPE REAL ESTATE PLATFORM")
-    print(" CD Miranda Realty & Mariam Lobren")
+    print(" CD Miranda Realty & Miriam Lobren")
     print("=" * 60)
     print(f" ▸ Web Application:      http://{host}:{port}/")
     print(f" ▸ Properties Catalog:  http://{host}:{port}/pages/properties/properties.html")

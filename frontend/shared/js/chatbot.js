@@ -1,6 +1,6 @@
 /**
  * UrbanScope - AI Real Estate Chatbot (Mira)
- * Specially designed for CD Miranda Realty & Mariam Lobren
+ * Specially designed for CD Miranda Realty & Miriam Lobren
  * Provides intelligent website navigation, property recommendations,
  * consultation guidance, and real estate assistance.
  */
@@ -29,7 +29,7 @@
     // 2. KNOWLEDGE BASE & PROPERTY CATALOG
     // ----------------------------------------------------------
     const AGENT_INFO = {
-        name: "Mariam Lobren",
+        name: "Miriam Lobren",
         role: "Licensed Real Estate Agent & Specialist",
         agency: "CD Miranda Realty (UrbanScope)",
         tagline: "Better Homes, Brighter Futures",
@@ -233,7 +233,7 @@
                         </div>
                         <div class="chatbot-header-info">
                             <h3>Mira <span class="chatbot-header-badge">AI Assistant</span></h3>
-                            <p>Mariam Lobren Realty &bull; Online</p>
+                            <p>Miriam Lobren Realty &bull; Online</p>
                         </div>
                     </div>
                     <div class="chatbot-header-actions">
@@ -263,7 +263,7 @@
                     <button type="button" class="chatbot-suggest-btn" data-query="Properties in Cavite">📍 Cavite Listings</button>
                     <button type="button" class="chatbot-suggest-btn" data-query="Homes under 5 Million">💰 Under ₱5M</button>
                     <button type="button" class="chatbot-suggest-btn" data-query="How do I inquire or book a consultation?">📝 How to Inquire?</button>
-                    <button type="button" class="chatbot-suggest-btn" data-query="Tell me about agent Mariam Lobren">👤 About Agent</button>
+                    <button type="button" class="chatbot-suggest-btn" data-query="Tell me about agent Miriam Lobren">👤 About Agent</button>
                 </div>
 
                 <!-- Input Area -->
@@ -510,9 +510,9 @@
             `;
         }
 
-        if (text.includes('about agent') || text.includes('about us') || text.includes('about me') || text.includes('who is mariam') || text.includes('who are you')) {
+        if (text.includes('about agent') || text.includes('about us') || text.includes('about me') || text.includes('who is miriam') || text.includes('who is mariam') || text.includes('who are you')) {
             return `
-                <p><strong>Mariam Lobren</strong> is a dedicated Real Estate Agent affiliated with <strong>CD Miranda Realty</strong>.</p>
+                <p><strong>Miriam Lobren</strong> is a dedicated Real Estate Agent affiliated with <strong>CD Miranda Realty</strong>.</p>
                 <p>Motto: <em>"Better Homes, Brighter Futures."</em></p>
                 <ul>
                     <li><strong>Service Areas:</strong> Las Piñas City, Cavite (Dasmariñas, Bacoor, Imus, Naic)</li>
@@ -528,7 +528,7 @@
 
         if (text.includes('contact') || text.includes('phone') || text.includes('email') || text.includes('call') || text.includes('office address')) {
             return `
-                <p>Here are the direct contact details for <strong>Mariam Lobren Realty</strong>:</p>
+                <p>Here are the direct contact details for <strong>Miriam Lobren Realty</strong>:</p>
                 <ul>
                     <li>📞 <strong>Phone:</strong> <a href="tel:+639000000000" style="color:var(--chat-green)">+63 900 000 0000</a></li>
                     <li>✉️ <strong>Email:</strong> <a href="mailto:name@sample.com" style="color:var(--chat-green)">name@sample.com</a></li>
@@ -581,7 +581,7 @@
         // ----------------------------------------------------------
         if (text.includes('how to inquire') || text.includes('inquire') || text.includes('consultation') || text.includes('process') || text.includes('requirements') || text.includes('schedule') || text.includes('site visit') || text.includes('viewing')) {
             return `
-                <p><strong>How to Inquire with Mariam Lobren:</strong></p>
+                <p><strong>How to Inquire with Miriam Lobren:</strong></p>
                 <ol style="margin:4px 0 8px;padding-left:18px;">
                     <li>Browse our <a href="${URLS.properties}" style="color:var(--chat-green);font-weight:600">Properties Catalog</a>.</li>
                     <li>Click <strong>"Book a Free Consultation"</strong> or <strong>"Submit Inquiry"</strong>.</li>
@@ -607,7 +607,7 @@
                     <li>🏠 <strong>Pag-IBIG Fund:</strong> Ideal for affordable subdivision homes (e.g., Liora Homes, Sunset Townhouses) with lower interest rates.</li>
                     <li>💵 <strong>Spot Cash / Deferred Cash:</strong> Discounts available for spot cash settlements.</li>
                 </ul>
-                <p>Would you like personalized payment computation? Mariam Lobren provides free sample computations!</p>
+                <p>Would you like personalized payment computation? Miriam Lobren provides free sample computations!</p>
                 <div class="chatbot-btn-group">
                     <a href="${URLS.inquiry}" class="chatbot-action-chip gold">💬 Request Free Computation</a>
                     <button type="button" class="chatbot-action-chip" data-prompt="Affordable properties under 4M">💰 Affordable Homes</button>
@@ -716,7 +716,7 @@
                     ${sampleCards}
                     <div class="chatbot-btn-group">
                         <a href="${URLS.properties}?type=${typeKeyword}" class="chatbot-action-chip gold">📂 View All ${capitalize(typeKeyword)}s</a>
-                        <a href="${URLS.inquiry}" class="chatbot-action-chip">💬 Ask Mariam</a>
+                        <a href="${URLS.inquiry}" class="chatbot-action-chip">💬 Ask Miriam</a>
                     </div>
                 `;
             }
@@ -745,7 +745,7 @@
 
         if (text.includes('thank') || text.includes('salamat') || text.includes('great') || text.includes('awesome')) {
             return `
-                <p>You're very welcome! If you need any assistance finding a home or speaking with Mariam Lobren, I'm always right here. 🏡✨</p>
+                <p>You're very welcome! If you need any assistance finding a home or speaking with Miriam Lobren, I'm always right here. 🏡✨</p>
                 <div class="chatbot-btn-group">
                     <a href="${URLS.properties}" class="chatbot-action-chip gold">🔍 Continue Browsing</a>
                     <a href="${URLS.inquiry}" class="chatbot-action-chip">💬 Book Consultation</a>
@@ -836,7 +836,7 @@
 
         const initialGreeting = `
             <p>👋 Hello${escapeHtml(greetingName)}! I'm <strong>Mira</strong>, your AI Concierge for <strong>CD Miranda Realty</strong>.</p>
-            <p>I can help you navigate our listings, filter homes in Las Piñas &amp; Cavite, calculate budgets, or book a consultation with <strong>Mariam Lobren</strong>.</p>
+            <p>I can help you navigate our listings, filter homes in Las Piñas &amp; Cavite, calculate budgets, or book a consultation with <strong>Miriam Lobren</strong>.</p>
             <p>How can I assist your real estate journey today?</p>
             <div class="chatbot-btn-group">
                 <button type="button" class="chatbot-action-chip" data-prompt="Show available properties">🏡 Browse Properties</button>
