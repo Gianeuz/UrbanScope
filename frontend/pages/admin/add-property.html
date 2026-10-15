@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Property | Miriam Lobren</title>
+
+    <link rel="stylesheet" href="add-property.css">
+</head>
+<body>
+    <!-- TOP NAVIGATION BAR -->
+    <header class="admin-topbar">
+
+        <div class="topbar-left">
+            <button
+                class="hamburger-btn"
+                id="sidebarToggle"
+                type="button"
+                aria-label="Toggle sidebar menu"
+            >
+                <svg width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="brand-badge">
+                <img
+                    src="../../assets/images/logo-urban.png"
+                    alt="Yamm Lobren Real Estate"
+                    class="logo-icon"
+                    onerror="this.style.display='none'">
+
+                <div class="brand-text">
+                    <h1>Miriam Lobren</h1>
+                    <h2>Real Estate Agent</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="topbar-search">
+            <svg width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+
+            <input
+                type="text"
+                placeholder="Search properties, location, or keywords..."
+            >
+        </div>
+
+        <div class="topbar-right">
+
+            <button
+                class="notif-btn"
+                type="button"
+                aria-label="Notifications"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+
+                <span class="notif-badge">3</span>
+            </button>
+
+<button
+    class="admin-profile-badge"
+    id="profileButton"
+    type="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="profileDropdown"
+>
+    <img
+        src="../../assets/images/agent.jpg"
+        alt="Miriam Lobren"
+        class="avatar-circle">
+
+    <svg class="profile-chevron"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true">
+        <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+</button>
+     
+            <div class="profile-dropdown" id="profileDropdown" role="menu" hidden>
+                
+                <div class="profile-dropdown-info">
+                        <div class="profile-dropdown-info">
+        <img src="../../assets/images/agent.jpg"
+             alt="Miriam Lobren"
+             class="avatar-circle">
+                    
+                    <span class="profile-dropdown-name"><strong>Miriam Lobren</strong><small>Administrator</small></span>
+                </div>
+                </div>
+                
+                
+                <div class="profile-dropdown-divider"></div>
+                <a href="#" role="menuitem" data-profile-action><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile</span></a>
+                <a href="login.html" role="menuitem" class="profile-signout"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path></svg><span>Sign Out</span></a>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- SIDEBAR BACKDROP -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+
+            <div class="brand-badge">
+                <img
+                    src="../../assets/images/logo-urban.png"
+                    alt="Yamm Lobren Real Estate"
+                    class="logo-icon"
+                    onerror="this.style.display='none'"
+                >
+
+                <div class="brand-text">
+                    <h1>Miriam Lobren</h1>
+                    <h2>Real Estate Agent</h2>
+                </div>
+            </div>
+
+            <button
+                class="close-sidebar-btn"
+                id="closeSidebarBtn"
+                type="button"
+                aria-label="Close sidebar"
+            >
+                &times;
+            </button>
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="dashboard.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Home</span>
+            </a>
+
+            <a href="properties.html" class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                    <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                    <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                    <line x1="9" y1="6" x2="9" y2="6.01"></line>
+                    <line x1="15" y1="6" x2="15" y2="6.01"></line>
+                    <line x1="9" y1="10" x2="9" y2="10.01"></line>
+                    <line x1="15" y1="10" x2="15" y2="10.01"></line>
+                    <line x1="9" y1="14" x2="9" y2="14.01"></line>
+                    <line x1="15" y1="14" x2="15" y2="14.01"></line>
+                    <line x1="9" y1="18" x2="9" y2="18.01"></line>
+                    <line x1="15" y1="18" x2="15" y2="18.01"></line>
+                </svg>
+                <span>Properties</span>
+            </a>
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('Client Management coming in v2.0'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>Clients</span>
+            </a>
+
+
+            <!-- INQUIRIES SUB-MENU -->
+            <div class="nav-group open">
+
+                <div class="nav-item group-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+
+                    <span>Inquiries</span>
+
+                    <svg class="chevron" width="16" height="16"
+                        viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+
+                <div class="sub-menu">
+                    <a href="#" class="sub-item">
+                        <span>All Inquiries</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>Pending Review</span>
+                        <span class="count-badge orange">5</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>For Resubmission</span>
+                        <span class="count-badge gray">2</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>Approved</span>
+                        <span class="count-badge green">8</span>
+                    </a>
+
+                    <a href="#" class="sub-item">
+                        <span>Completed</span>
+                        <span class="count-badge dark-green">12</span>
+                    </a>
+                </div>
+            </div>
+
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('User Management coming in v2.0'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Users</span>
+            </a>
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('Analytics Reports coming in v2.0'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Reports</span>
+            </a>
+
+            <a
+                href="#"
+                class="nav-item"
+                onclick="alert('System Settings'); return false;"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+            <div class="cursive-tagline">
+                Better Homes,<br>Brighter Futures
+            </div>
+
+            <a href="login.html" class="logout-link">
+                <svg width="18" height="18" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Sign Out</span>
+            </a>
+        </div>
+
+    </aside>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- PAGE CONTENT -->
+        <section class="content">
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+
+                <div>
+                    <h1>Add Property</h1>
+
+                    <p>
+                        Add a new property to your listings.
+                    </p>
+                </div>
+
+                <a href="properties.html" class="back-btn">
+                    ← Back to Properties
+                </a>
+
+            </div>
+
+
+            <!-- FORM -->
+            <form class="property-form" id="addPropertyForm">
+
+
+                <!-- BASIC INFORMATION -->
+                <div class="form-card">
+
+                    <div class="form-card-header">
+                        <h2>Basic Information</h2>
+
+                        <p>
+                            Enter the basic details of the property.
+                        </p>
+                    </div>
+
+
+                    <div class="form-content">
+
+                        <div class="form-row">
+
+                            <!-- PROPERTY NAME -->
+                            <div class="form-group full-width">
+
+                                <label for="propertyName">
+                                    Property Name
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="propertyName"
+                                    name="propertyName"
+                                    placeholder="e.g. Liora Homes"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-row">
+
+                            <!-- LOCATION -->
+                            <div class="form-group">
+
+                                <label for="location">
+                                    Location
+                                    <span>*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="location"
+                                    name="location"
+                                    placeholder="e.g. Naic, Cavite"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- PROPERTY TYPE -->
+                            <div class="form-group">
+
+                                <label for="propertyType">
+                                    Property Type
+                                    <span>*</span>
+                                </label>
+
+                                <select
+                                    id="propertyType"
+                                    name="propertyType"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select property type
+                                    </option>
+
+                                    <option value="House & Lot">
+                                        House & Lot
+                                    </option>
+
+                                    <option value="Townhouse">
+                                        Townhouse
+                                    </option>
+
+                                    <option value="Duplex">
+                                        Duplex
+                                    </option>
+
+                                    <option value="Condominium">
+                                        Condominium
+                                    </option>
+
+                                    <option value="Lot Only">
+                                        Lot Only
+                                    </option>
+
+                                    <option value="Other">
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-row">
+
+                            <!-- PRICE -->
+                            <div class="form-group">
+
+                                <label for="price">
+                                    Price
+                                </label>
+
+                                <div class="input-with-prefix">
+
+                                    <span>₱</span>
+
+                                    <input
+                                        type="number"
+                                        id="price"
+                                        name="price"
+                                        placeholder="0.00"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+                            <div class="form-group">
+
+                                <label for="status">
+                                    Status
+                                    <span>*</span>
+                                </label>
+
+                                <select
+                                    id="status"
+                                    name="status"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select status
+                                    </option>
+
+                                    <option value="Available">
+                                        Available
+                                    </option>
+
+                                    <option value="Pending">
+                                        Pending
+                                    </option>
+
+                                    <option value="Sold">
+                                        Sold
+                                    </option>
+
+                                    <option value="Unavailable">
+                                        Unavailable
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROPERTY DETAILS -->
+                <div class="form-card">
+
+                    <div class="form-card-header">
+
+                        <h2>Property Details</h2>
+
+                        <p>
+                            Add information about the size and features of the property.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-content">
+
+                        <div class="form-row">
+
+                            <!-- LOT AREA -->
+                            <div class="form-group">
+
+                                <label for="lotArea">
+                                    Lot Area
+                                </label>
+
+                                <div class="input-with-suffix">
+
+                                    <input
+                                        type="number"
+                                        id="lotArea"
+                                        name="lotArea"
+                                        placeholder="e.g. 50"
+                                    >
+
+                                    <span>sqm</span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- FLOOR AREA -->
+                            <div class="form-group">
+
+                                <label for="floorArea">
+                                    Floor Area
+                                </label>
+
+                                <div class="input-with-suffix">
+
+                                    <input
+                                        type="number"
+                                        id="floorArea"
+                                        name="floorArea"
+                                        placeholder="e.g. 44"
+                                    >
+
+                                    <span>sqm</span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+                        <div class="form-group full-width">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="6"
+                                placeholder="Enter a description of the property..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+<!-- PROPERTY IMAGES -->
+<div class="form-card">
+
+    <div class="form-card-header">
+
+        <h2>Property Images</h2>
+
+        <p>
+            Upload images of the property.
+        </p>
+
+    </div>
+
+    <div class="form-content">
+
+        <div class="upload-area">
+
+            <div class="upload-icon">
+                ↑
+            </div>
+
+            <h3>Upload Property Images</h3>
+
+            <p>
+                Choose one or more images from your device.
+            </p>
+
+            <label
+                for="propertyImages"
+                class="upload-btn"
+            >
+                Choose Images
+            </label>
+
+            <input
+                type="file"
+                id="propertyImages"
+                name="propertyImages"
+                accept="image/*"
+                multiple
+                hidden
+            >
+
+            <small>
+                You can upload multiple images for this property.
+            </small>
+
+        </div>
+
+
+        <!-- IMAGE PREVIEW -->
+        <div
+            class="image-preview"
+            id="imagePreview"
+        ></div>
+
+    </div>
+
+</div>
+                <!-- FORM ACTIONS -->
+                <div class="form-actions">
+
+                    <a
+                        href="properties.html"
+                        class="cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="save-btn"
+                    >
+                        Save Property
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="add-property.js"></script>
+
+</body>
+</html>

@@ -21,13 +21,13 @@ schema, seed data, how migrations work, and how the frontend reaches it.
 
 ```mermaid
 flowchart LR
-    Browser["Frontend pages"] -->|"fetch()"| GW["shared/js/supabase.js (REST gateway)"]
+    Browser["Frontend pages"] -->|"fetch()"| GW["frontend/shared/js/supabase.js (REST gateway)"]
     GW -->|"HTTP /api/*"| API["backend/app.py (FastAPI)"]
     API --> DB[("backend/urbanscope.db (SQLite)")]
 ```
 
 > [!NOTE]
-> Despite its name, `shared/js/supabase.js` does **not** talk to Supabase. It is a
+> Despite its name, `frontend/shared/js/supabase.js` does **not** talk to Supabase. It is a
 > REST client for the local FastAPI backend, kept under that filename for
 > backward compatibility with existing page scripts.
 
@@ -116,7 +116,7 @@ Listing catalog shown on the home page, catalog, detail pages, and chatbot.
 | `carports` | INTEGER | `1` | *added by migration* |
 | `storeys` | INTEGER | `2` | *added by migration* |
 | `status` | TEXT | `'Available'` | Free text |
-| `image_url` | TEXT | — | **Root-relative** path, e.g. `assets/images/property1.jpg` |
+| `image_url` | TEXT | — | **Root-relative** path, e.g. `assets/images/property1.jpg` (relative to `frontend/`) |
 | `description` | TEXT | — | |
 | `amenities` | TEXT | `''` | **Comma-separated** list — *added by migration* |
 | `created_at` | TIMESTAMP | `CURRENT_TIMESTAMP` | Catalog sorts `ORDER BY created_at DESC` |
@@ -139,7 +139,7 @@ The `GET /api/properties?type=` filter maps UI category aliases to these values:
 
 ### 3.3 `inquiries`
 
-Client consultation / viewing requests submitted from `inquiry/inquiry.html`.
+Client consultation / viewing requests submitted from `frontend/pages/inquiry/inquiry.html`.
 
 | Column | Type | Default | Notes |
 | :--- | :--- | :--- | :--- |
@@ -302,8 +302,8 @@ Differences from SQLite:
   a property orphans its inquiries.
 - **No server-side authorisation on writes** — `POST/PUT/DELETE /api/properties`
   and `GET /api/inquiries` do not check the JWT or role.
-- **Admin property pages bypass the DB** — `admin/properties.js` reads
-  `localStorage["properties"]` and `admin/add-property.js` writes
+- **Admin property pages bypass the DB** — `frontend/pages/admin/properties.js` reads
+  `localStorage["properties"]` and `frontend/pages/admin/add-property.js` writes
   `localStorage["urbanScopeProperties"]`; neither calls the API, and the keys differ.
 - **Stats mismatch** — the dashboard UI shows 5 KPIs, but `GET /api/stats` returns only
   `total_properties`, `total_inquiries`, `pending_inquiries`.

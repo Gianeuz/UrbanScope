@@ -13,7 +13,7 @@ there's a single source of truth. Database details are in **DATABASE.md**.
 ## Claude-Specific Workflow
 
 - **Read before writing.** Before editing a page, open its `.html`, `.css`, and `.js` together —
-  behaviour is often split across all three plus `shared/js/session.js`.
+  behaviour is often split across all three plus `frontend/shared/js/session.js`.
 - **Plan non-trivial changes.** For anything touching more than one feature folder, or the
   backend schema, outline the plan and confirm with the user before editing.
 - **Small, focused diffs.** Don't reformat files or reorder CSS you aren't changing.
@@ -37,7 +37,7 @@ Remove-Item backend\urbanscope.db         # reset DB (re-seeds on next start)
 ## Don'ts
 
 - Don't introduce frameworks, bundlers, Tailwind, or npm packages unless asked.
-- Don't rename `shared/js/supabase.js` or move folders without asking — paths are hard-coded
+- Don't rename `frontend/shared/js/supabase.js` or move folders without asking — paths are hard-coded
   across pages and in `backend/app.py`.
 - Don't run `backend/supabase_schema.sql` against a live project (it drops tables).
 - Don't commit `backend/urbanscope.db` or secrets.

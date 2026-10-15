@@ -36,12 +36,12 @@
   - Step-by-step guidance on booking consultations, requirements, and financing options (Pag-IBIG, bank loans).
   - Session chat history persistence across page navigation with subtle sound feedback.
 
-### 🔐 Authentication Suite (`auth/`)
+### 🔐 Authentication Suite (`frontend/pages/auth/`)
 - **Client Login:** Secure split-screen layout with branding slideshow carousel, password visibility toggle, remember-me checkbox, and Google sign-in option.
 - **Client Registration:** Name, email, Philippine phone number validation (`+639...` / `09...`), dynamic 4-stage password strength meter, real-time password matching hint, and terms checkbox.
 - **Discreet Admin Access:** Direct route linking authorized staff to the restricted admin portal.
 
-### 🛡️ Administrator Suite (`admin/`)
+### 🛡️ Administrator Suite (`frontend/pages/admin/`)
 - **Admin Login:** Dedicated, restricted login page with security auditing notice and password visibility toggle.
 - **Analytics Dashboard:**
   - **5 Metric KPI Cards:** Total Properties, Total Clients, Total Inquiries, Pending Review, and Completed Inquiries.
@@ -62,9 +62,6 @@
 ```text
 Mariam-Lobren-Real-Estate/
 ├── run.py                       # Single-Command Python Server Launcher
-├── index.html                   # Main Home Landing Page
-├── index.css                    # Home landing page styles
-├── index.js                     # Home interactive controls & category filter
 ├── README.md                    # Project Documentation
 ├── DATABASE.md                  # SQLite schema, seed data, migrations & Supabase mirror
 ├── AGENTS.md                    # Guide for AI coding agents (setup, conventions, known issues)
@@ -76,69 +73,84 @@ Mariam-Lobren-Real-Estate/
 │   ├── database.py              # SQLite connection, tables schema & seed data
 │   ├── models.py                # Pydantic data schemas & request validation
 │   ├── auth.py                  # PBKDF2 password hashing & PyJWT token auth
-│   └── requirements.txt         # Python dependencies (fastapi, uvicorn, pydantic, pyjwt)
+│   ├── requirements.txt         # Python dependencies (fastapi, uvicorn, pydantic, pyjwt)
+│   └── supabase_schema.sql      # Optional PostgreSQL / Supabase mirror (drops tables!)
 │
-├── properties/                  # Properties Feature Module
-│   ├── properties.html          # Properties catalog with filter drawer
-│   ├── properties.css           # Properties listing & drawer styles
-│   ├── properties.js            # Listing search, filters, category pills & dynamic cards
-│   ├── property-detail.html     # Dynamic property details page
-│   ├── property-detail.css      # Property details specs, gallery & booking card styles
-│   ├── property-detail.js       # Gallery image carousel & dynamic listing loader
-│   ├── Liora.html               # Featured listing: Liora Homes Executive Townhouse
-│   └── Airmen.html              # Featured listing: Airmen Triplex Modern Residence
+├── frontend/                    # 🌐 Static website (served at /)
+│   ├── index.html               # Main Home Landing Page
+│   ├── index.css                # Home landing page styles
+│   ├── index.js                 # Home interactive controls & category filter
+│   │
+│   ├── pages/                   # One folder per feature; each page keeps its .html/.css/.js together
+│   │   ├── properties/          # Properties Feature Module
+│   │   │   ├── properties.html          # Properties catalog with filter drawer
+│   │   │   ├── properties.css           # Properties listing & drawer styles
+│   │   │   ├── properties.js            # Listing search, filters, category pills & dynamic cards
+│   │   │   ├── property-detail.html     # Dynamic property details page
+│   │   │   ├── property-detail.css      # Property details specs, gallery & booking card styles
+│   │   │   ├── property-detail.js       # Gallery image carousel & dynamic listing loader
+│   │   │   ├── Liora.html               # Featured listing: Liora Homes Executive Townhouse
+│   │   │   └── Airmen.html              # Featured listing: Airmen Triplex Modern Residence
+│   │   │
+│   │   ├── inquiry/             # Client Inquiry Feature Module
+│   │   │   ├── inquiry.html             # Client inquiry submission form
+│   │   │   ├── inquiry.css              # Inquiry form layout, input groups & responsive styles
+│   │   │   └── inquiry.js               # Form submission handling & validation
+│   │   │
+│   │   ├── auth/                # Client Authentication Feature Module
+│   │   │   ├── login.html               # Client sign-in page
+│   │   │   ├── login.js                 # Client login authentication logic & redirect
+│   │   │   ├── register.html            # Client registration page
+│   │   │   ├── register.js              # Registration form validation & account creation
+│   │   │   ├── auth.css                 # Authentication split-screen layout & input styling
+│   │   │   └── auth.js                  # Hero carousel, password visibility toggle & strength meter
+│   │   │
+│   │   └── admin/               # Administrator Portal Feature Module
+│   │       ├── login.html               # Admin login portal
+│   │       ├── login.js                 # Admin authentication handler
+│   │       ├── dashboard.html           # Admin dashboard analytics & KPI charts
+│   │       ├── dashboard.css            # Dashboard layout, KPI cards & slide-out sidebar styles
+│   │       ├── dashboard.js             # Dashboard metrics, chart interactions & sidebar toggle
+│   │       ├── properties.html          # Property management table & modal dialog
+│   │       ├── properties.css           # Admin data table, filter pills & modal styles
+│   │       ├── properties.js            # Admin property CRUD operations & modal controls
+│   │       ├── add-property.html        # Full-page add-property form
+│   │       ├── add-property.css         # Add-property form styles
+│   │       └── add-property.js          # Add-property form logic (writes localStorage)
+│   │
+│   ├── shared/                  # Shared Cross-Cutting Components
+│   │   ├── css/
+│   │   │   ├── common.css           # Global tokens, reset, typography, shared navbar & footer
+│   │   │   ├── splash.css           # Welcome splash screen loader styles
+│   │   │   ├── session.css          # User profile avatar, dropdown & login state styles
+│   │   │   └── chatbot.css          # Mira AI chatbot widget styling & animations
+│   │   └── js/
+│   │       ├── api.js               # Python REST API Client (Properties, Inquiries, Auth)
+│   │       ├── supabase.js          # Unified Service Gateway (bridges to Python REST API)
+│   │       ├── session.js           # Session manager, auth gate, profile pill & dropdown
+│   │       ├── splash.js            # Animated welcome splash screen controller
+│   │       └── chatbot.js           # Mira AI Real Estate Assistant chatbot engine
+│   │
+│   └── assets/                  # Static Media Assets
+│       └── images/              # Project images, icons & photography
+│           ├── logo.png             # Real estate agent branding logo
+│           ├── logo-urban.png       # UrbanScope agency logo
+│           ├── favicon.jpg          # Browser tab icon
+│           ├── home-bg.png          # Hero backdrop photography
+│           ├── Urban.jpg            # Authentication showcase photography
+│           ├── agent.jpg            # Agent portrait (Mariam Lobren)
+│           ├── property1.jpg        # Property showcase 1 (Velemont)
+│           ├── property2.jpg        # Property showcase 2 (Green Valley)
+│           ├── property3.jpg        # Property showcase 3 (Horizon Heights)
+│           ├── LioraHomes.jpg       # Liora Homes cover
+│           ├── liora2.JPG, ...      # Liora gallery photos
+│           ├── AirmenTriplex.WEBP   # Airmen Triplex showcase
+│           └── *.png                # Interface & social media icons (search, email, phone, etc.)
 │
-├── inquiry/                     # Client Inquiry Feature Module
-│   ├── inquiry.html             # Client inquiry submission form
-│   ├── inquiry.css              # Inquiry form layout, input groups & responsive styles
-│   └── inquiry.js               # Form submission handling & validation
-│
-├── auth/                        # Client Authentication Feature Module
-│   ├── login.html               # Client sign-in page
-│   ├── login.js                 # Client login authentication logic & redirect
-│   ├── register.html            # Client registration page
-│   ├── register.js              # Registration form validation & account creation
-│   ├── auth.css                 # Authentication split-screen layout & input styling
-│   └── auth.js                  # Hero carousel, password visibility toggle & strength meter
-│
-├── admin/                       # Administrator Portal Feature Module
-│   ├── login.html               # Admin login portal
-│   ├── login.js                 # Admin authentication handler
-│   ├── dashboard.html           # Admin dashboard analytics & KPI charts
-│   ├── dashboard.css            # Dashboard layout, KPI cards & slide-out sidebar styles
-│   ├── dashboard.js             # Dashboard metrics, chart interactions & sidebar toggle
-│   ├── properties.html          # Property management table & modal dialog
-│   ├── properties.css           # Admin data table, filter pills & modal styles
-│   └── properties.js            # Admin property CRUD operations & modal controls
-│
-├── shared/                      # Shared Cross-Cutting Components
-│   ├── css/
-│   │   ├── common.css           # Global tokens, reset, typography, shared navbar & footer
-│   │   ├── splash.css           # Welcome splash screen loader styles
-│   │   ├── session.css          # User profile avatar, dropdown & login state styles
-│   │   └── chatbot.css          # Mira AI chatbot widget styling & animations
-│   └── js/
-│       ├── api.js               # Python REST API Client (Properties, Inquiries, Auth)
-│       ├── supabase.js          # Unified Service Gateway (bridges to Python REST API)
-│       ├── session.js           # Session manager, auth gate, profile pill & dropdown
-│       ├── splash.js            # Animated welcome splash screen controller
-│       └── chatbot.js           # Mira AI Real Estate Assistant chatbot engine
-│
-└── assets/                      # Static Media Assets
-    └── images/                  # Project images, icons & photography
-        ├── logo.png             # Real estate agent branding logo
-        ├── logo-urban.png       # UrbanScope agency logo
-        ├── favicon.jpg          # Browser tab icon
-        ├── home-bg.png          # Hero backdrop photography
-        ├── Urban.jpg            # Authentication showcase photography
-        ├── agent.jpg            # Agent portrait (Mariam Lobren)
-        ├── property1.jpg        # Property showcase 1 (Velemont)
-        ├── property2.jpg        # Property showcase 2 (Green Valley)
-        ├── property3.jpg        # Property showcase 3 (Horizon Heights)
-        ├── LioraHomes.jpg       # Liora Homes cover
-        ├── liora2.JPG, ...      # Liora gallery photos
-        ├── AirmenTriplex.WEBP   # Airmen Triplex showcase
-        └── *.png                # Interface & social media icons (search, email, phone, etc.)
+└── next-app/                    # 🚧 Unfinished Next.js + Prisma rewrite (not used by run.py)
+    ├── package.json, next.config.ts, tsconfig.json, .env.example
+    ├── prisma/schema.prisma
+    └── src/lib/                 # constants.ts, db.ts, format.ts
 ```
 
 ---
@@ -198,32 +210,39 @@ python3 run.py
 
 The terminal will launch the server and display all accessible endpoints:
 - **Web Application:** `http://localhost:8000/`
-- **Properties Catalog:** `http://localhost:8000/properties/properties.html`
-- **Admin Portal:** `http://localhost:8000/admin/login.html` (Login: `admin@cdmiranda.com` / `admin123`)
+- **Properties Catalog:** `http://localhost:8000/pages/properties/properties.html`
+- **Admin Portal:** `http://localhost:8000/pages/admin/login.html` (Login: `admin@cdmiranda.com` / `admin123`)
 - **Swagger Interactive API Docs:** `http://localhost:8000/docs`
 - **ReDoc Documentation:** `http://localhost:8000/redoc`
 
+> Old URLs from before the folder reorganization (e.g. `/properties/properties.html`) are
+> permanently redirected to their new `/pages/...` location.
+
 ### Option 2: Live Server or Direct Browser Open
 
-You can also run the frontend via VS Code Live Server (`http://127.0.0.1:5500`) or open `index.html` directly. The frontend REST client will automatically connect to `http://127.0.0.1:8000/api` with full CORS support!
+You can also run the frontend via VS Code Live Server (`http://127.0.0.1:5500/frontend/`) or open `frontend/index.html` directly. The frontend REST client will automatically connect to `http://127.0.0.1:8000/api` with full CORS support!
 
 ---
 
 ## 🗺️ Page Navigation Map
 
-| Page | URL Path | Description |
+| Page | File | Description |
 | :--- | :--- | :--- |
-| **Home** | [`index.html`](index.html) | Main landing page, search, featured homes, bio, testimonials |
-| **Properties** | [`properties/properties.html`](properties/properties.html) | Listings catalog with interactive filter drawer & sorting |
-| **Property Details** | [`properties/property-detail.html`](properties/property-detail.html) | High-res photo carousel, specs bar, map, and inquiry card |
-| **Featured: Liora Homes** | [`properties/Liora.html`](properties/Liora.html) | Dedicated showcase for Liora Homes Executive Townhouse |
-| **Featured: Airmen Triplex** | [`properties/Airmen.html`](properties/Airmen.html) | Dedicated showcase for Airmen Triplex Modern Residence |
-| **Submit Inquiry** | [`inquiry/inquiry.html`](inquiry/inquiry.html) | Client inquiry form with pre-filled account details |
-| **Client Login** | [`auth/login.html`](auth/login.html) | Client sign-in with split-screen branding |
-| **Client Register** | [`auth/register.html`](auth/register.html) | Account registration with password strength meter |
-| **Admin Login** | [`admin/login.html`](admin/login.html) | Restricted access portal for administrative staff |
-| **Admin Dashboard** | [`admin/dashboard.html`](admin/dashboard.html) | Analytics charts, KPI cards, notifications, slide-out sidebar |
-| **Admin Properties** | [`admin/properties.html`](admin/properties.html) | Manage listings table with "+ Add Property" modal |
+| **Home** | [`frontend/index.html`](frontend/index.html) | Main landing page, search, featured homes, bio, testimonials |
+| **Properties** | [`frontend/pages/properties/properties.html`](frontend/pages/properties/properties.html) | Listings catalog with interactive filter drawer & sorting |
+| **Property Details** | [`frontend/pages/properties/property-detail.html`](frontend/pages/properties/property-detail.html) | High-res photo carousel, specs bar, map, and inquiry card |
+| **Featured: Liora Homes** | [`frontend/pages/properties/Liora.html`](frontend/pages/properties/Liora.html) | Dedicated showcase for Liora Homes Executive Townhouse |
+| **Featured: Airmen Triplex** | [`frontend/pages/properties/Airmen.html`](frontend/pages/properties/Airmen.html) | Dedicated showcase for Airmen Triplex Modern Residence |
+| **Submit Inquiry** | [`frontend/pages/inquiry/inquiry.html`](frontend/pages/inquiry/inquiry.html) | Client inquiry form with pre-filled account details |
+| **Client Login** | [`frontend/pages/auth/login.html`](frontend/pages/auth/login.html) | Client sign-in with split-screen branding |
+| **Client Register** | [`frontend/pages/auth/register.html`](frontend/pages/auth/register.html) | Account registration with password strength meter |
+| **Admin Login** | [`frontend/pages/admin/login.html`](frontend/pages/admin/login.html) | Restricted access portal for administrative staff |
+| **Admin Dashboard** | [`frontend/pages/admin/dashboard.html`](frontend/pages/admin/dashboard.html) | Analytics charts, KPI cards, notifications, slide-out sidebar |
+| **Admin Properties** | [`frontend/pages/admin/properties.html`](frontend/pages/admin/properties.html) | Manage listings table with "+ Add Property" modal |
+| **Admin Add Property** | [`frontend/pages/admin/add-property.html`](frontend/pages/admin/add-property.html) | Full-page form for creating a listing |
+
+When served by `run.py`, each file's URL is its path with `frontend/` removed
+(e.g. `frontend/pages/auth/login.html` → `http://localhost:8000/pages/auth/login.html`).
 
 ---
 
