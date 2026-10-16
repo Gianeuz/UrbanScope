@@ -15,7 +15,7 @@ let homepageProperties = [];
 
 function resolveCardImage(url) {
     if (!url) return 'assets/images/property1.jpg';
-    if (url.startsWith('http')) return url;
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
     if (url.startsWith('../')) return url.substring(3);
     return url;
 }

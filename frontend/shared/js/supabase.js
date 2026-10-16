@@ -31,7 +31,7 @@
     }
 
     function getHeaders(custom = {}) {
-        const headers = {
+        return {
             'Content-Type': 'application/json',
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
@@ -39,11 +39,6 @@
             'Prefer': 'return=representation',
             ...custom
         };
-        const token = localStorage.getItem(TOKEN_KEY);
-        if (token && !token.startsWith('local_')) {
-            headers['Authorization'] = 'Bearer ' + token;
-        }
-        return headers;
     }
 
     function isBackendConfigured() {
@@ -97,9 +92,39 @@
             const res = await fetch(url, { method: 'GET', headers: getHeaders() });
 
             if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-            return await res.json();
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                try {
+                    localStorage.setItem('cached_live_properties', JSON.stringify(data));
+                } catch (e) {}
+                return data;
+            }
+            return data;
         } catch (err) {
-            console.warn('Supabase properties fetch error, attempting fallback:', err.message);
+            console.warn('Supabase properties fetch notice, attempting fallback:', err.message);
+
+            // Fallback 1: Local Python backend if available
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                const localRes = await fetch(`${localBase}/properties`, { method: 'GET' });
+                if (localRes.ok) {
+                    const localData = await localRes.json();
+                    if (Array.isArray(localData) && localData.length > 0) return localData;
+                }
+            } catch (e) {}
+
+            // Fallback 2: Cached properties in localStorage
+            try {
+                const cached = JSON.parse(localStorage.getItem('cached_live_properties') || '[]');
+                if (Array.isArray(cached) && cached.length > 0) return cached;
+            } catch (e) {}
+
+            // Fallback 3: Locally created properties
+            try {
+                const localProps = JSON.parse(localStorage.getItem('urbanScopeProperties') || localStorage.getItem('properties') || '[]');
+                if (Array.isArray(localProps) && localProps.length > 0) return localProps;
+            } catch (e) {}
+
             return null;
         }
     }
@@ -108,57 +133,75 @@
         try {
             const url = `${REST_BASE}/properties?id=eq.${encodeURIComponent(id)}&select=*`;
             const res = await fetch(url, { method: 'GET', headers: getHeaders() });
-            if (!res.ok) throw new Error(`Property #${id} not found`);
-            const data = await res.json();
-            return data && data.length > 0 ? data[0] : null;
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.length > 0) return data[0];
+            }
         } catch (err) {
-            console.error(`Error fetching property #${id} from Supabase:`, err.message);
-            return null;
+            console.warn(`Supabase notice fetching property #${id}:`, err.message);
         }
+
+        // Fallback 1: Local backend
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const localRes = await fetch(`${localBase}/properties/${encodeURIComponent(id)}`);
+            if (localRes.ok) return await localRes.json();
+        } catch (e) {}
+
+        // Fallback 2: Cache / local storage
+        try {
+            const all = JSON.parse(localStorage.getItem('cached_live_properties') || '[]')
+                .concat(JSON.parse(localStorage.getItem('urbanScopeProperties') || '[]'))
+                .concat(JSON.parse(localStorage.getItem('properties') || '[]'));
+            const found = all.find(p => String(p.id) === String(id));
+            if (found) return found;
+        } catch (e) {}
+
+        return null;
     }
 
     async function apiAddProperty(property) {
+        const loc = (property.location || 'Cavite, Philippines').trim();
+        let city = property.city;
+        let province = property.province || 'Cavite';
+        if (!city) {
+            if (loc.includes(',')) {
+                city = loc.split(',')[0].trim();
+                province = loc.split(',')[1].trim() || 'Cavite';
+            } else {
+                city = loc || 'Cavite';
+            }
+        }
+        if (!city) city = 'Cavite';
+        if (!province) province = 'Cavite';
+
+        let validStatus = property.status || 'Available';
+        if (!['Available', 'Reserved', 'Sold', 'Under Review'].includes(validStatus)) {
+            if (validStatus === 'Pending') validStatus = 'Under Review';
+            else if (validStatus === 'Unavailable') validStatus = 'Sold';
+            else validStatus = 'Available';
+        }
+
+        const payload = {
+            title: property.title || property.propertyName || 'New Listing',
+            location: loc,
+            city: city,
+            province: province,
+            property_type: property.property_type || property.propertyType || 'Villa',
+            price: parseFloat(property.price) || 0,
+            bedrooms: parseInt(property.bedrooms, 10) || 3,
+            bathrooms: parseInt(property.bathrooms, 10) || 2,
+            lot_area: parseFloat(property.lot_area || property.lotArea) || 120,
+            floor_area: parseFloat(property.floor_area || property.floorArea) || 80,
+            carports: parseInt(property.carports, 10) || 1,
+            storeys: parseInt(property.storeys, 10) || 2,
+            status: validStatus,
+            image_url: property.image_url || (property.imageNames && property.imageNames[0] ? 'assets/images/' + property.imageNames[0] : 'assets/images/property1.jpg'),
+            description: property.description || '',
+            amenities: property.amenities || ''
+        };
+
         try {
-            const loc = (property.location || 'Cavite, Philippines').trim();
-            let city = property.city;
-            let province = property.province || 'Cavite';
-            if (!city) {
-                if (loc.includes(',')) {
-                    city = loc.split(',')[0].trim();
-                    province = loc.split(',')[1].trim() || 'Cavite';
-                } else {
-                    city = loc || 'Cavite';
-                }
-            }
-            if (!city) city = 'Cavite';
-            if (!province) province = 'Cavite';
-
-            let validStatus = property.status || 'Available';
-            if (!['Available', 'Reserved', 'Sold', 'Under Review'].includes(validStatus)) {
-                if (validStatus === 'Pending') validStatus = 'Under Review';
-                else if (validStatus === 'Unavailable') validStatus = 'Sold';
-                else validStatus = 'Available';
-            }
-
-            const payload = {
-                title: property.title || property.propertyName || 'New Listing',
-                location: loc,
-                city: city,
-                province: province,
-                property_type: property.property_type || property.propertyType || 'Villa',
-                price: parseFloat(property.price) || 0,
-                bedrooms: parseInt(property.bedrooms, 10) || 3,
-                bathrooms: parseInt(property.bathrooms, 10) || 2,
-                lot_area: parseFloat(property.lot_area || property.lotArea) || 120,
-                floor_area: parseFloat(property.floor_area || property.floorArea) || 80,
-                carports: parseInt(property.carports, 10) || 1,
-                storeys: parseInt(property.storeys, 10) || 2,
-                status: validStatus,
-                image_url: property.image_url || (property.imageNames && property.imageNames[0] ? 'assets/images/' + property.imageNames[0] : 'assets/images/property1.jpg'),
-                description: property.description || '',
-                amenities: property.amenities || ''
-            };
-
             const res = await fetch(`${REST_BASE}/properties`, {
                 method: 'POST',
                 headers: getHeaders(),
@@ -171,9 +214,33 @@
             }
 
             const data = await res.json();
-            return Array.isArray(data) ? data[0] : data;
+            const created = Array.isArray(data) ? data[0] : data;
+
+            // Also sync to local Python backend if available
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                await fetch(`${localBase}/properties`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {}
+
+            return created;
         } catch (err) {
             console.error('Error adding property to Supabase:', err.message);
+
+            // Fallback: try local Python backend
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                const localRes = await fetch(`${localBase}/properties`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (localRes.ok) return await localRes.json();
+            } catch (e) {}
+
             alert('Database notice: ' + err.message);
             return null;
         }
@@ -193,7 +260,19 @@
             }
 
             const data = await res.json();
-            return Array.isArray(data) ? data[0] : data;
+            const updated = Array.isArray(data) ? data[0] : data;
+
+            // Also sync to local backend if available
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                await fetch(`${localBase}/properties/${encodeURIComponent(id)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(property)
+                });
+            } catch (e) {}
+
+            return updated;
         } catch (err) {
             console.error(`Error updating property #${id} in Supabase:`, err.message);
             alert('Supabase error: ' + err.message);
@@ -207,6 +286,15 @@
                 method: 'DELETE',
                 headers: getHeaders()
             });
+
+            // Also sync to local backend if available
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                await fetch(`${localBase}/properties/${encodeURIComponent(id)}`, {
+                    method: 'DELETE'
+                });
+            } catch (e) {}
+
             return res.ok;
         } catch (err) {
             console.error(`Error deleting property #${id} from Supabase:`, err.message);
