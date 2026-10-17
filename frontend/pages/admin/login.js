@@ -26,66 +26,28 @@ if (adminLoginForm) {
         try {
             const cleanEmail = adminId.toLowerCase();
 
-            // 1. Direct credentials verification for authorized admins
-            const isCVSUAdmin = (cleanEmail === 'urbanscope.cvsu@gmail.com' && password === 'urbanscope2026');
-            const isDefaultAdmin = (cleanEmail === 'admin@cdmiranda.com' && (
-                password === 'admin123' ||
-                password === localStorage.getItem('urbanscope_admin_password_updated')
-            ));
-
-            if (isCVSUAdmin || isDefaultAdmin) {
-                const adminProfile = {
-                    id: isCVSUAdmin ? 11 : 1,
-                    email: cleanEmail,
-                    name: isCVSUAdmin ? 'UrbanScope Admin' : 'Miriam Lobren',
-                    full_name: isCVSUAdmin ? 'UrbanScope Admin' : 'Miriam Lobren',
-                    phone: '+63 900 000 0000',
-                    role: 'admin',
-                    avatar_url: 'assets/images/agent.jpg',
-                    user_metadata: { full_name: isCVSUAdmin ? 'UrbanScope Admin' : 'Miriam Lobren' }
-                };
-
-                const simulatedToken = 'sb_admin_' + adminProfile.id + '_' + Date.now();
-                localStorage.setItem('urbanscope_jwt_token', simulatedToken);
-                localStorage.setItem('urbanscope_user', JSON.stringify(adminProfile));
-                localStorage.setItem('urbanscope_demo_user', JSON.stringify(adminProfile));
-                localStorage.setItem('adminUser', JSON.stringify(adminProfile));
-
-                window.location.href = 'dashboard.html';
-                return;
+            // Strict admin email check
+            if (cleanEmail !== 'admin.realestate@gmail.com' && cleanEmail !== 'urbanscope.cvsu@gmail.com') {
+                throw new Error('Access denied: Only authorized administrators may log in here.');
             }
 
-            // 2. Authenticate through apiSignIn if available
+            // Authenticate through apiSignIn (FastAPI Backend + Session)
             if (typeof apiSignIn === 'function') {
                 const res = await apiSignIn(adminId, password);
-                if (res && res.success && res.data?.user?.role === 'admin') {
-                    window.location.href = 'dashboard.html';
-                    return;
-                } else if (res && !res.success) {
-                    throw new Error(res.error || 'Invalid admin credentials.');
-                }
-            }
-
-            // 3. Fallback: Supabase Auth client if configured
-            if (window.supabaseClient?.auth) {
-                try {
-                    const { data: authData, error: authError } =
-                        await window.supabaseClient.auth.signInWithPassword({
-                            email: adminId,
-                            password: password
-                        });
-
-                    if (!authError && authData?.user) {
+                if (res && res.success) {
+                    const user = res.data?.user;
+                    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
                         window.location.href = 'dashboard.html';
                         return;
+                    } else {
+                        throw new Error('Access denied: Administrator privileges required.');
                     }
-                } catch (authErr) {
-                    console.warn('Supabase Auth attempt notice:', authErr);
+                } else {
+                    throw new Error(res?.error || 'Invalid admin credentials.');
                 }
+            } else {
+                throw new Error('Authentication gateway not available.');
             }
-
-            throw new Error('Invalid email or password.');
-
         } catch (error) {
             alert('Admin login failed: ' + error.message);
             btn.disabled = false;

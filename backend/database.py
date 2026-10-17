@@ -23,6 +23,21 @@ def normalize_text(val) -> str:
     return s.replace('-', ' ').replace('_', ' ').lower().strip()
 
 
+def determine_user_role(email: str) -> str:
+    """
+    Automatic database role detection:
+    - admin.realestate@gmail.com -> 'admin'
+    - urbanscope.cvsu@gmail.com -> 'superadmin'
+    - all other emails -> 'user'
+    """
+    clean = (email or "").strip().lower()
+    if clean == "admin.realestate@gmail.com":
+        return "admin"
+    elif clean == "urbanscope.cvsu@gmail.com":
+        return "superadmin"
+    return "user"
+
+
 def get_db_connection() -> sqlite3.Connection:
     """Creates a database connection with dictionary-like row access and search normalization."""
     conn = sqlite3.connect(str(DB_PATH), check_same_thread=False)
@@ -32,11 +47,11 @@ def get_db_connection() -> sqlite3.Connection:
 
 
 def init_db():
-    """Initializes SQLite schema and populates seed records if empty."""
+    """Initializes SQLite schema, triggers, and populates seed records."""
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # 1. Users Table
+    # 1. Users Table with role ENUM / CHECK constraint
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,9 +59,38 @@ def init_db():
             password_hash TEXT NOT NULL,
             full_name TEXT NOT NULL,
             phone TEXT,
-            role TEXT DEFAULT 'user',
+            role TEXT CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+    """)
+
+    # Triggers for automatic role enforcement upon insertion or email update
+    cursor.execute("""
+        CREATE TRIGGER IF NOT EXISTS trg_user_role_insert
+        AFTER INSERT ON users
+        BEGIN
+            UPDATE users
+            SET role = CASE
+                WHEN LOWER(NEW.email) = 'admin.realestate@gmail.com' THEN 'admin'
+                WHEN LOWER(NEW.email) = 'urbanscope.cvsu@gmail.com' THEN 'superadmin'
+                ELSE 'user'
+            END
+            WHERE id = NEW.id;
+        END;
+    """)
+
+    cursor.execute("""
+        CREATE TRIGGER IF NOT EXISTS trg_user_role_update
+        AFTER UPDATE OF email ON users
+        BEGIN
+            UPDATE users
+            SET role = CASE
+                WHEN LOWER(NEW.email) = 'admin.realestate@gmail.com' THEN 'admin'
+                WHEN LOWER(NEW.email) = 'urbanscope.cvsu@gmail.com' THEN 'superadmin'
+                ELSE 'user'
+            END
+            WHERE id = NEW.id;
+        END;
     """)
 
     # 2. Properties Table
@@ -99,26 +143,42 @@ def init_db():
 
     conn.commit()
 
-    # Seed Initial Admin & Demo User
+    # Seed & Sync Admin Accounts with RBAC (admin.realestate@gmail.com, urbanscope.cvsu@gmail.com)
     from backend.auth import hash_password
 
-    cursor.execute("SELECT COUNT(*) FROM users")
-    user_count = cursor.fetchone()[0]
-    if user_count == 0:
-        admin_pass = hash_password("admin123")
-        admin_pass_cvsu = hash_password("urbanscope2026")
-        client_pass = hash_password("client123")
+    admin_pass = hash_password("realestate2026")
+    superadmin_pass = hash_password("urbanscope2026")
+    client_pass = hash_password("client123")
 
-        cursor.executemany("""
-            INSERT INTO users (email, password_hash, full_name, phone, role)
-            VALUES (?, ?, ?, ?, ?)
-        """, [
-            ("urbanscope.cvsu@gmail.com", admin_pass_cvsu, "UrbanScope Admin (CvSU)", "+63 900 000 0000", "admin"),
-            ("admin@cdmiranda.com", admin_pass, "Miriam Lobren (Admin)", "+63 900 000 0000", "admin"),
-            ("client@example.com", client_pass, "Sample Client", "+63 912 345 6789", "user")
-        ])
-        conn.commit()
-        print("✓ Database seeded with default users (Admin: urbanscope.cvsu@gmail.com / urbanscope2026, admin@cdmiranda.com / admin123)")
+    accounts_to_sync = [
+        ("admin.realestate@gmail.com", admin_pass, "Miriam Lobren (Admin)", "+63 900 000 0000", "admin"),
+        ("urbanscope.cvsu@gmail.com", superadmin_pass, "UrbanScope Superadmin (CvSU)", "+63 900 000 0000", "superadmin"),
+        ("client@example.com", client_pass, "Sample Client", "+63 912 345 6789", "user")
+    ]
+
+    for email, pwd_hash, full_name, phone, role in accounts_to_sync:
+        cursor.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(?)", (email,))
+        existing = cursor.fetchone()
+        if existing:
+            cursor.execute(
+                "UPDATE users SET password_hash = ?, role = ?, full_name = ?, phone = ? WHERE id = ?",
+                (pwd_hash, role, full_name, phone, existing[0])
+            )
+        else:
+            cursor.execute(
+                "INSERT INTO users (email, password_hash, full_name, phone, role) VALUES (?, ?, ?, ?, ?)",
+                (email, pwd_hash, full_name, phone, role)
+            )
+
+    # Demote any unauthorized user emails that may have been previously given admin role
+    cursor.execute("""
+        UPDATE users
+        SET role = 'user'
+        WHERE LOWER(email) NOT IN ('admin.realestate@gmail.com', 'urbanscope.cvsu@gmail.com')
+          AND role != 'user'
+    """)
+    conn.commit()
+    print("✓ RBAC credentials & database triggers verified (Superadmin: urbanscope.cvsu@gmail.com, Admin: admin.realestate@gmail.com)")
 
     # Seed Initial Properties
     cursor.execute("SELECT COUNT(*) FROM properties")

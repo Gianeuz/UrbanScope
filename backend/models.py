@@ -37,6 +37,7 @@ class AuthResponse(BaseModel):
     success: bool
     token: Optional[str] = None
     user: Optional[UserResponse] = None
+    redirect_url: Optional[str] = None
     message: Optional[str] = None
 
 

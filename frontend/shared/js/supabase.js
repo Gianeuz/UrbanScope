@@ -582,56 +582,88 @@
             const cleanEmail = email.trim().toLowerCase();
             const cleanName = fullName.trim();
             const cleanPhone = (phone || '').trim();
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
 
-            // Check if user already exists
-            const checkRes = await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(cleanEmail)}&select=id`, {
-                method: 'GET',
-                headers: getHeaders()
-            });
-            const existing = await checkRes.json().catch(() => []);
-            if (existing && existing.length > 0) {
-                return { success: false, error: 'An account with this email already exists.' };
+            // 1. Direct registration with FastAPI backend
+            try {
+                const res = await fetch(`${localBase}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: cleanEmail,
+                        password: password,
+                        full_name: cleanName,
+                        phone: cleanPhone
+                    })
+                });
+
+                if (res.ok) {
+                    const regData = await res.json();
+                    if (regData.success && regData.user) {
+                        const u = regData.user;
+                        const sessionUser = {
+                            id: u.id,
+                            email: u.email,
+                            name: u.full_name,
+                            full_name: u.full_name,
+                            phone: u.phone || '',
+                            role: u.role || 'user',
+                            user_metadata: { full_name: u.full_name, phone: u.phone }
+                        };
+
+                        localStorage.setItem(TOKEN_KEY, regData.token);
+                        localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
+                        localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
+                        if (sessionUser.role === 'admin' || sessionUser.role === 'superadmin') {
+                            localStorage.setItem('adminUser', JSON.stringify(sessionUser));
+                        }
+
+                        return {
+                            success: true,
+                            data: {
+                                session: true,
+                                user: sessionUser,
+                                token: regData.token,
+                                redirect_url: regData.redirect_url
+                            }
+                        };
+                    }
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    return { success: false, error: err.detail || 'Registration failed' };
+                }
+            } catch (err) {
+                console.warn('Backend register attempt notice, using local session:', err);
             }
 
-            const userPayload = {
-                email: cleanEmail,
-                full_name: cleanName,
-                phone: cleanPhone,
-                role: 'client'
-            };
-
-            const res = await fetch(`${REST_BASE}/users`, {
-                method: 'POST',
-                headers: getHeaders(),
-                body: JSON.stringify(userPayload)
-            });
-
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                return { success: false, error: err.message || 'Registration failed' };
-            }
-
-            const created = await res.json();
-            const userObj = Array.isArray(created) ? created[0] : created;
+            // Local fallback
+            let role = 'user';
+            if (cleanEmail === 'urbanscope.cvsu@gmail.com') role = 'superadmin';
+            else if (cleanEmail === 'admin.realestate@gmail.com') role = 'admin';
 
             const sessionUser = {
-                id: userObj.id,
-                email: userObj.email,
-                name: userObj.full_name,
-                full_name: userObj.full_name,
-                phone: userObj.phone,
-                role: userObj.role || 'client',
-                user_metadata: { full_name: userObj.full_name, phone: userObj.phone }
+                id: Date.now(),
+                email: cleanEmail,
+                name: cleanName,
+                full_name: cleanName,
+                phone: cleanPhone,
+                role: role,
+                user_metadata: { full_name: cleanName, phone: cleanPhone }
             };
 
-            const simulatedToken = 'sb_session_' + userObj.id + '_' + Date.now();
+            const simulatedToken = 'sb_session_' + sessionUser.id + '_' + Date.now();
             localStorage.setItem(TOKEN_KEY, simulatedToken);
             localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
             localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
 
             return {
                 success: true,
-                data: { session: true, user: sessionUser, token: simulatedToken }
+                data: {
+                    session: true,
+                    user: sessionUser,
+                    token: simulatedToken,
+                    redirect_url: (role === 'admin' || role === 'superadmin') ? '/pages/admin/dashboard.html' : '/index.html'
+                }
             };
         } catch (err) {
             return { success: false, error: err.message };
@@ -641,82 +673,93 @@
     async function apiSignIn(email, password) {
         try {
             const cleanEmail = email.trim().toLowerCase();
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
 
-            // Query Supabase users table
-            const res = await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(cleanEmail)}&select=*`, {
-                method: 'GET',
-                headers: getHeaders()
-            });
+            // 1. Direct authentication with FastAPI Backend
+            try {
+                const res = await fetch(`${localBase}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: cleanEmail, password: password })
+                });
 
-            if (!res.ok) {
-                return { success: false, error: 'Sign in request failed. Please check your network connection.' };
+                if (res.ok) {
+                    const authRes = await res.json();
+                    if (authRes.success && authRes.user) {
+                        const u = authRes.user;
+                        const sessionUser = {
+                            id: u.id,
+                            email: u.email,
+                            name: u.full_name,
+                            full_name: u.full_name,
+                            phone: u.phone || '',
+                            role: u.role || 'user',
+                            user_metadata: { full_name: u.full_name, phone: u.phone }
+                        };
+
+                        localStorage.setItem(TOKEN_KEY, authRes.token);
+                        localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
+                        localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
+                        if (sessionUser.role === 'admin' || sessionUser.role === 'superadmin') {
+                            localStorage.setItem('adminUser', JSON.stringify(sessionUser));
+                        }
+
+                        return {
+                            success: true,
+                            data: {
+                                user: sessionUser,
+                                token: authRes.token,
+                                redirect_url: authRes.redirect_url
+                            }
+                        };
+                    }
+                } else if (res.status === 401) {
+                    const errData = await res.json().catch(() => ({}));
+                    return { success: false, error: errData.detail || 'Invalid email or password.' };
+                }
+            } catch (backendErr) {
+                console.warn('Backend login attempt notice, falling back:', backendErr);
             }
 
-            const users = await res.json();
-            if (!users || users.length === 0) {
-                return { success: false, error: 'No account found with this email address.' };
-            }
-
-            const user = users[0];
-
-            // Password check: check custom updated password or stored hash or default seed
-            const storedPass = user.password_hash || '';
-            const locallyUpdatedPass = localStorage.getItem('urbanscope_admin_password_updated');
-
+            // Fallback for offline or static demo sessions
+            let role = 'user';
             if (cleanEmail === 'urbanscope.cvsu@gmail.com') {
-                const validAdminPass = (
-                    password === 'urbanscope2026' ||
-                    password === storedPass ||
-                    password === locallyUpdatedPass ||
-                    (storedPass && storedPass.includes(password))
-                );
-                if (!validAdminPass) {
-                    return { success: false, error: 'Incorrect admin password.' };
-                }
-            } else if (cleanEmail === 'admin@cdmiranda.com') {
-                const validAdminPass = (
-                    password === 'urbanscope' ||
-                    password === 'admin123' ||
-                    password === storedPass ||
-                    password === locallyUpdatedPass ||
-                    (storedPass && storedPass.includes(password)) ||
-                    (storedPass === 'b91dfbecc4174a5caaa09dcb3a229bd8$e63fd67ec76ca851e88bcad117fa7ca803bb6015c0852e94d2da659ec48fc6cd' && password === 'urbanscope') ||
-                    (storedPass === '8ca49701e51a970c409cf0ecdb2e5fdc$84c9e645bcb59437d2cf899b39f5424f1482d4c24d412fec1017500e739c9e95' && password === 'admin123')
-                );
-                if (!validAdminPass) {
-                    return { success: false, error: 'Incorrect admin password.' };
-                }
+                if (password !== 'urbanscope2026') return { success: false, error: 'Incorrect admin password.' };
+                role = 'superadmin';
+            } else if (cleanEmail === 'admin.realestate@gmail.com') {
+                if (password !== 'realestate2026') return { success: false, error: 'Incorrect admin password.' };
+                role = 'admin';
             } else if (cleanEmail === 'client@example.com') {
-                if (password !== 'client123' && password !== storedPass) {
-                    return { success: false, error: 'Incorrect password.' };
-                }
-            } else if (storedPass && password !== storedPass) {
-                return { success: false, error: 'Incorrect password.' };
+                if (password !== 'client123') return { success: false, error: 'Incorrect password.' };
+                role = 'user';
             }
 
+            const name = cleanEmail.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             const sessionUser = {
-                id: user.id,
-                email: user.email,
-                name: user.full_name,
-                full_name: user.full_name,
-                phone: user.phone || '',
-                role: user.role || 'client',
-                license_number: user.license_number || '',
-                avatar_url: user.avatar_url,
-                user_metadata: { full_name: user.full_name, phone: user.phone }
+                id: (role === 'superadmin' ? 1 : (role === 'admin' ? 2 : 10)),
+                email: cleanEmail,
+                name: name,
+                full_name: name,
+                phone: '',
+                role: role,
+                user_metadata: { full_name: name }
             };
 
-            const simulatedToken = 'sb_session_' + user.id + '_' + Date.now();
+            const simulatedToken = 'sb_session_' + sessionUser.id + '_' + Date.now();
             localStorage.setItem(TOKEN_KEY, simulatedToken);
             localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
             localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
-            if (sessionUser.role === 'admin') {
+            if (sessionUser.role === 'admin' || sessionUser.role === 'superadmin') {
                 localStorage.setItem('adminUser', JSON.stringify(sessionUser));
             }
 
+            const redirectUrl = (role === 'admin' || role === 'superadmin') 
+                ? '/pages/admin/dashboard.html' 
+                : '/index.html';
+
             return {
                 success: true,
-                data: { user: sessionUser, token: simulatedToken }
+                data: { user: sessionUser, token: simulatedToken, redirect_url: redirectUrl }
             };
         } catch (err) {
             return { success: false, error: err.message };
@@ -724,13 +767,40 @@
     }
 
     async function apiSignOut() {
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            await fetch(`${localBase}/auth/logout`, { method: 'POST' }).catch(() => {});
+        } catch (e) {}
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
         localStorage.removeItem(DEMO_KEY);
+        localStorage.removeItem('adminUser');
     }
 
     async function apiGetCurrentUser() {
         try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem(TOKEN_KEY);
+            if (token) {
+                try {
+                    const res = await fetch(`${localBase}/auth/me`, {
+                        method: 'GET',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        const u = await res.json();
+                        return {
+                            id: u.id,
+                            email: u.email,
+                            name: u.full_name,
+                            full_name: u.full_name,
+                            phone: u.phone || '',
+                            role: u.role || 'user',
+                            user_metadata: { full_name: u.full_name, phone: u.phone }
+                        };
+                    }
+                } catch (e) {}
+            }
             const cached = JSON.parse(localStorage.getItem(USER_KEY)) || JSON.parse(localStorage.getItem(DEMO_KEY));
             return cached || null;
         } catch (e) {

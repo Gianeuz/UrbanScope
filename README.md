@@ -211,7 +211,7 @@ python3 run.py
 The terminal will launch the server and display all accessible endpoints:
 - **Web Application:** `http://localhost:8000/`
 - **Properties Catalog:** `http://localhost:8000/pages/properties/properties.html`
-- **Admin Portal:** `http://localhost:8000/pages/admin/login.html` (Login: `urbanscope.cvsu@gmail.com` / `urbanscope2026`)
+- **Admin Portal:** `http://localhost:8000/pages/admin/login.html` (Superadmin: `urbanscope.cvsu@gmail.com` / `urbanscope2026`, Admin: `admin.realestate@gmail.com` / `realestate2026`)
 - **Swagger Interactive API Docs:** `http://localhost:8000/docs`
 - **ReDoc Documentation:** `http://localhost:8000/redoc`
 

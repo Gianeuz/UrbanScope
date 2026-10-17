@@ -95,7 +95,7 @@ Client and admin accounts.
 | `password_hash` | TEXT | NOT NULL | Format `"<salt_hex>$<pbkdf2_hex>"` — see §6 |
 | `full_name` | TEXT | NOT NULL | |
 | `phone` | TEXT | — | Free-form; frontend validates PH formats (`+639…` / `09…`) |
-| `role` | TEXT | `'user'` | `'user'` or `'admin'` |
+| `role` | TEXT | `CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user'` | Auto-assigned via database trigger: `urbanscope.cvsu@gmail.com` → `'superadmin'`, `admin.realestate@gmail.com` → `'admin'`, others → `'user'` |
 | `created_at` | TIMESTAMP | `CURRENT_TIMESTAMP` | UTC, `YYYY-MM-DD HH:MM:SS` |
 
 ### 3.2 `properties`
@@ -229,8 +229,9 @@ Seeding happens inside `init_db()` **only when the table is empty**, per table.
 **Users**
 
 | Email | Password | Role | Name |
-| `urbanscope.cvsu@gmail.com` | `urbanscope2026` | `admin` | UrbanScope Admin (CvSU) |
-| `admin@cdmiranda.com` | `admin123` | `admin` | Miriam Lobren (Admin) |
+| :--- | :--- | :--- | :--- |
+| `urbanscope.cvsu@gmail.com` | `urbanscope2026` | `superadmin` | UrbanScope Superadmin (CvSU) |
+| `admin.realestate@gmail.com` | `realestate2026` | `admin` | Real Estate Admin |
 | `client@example.com` | `client123` | `user` | Sample Client |
 
 **Properties (6)**

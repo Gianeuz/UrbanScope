@@ -32,20 +32,36 @@ if (loginForm) {
         btn.disabled = true;
         btn.innerText = 'Signing In...';
 
-        if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
+        try {
             const res = await apiSignIn(email, password);
             if (res && res.success) {
-                window.location.href = '../../' + safeNext;
+                const user = res.data?.user || {};
+                const cleanEmail = (user.email || email).toLowerCase();
+                const role = user.role || 'user';
+                const isAdminUser = (
+                    (cleanEmail === 'admin.realestate@gmail.com' || cleanEmail === 'urbanscope.cvsu@gmail.com') &&
+                    (role === 'admin' || role === 'superadmin')
+                );
+
+                if (isAdminUser) {
+                    window.location.href = res.data?.redirect_url || '../admin/dashboard.html';
+                } else {
+                    // Normal user dashboard / destination
+                    if (safeNext && safeNext !== 'index.html') {
+                        window.location.href = '../../' + safeNext;
+                    } else {
+                        window.location.href = res.data?.redirect_url || '../../index.html';
+                    }
+                }
             } else {
-                alert('Login failed: ' + (res.error || 'Invalid email or password.'));
+                alert('Login failed: ' + (res?.error || 'Invalid email or password.'));
                 btn.disabled = false;
                 btn.innerText = originalText;
             }
-        } else {
-            // Demo session when Supabase is not configured
-            const name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-            localStorage.setItem('urbanscope_demo_user', JSON.stringify({ name: name, email: email, phone: '' }));
-            window.location.href = '../../' + safeNext;
+        } catch (err) {
+            alert('Login failed: ' + (err.message || 'An unexpected error occurred.'));
+            btn.disabled = false;
+            btn.innerText = originalText;
         }
     });
 }
