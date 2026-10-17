@@ -754,6 +754,20 @@
             loadProperties(),
             loadInquiries()
         ]);
+
+        // Deep linking / direct tab support via ?tab=... or #...
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialTab = urlParams.get('tab') || window.location.hash.replace('#', '');
+            if (initialTab && ['overview', 'users', 'properties', 'inquiries', 'system'].includes(initialTab)) {
+                switchTab(initialTab);
+            }
+            if (urlParams.get('modal') === 'create') {
+                openCreateUserModal();
+            }
+        } catch (e) {
+            console.warn('Tab deep-link parse note:', e);
+        }
     }
 
     if (document.readyState === 'loading') {
