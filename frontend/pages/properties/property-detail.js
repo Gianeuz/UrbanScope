@@ -77,7 +77,7 @@ async function loadPropertyFromDb() {
     }
 
     if (mainImgEl && property.image_url) {
-        const fullImg = property.image_url.startsWith('http') ? property.image_url : '../../' + property.image_url.replace(/^(\.\.\/)+/, '');
+        const fullImg = (property.image_url.startsWith('http') || property.image_url.startsWith('data:')) ? property.image_url : '../../' + property.image_url.replace(/^(\.\.\/)+/, '');
         mainImgEl.src = fullImg;
         galleryImages[0] = fullImg;
         updateGallery();

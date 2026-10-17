@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Edit Property | Yamm Lobren</title>
+    <title>Edit Property | Miriam Lobren</title>
 
     <link rel="stylesheet" href="edit-property.css">
 </head>
@@ -22,7 +22,7 @@
 
                 <a href="properties.html" class="back-btn">
                     <span aria-hidden="true">←</span>
-                    Back to Properties
+                    Back to Manage Properties
                 </a>
             </div>
 
@@ -73,12 +73,15 @@
                                 </label>
                                 <select id="property-type" name="property-type" required>
                                     <option value="">Select property type</option>
-                                    <option value="house-lot">House &amp; Lot</option>
-                                    <option value="townhouse">Townhouse</option>
-                                    <option value="duplex">Duplex</option>
-                                    <option value="condominium">Condominium</option>
-                                    <option value="lot">Lot Only</option>
-                                    <option value="other">Other</option>
+                                    <option value="Villa">Villa</option>
+                                    <option value="Apartment">Apartment</option>
+                                    <option value="Townhouse">Townhouse</option>
+                                    <option value="Subdivision">Subdivision</option>
+                                    <option value="Condominium">Condominium</option>
+                                    <option value="House & Lot">House &amp; Lot</option>
+                                    <option value="Triplex">Triplex</option>
+                                    <option value="Single Attached">Single Attached</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                         </div>
@@ -107,9 +110,9 @@
                                 <select id="status" name="status" required>
                                     <option value="">Select status</option>
                                     <option value="Available">Available</option>
-                                    <option value="Pending">Pending</option>
+                                    <option value="Under Review">Under Review (Pending)</option>
+                                    <option value="Reserved">Reserved</option>
                                     <option value="Sold">Sold</option>
-                                    <option value="Unavailable">Unavailable</option>
                                 </select>
                                 <small class="field-note">Choose the current status of this property.</small>
                             </div>

@@ -15,7 +15,7 @@ let homepageProperties = [];
 
 function resolveCardImage(url) {
     if (!url) return 'assets/images/property1.jpg';
-    if (url.startsWith('http')) return url;
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
     if (url.startsWith('../')) return url.substring(3);
     return url;
 }
@@ -127,8 +127,8 @@ function filterPropertyList(list, category) {
 
     const c = category.toLowerCase().trim();
     return list.filter(item => {
-        const type = (item.property_type || '').toLowerCase();
-        const title = (item.title || '').toLowerCase();
+        const type = (item.property_type || item.propertyType || '').toLowerCase();
+        const title = (item.title || item.propertyName || '').toLowerCase();
         const desc = (item.description || '').toLowerCase();
         const price = Number(item.price) || 0;
 
@@ -139,9 +139,9 @@ function filterPropertyList(list, category) {
             return type.includes('apartment') || type.includes('condo') || title.includes('apartment') || title.includes('condo');
         }
         if (c === 'townhouses' || c === 'townhouse') {
-            return type.includes('townhouse') || type.includes('triplex') || title.includes('townhouse');
+            return type.includes('townhouse') || type.includes('triplex') || type.includes('single attached') || title.includes('townhouse');
         }
-        if (c === 'luxury') {
+        if (c === 'luxury' || c === 'luxury villas') {
             return type.includes('villa') || price >= 5000000 || title.includes('luxury') || desc.includes('luxury');
         }
         if (c === 'house-lot' || c === 'house & lot') {
@@ -162,6 +162,12 @@ function sortPropertyList(list, sortKey) {
         sorted.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
     } else if (sortKey === 'newest') {
         sorted.sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
+    } else if (sortKey === 'type') {
+        sorted.sort((a, b) => {
+            const typeA = (a.property_type || a.propertyType || '').toLowerCase();
+            const typeB = (b.property_type || b.propertyType || '').toLowerCase();
+            return typeA.localeCompare(typeB);
+        });
     }
     return sorted;
 }
@@ -175,19 +181,27 @@ function applyCurrentFiltersAndRender() {
 async function loadHomeProperties(category = 'all') {
     activeCategory = category;
 
-    // If we already have cached properties, render immediately for instant feedback
+    // Fast-path: if properties are already loaded in memory, filter and render instantly
     if (allCachedProperties.length > 0) {
         applyCurrentFiltersAndRender();
+        return;
     }
+
+    // Try local storage cache immediately
+    try {
+        const cached = JSON.parse(localStorage.getItem('cached_live_properties') || localStorage.getItem('urbanScopeProperties') || '[]');
+        if (Array.isArray(cached) && cached.length > 0) {
+            allCachedProperties = cached;
+            applyCurrentFiltersAndRender();
+        }
+    } catch (e) {}
 
     if (typeof apiGetProperties === 'function') {
         try {
-            // Fetch live dataset from Supabase
             const data = await apiGetProperties({});
             if (data && Array.isArray(data) && data.length > 0) {
                 allCachedProperties = data;
                 applyCurrentFiltersAndRender();
-                return;
             }
         } catch (e) {
             console.warn('Live property fetch notice:', e);
@@ -210,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Optional sort dropdown if present
+    // Optional sort dropdown
     const sortSelect = document.getElementById('homeSortSelect');
     if (sortSelect) {
         sortSelect.addEventListener('change', (e) => {

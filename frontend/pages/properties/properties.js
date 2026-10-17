@@ -115,7 +115,7 @@ function renderProperties(list) {
 
     grid.innerHTML = list.map(item => {
         const imgSrc = item.image_url ? 
-            (item.image_url.startsWith('http') ? item.image_url : '../../' + item.image_url.replace(/^(\.\.\/)+/, '')) : 
+            (item.image_url.startsWith('http') || item.image_url.startsWith('data:') ? item.image_url : '../../' + item.image_url.replace(/^(\.\.\/)+/, '')) : 
             '../../assets/images/property1.jpg';
         const specsText = `${item.bedrooms || 0} Beds &bull; ${item.bathrooms || 0} Baths &bull; ${item.lot_area || 0} sqm Lot` + 
             (item.floor_area ? ` (${item.floor_area} sqm Flr)` : '');

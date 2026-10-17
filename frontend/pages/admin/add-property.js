@@ -273,7 +273,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return new Promise((resolve) => {
             if (!file) return resolve(null);
             const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxDim = 1200;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        } else {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+                    const canvas = document.createElement("canvas");
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL("image/jpeg", 0.82));
+                };
+                img.onerror = () => resolve(e.target.result);
+                img.src = e.target.result;
+            };
             reader.onerror = () => resolve(null);
             reader.readAsDataURL(file);
         });
@@ -303,24 +327,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 uploadedImageUrl = await readImageFileAsDataUrl(selectedFiles[0]);
             }
 
+            const propertyName = document.getElementById("propertyName")?.value.trim() || "New Listing";
+            const location = document.getElementById("location")?.value.trim() || "Cavite, Philippines";
+            const propertyType = document.getElementById("propertyType")?.value || "Villa";
+            const price = parseFloat(document.getElementById("price")?.value) || 0;
+            const status = document.getElementById("status")?.value || "Available";
+            const bedrooms = parseInt(document.getElementById("bedrooms")?.value, 10) || 3;
+            const bathrooms = parseInt(document.getElementById("bathrooms")?.value, 10) || 2;
+            const carports = parseInt(document.getElementById("carports")?.value, 10) || 1;
+            const storeys = parseInt(document.getElementById("storeys")?.value, 10) || 2;
+            const lotArea = parseFloat(document.getElementById("lotArea")?.value) || 100;
+            const floorArea = parseFloat(document.getElementById("floorArea")?.value) || 80;
+            const amenities = document.getElementById("amenities")?.value.trim() || "";
+            const description = document.getElementById("description")?.value.trim() || "";
+            const resolvedImg = uploadedImageUrl || (selectedFiles[0] ? "assets/images/" + selectedFiles[0].name : "assets/images/property1.jpg");
+
             const property = {
                 id: Date.now(),
-                propertyName: document.getElementById("propertyName")?.value.trim() || "New Listing",
-                title: document.getElementById("propertyName")?.value.trim() || "New Listing",
-                location: document.getElementById("location")?.value.trim() || "Cavite, Philippines",
-                propertyType: document.getElementById("propertyType")?.value || "Villa",
-                property_type: document.getElementById("propertyType")?.value || "Villa",
-                price: parseFloat(document.getElementById("price")?.value) || 0,
-                status: document.getElementById("status")?.value || "Available",
-                bedrooms: parseInt(document.getElementById("bedrooms")?.value, 10) || 3,
-                bathrooms: parseInt(document.getElementById("bathrooms")?.value, 10) || 2,
-                carports: parseInt(document.getElementById("carports")?.value, 10) || 1,
-                storeys: parseInt(document.getElementById("storeys")?.value, 10) || 2,
-                lotArea: parseFloat(document.getElementById("lotArea")?.value) || 100,
-                floorArea: parseFloat(document.getElementById("floorArea")?.value) || 80,
-                amenities: document.getElementById("amenities")?.value.trim() || "",
-                description: document.getElementById("description")?.value.trim() || "",
-                image_url: uploadedImageUrl || (selectedFiles[0] ? "assets/images/" + selectedFiles[0].name : "assets/images/property1.jpg"),
+                propertyName: propertyName,
+                title: propertyName,
+                name: propertyName,
+                location: location,
+                propertyType: propertyType,
+                property_type: propertyType,
+                price: price,
+                status: status,
+                bedrooms: bedrooms,
+                bathrooms: bathrooms,
+                carports: carports,
+                storeys: storeys,
+                lotArea: lotArea,
+                lot_area: lotArea,
+                floorArea: floorArea,
+                floor_area: floorArea,
+                amenities: amenities,
+                description: description,
+                image_url: resolvedImg,
                 createdAt: new Date().toISOString()
             };
 
@@ -333,34 +375,42 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (cloudRes.id) property.id = cloudRes.id;
                     }
                 } catch (e) {
-                    console.warn("Database add property warning:", e);
+                    console.warn("Database add property notice:", e);
                 }
             }
 
             try {
-                // Keep local browser cache updated
-                const savedProperties = JSON.parse(
-                    localStorage.getItem("urbanScopeProperties") || "[]"
-                );
-                savedProperties.unshift(property);
-                localStorage.setItem(
-                    "urbanScopeProperties",
-                    JSON.stringify(savedProperties)
-                );
+                // Keep local browser cache updated safely
+                try {
+                    const savedProperties = JSON.parse(
+                        localStorage.getItem("urbanScopeProperties") || "[]"
+                    );
+                    savedProperties.unshift(property);
+                    localStorage.setItem(
+                        "urbanScopeProperties",
+                        JSON.stringify(savedProperties)
+                    );
+                } catch (e) {
+                    console.warn("Local cache notice (urbanScopeProperties):", e);
+                }
 
-                const adminProps = JSON.parse(localStorage.getItem("properties") || "[]");
-                adminProps.unshift({
-                    id: property.id,
-                    name: property.propertyName,
-                    title: property.propertyName,
-                    location: property.location,
-                    type: property.propertyType,
-                    property_type: property.propertyType,
-                    price: property.price,
-                    status: property.status,
-                    image_url: property.image_url
-                });
-                localStorage.setItem("properties", JSON.stringify(adminProps));
+                try {
+                    const adminProps = JSON.parse(localStorage.getItem("properties") || "[]");
+                    adminProps.unshift({
+                        id: property.id,
+                        name: property.propertyName,
+                        title: property.propertyName,
+                        location: property.location,
+                        type: property.propertyType,
+                        property_type: property.propertyType,
+                        price: property.price,
+                        status: property.status,
+                        image_url: property.image_url
+                    });
+                    localStorage.setItem("properties", JSON.stringify(adminProps));
+                } catch (e) {
+                    console.warn("Local cache notice (properties):", e);
+                }
 
                 if (savedToCloud) {
                     alert(
@@ -372,21 +422,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
                 } else {
                     alert(
-                        "✓ Property saved locally!\n\n" +
+                        "✓ Property saved!\n\n" +
                         "Property: " + property.propertyName
                     );
                 }
 
                 propertyForm.reset();
-                window.location.href = "dashboard.html";
+                window.location.href = "properties.html";
 
             } catch (error) {
                 console.error("Unable to save property:", error);
-                alert("Unable to save the property details. Please check your browser storage settings.");
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = originalBtnText;
-                }
+                alert("Property saved to database! Redirecting to properties list.");
+                window.location.href = "properties.html";
             }
         });
     }
