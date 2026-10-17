@@ -16,6 +16,10 @@
     --border-color: #d1ddd3;
     --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
+ 
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     font-family: 'Plus Jakarta Sans', Arial, sans-serif;

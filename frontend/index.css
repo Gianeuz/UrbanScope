@@ -120,6 +120,7 @@
 .featured {
     padding: 100px 6% 70px;
     background-color: #ffffff;
+    scroll-margin-top: 90px;
 }
 
 .section-heading {
