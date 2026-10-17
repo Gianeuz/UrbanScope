@@ -158,4 +158,10 @@ async function loadPropertyFromDb() {
 window.addEventListener('DOMContentLoaded', () => {
     initGallery();
     loadPropertyFromDb();
+    const searchToggle = document.getElementById('searchToggle');
+    if (searchToggle) {
+        searchToggle.addEventListener('click', () => {
+            location.href = 'properties.html';
+        });
+    }
 });

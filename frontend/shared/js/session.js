@@ -171,6 +171,98 @@
     }
 
     // ------------------------------------------------------------------
+    // UI: Mobile Navigation Drawer
+    // ------------------------------------------------------------------
+    function initMobileNav(user) {
+        var navbar = document.querySelector('.navbar');
+        var nav = document.getElementById('mainNav');
+        if (!navbar || !nav) return;
+
+        var acts = navbar.querySelector('.nav-acts');
+        var toggle = document.getElementById('mobileNavToggle');
+        if (!toggle) {
+            toggle = document.createElement('button');
+            toggle.className = 'mobile-nav-toggle';
+            toggle.id = 'mobileNavToggle';
+            toggle.type = 'button';
+            toggle.setAttribute('aria-label', 'Toggle navigation menu');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.innerHTML =
+                '<span class="hamburger-line"></span>' +
+                '<span class="hamburger-line"></span>' +
+                '<span class="hamburger-line"></span>';
+            if (acts) acts.appendChild(toggle);
+            else navbar.appendChild(toggle);
+        }
+
+        var backdrop = document.querySelector('.mobile-nav-backdrop');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.className = 'mobile-nav-backdrop';
+            document.body.appendChild(backdrop);
+        }
+
+        // Render mobile auth/user drawer section
+        var existingAuth = nav.querySelector('.mobile-drawer-auth, .mobile-drawer-user');
+        if (existingAuth) existingAuth.remove();
+
+        var base = getBasePath();
+        if (user) {
+            var userSection = document.createElement('div');
+            userSection.className = 'mobile-drawer-user';
+            userSection.innerHTML =
+                '<div class="mobile-user-info">' +
+                    '<span class="profile-avatar" style="width:30px;height:30px;font-size:0.75rem;">' + esc(initials(user.name)) + '</span>' +
+                    '<span>' + esc(user.name) + '</span>' +
+                '</div>' +
+                '<button type="button" class="m-signout-btn" data-action="signout">Sign Out</button>';
+            nav.appendChild(userSection);
+        } else {
+            var authSection = document.createElement('div');
+            authSection.className = 'mobile-drawer-auth';
+            authSection.innerHTML =
+                '<a href="' + base + 'pages/auth/login.html" class="m-login-btn">Log In</a>' +
+                '<a href="' + base + 'pages/auth/register.html" class="m-signup-btn">Sign Up</a>';
+            nav.appendChild(authSection);
+        }
+
+        function setMenuOpen(open) {
+            nav.classList.toggle('mobile-open', open);
+            toggle.classList.toggle('active', open);
+            toggle.setAttribute('aria-expanded', String(open));
+            backdrop.classList.toggle('active', open);
+            document.body.classList.toggle('nav-locked', open);
+        }
+
+        toggle.onclick = function (e) {
+            e.stopPropagation();
+            setMenuOpen(!nav.classList.contains('mobile-open'));
+        };
+
+        backdrop.onclick = function () {
+            setMenuOpen(false);
+        };
+
+        nav.onclick = function (e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && nav.classList.contains('mobile-open')) {
+                setMenuOpen(false);
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768 && nav.classList.contains('mobile-open')) {
+                setMenuOpen(false);
+            }
+        });
+    }
+
+    // ------------------------------------------------------------------
     // Init
     // ------------------------------------------------------------------
     async function init() {
@@ -186,6 +278,8 @@
             renderNavProfile(currentUser);
             prefillInquiryForm(currentUser);
         }
+
+        initMobileNav(currentUser);
 
         root.classList.remove('auth-pending', 'auth-checking');
         document.dispatchEvent(new CustomEvent('urbanscope:user', { detail: currentUser }));

@@ -171,6 +171,14 @@ html.splash-pending {
     to   { transform: translate(40px, 30px) scale(1.15); }
 }
 
+@media (max-width: 480px) {
+    #splash .splash-logo-ring { width: 92px; height: 92px; }
+    #splash .splash-logo-ring img { width: 58px; height: 58px; }
+    #splash .splash-name { font-size: 1.95rem; margin-top: 20px; }
+    #splash .splash-role { font-size: 0.72rem; letter-spacing: 3px; }
+    #splash .splash-tag { font-size: 1.25rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     #splash, #splash * {
         animation-duration: 0.01ms !important;
@@ -180,3 +188,4 @@ html.splash-pending {
     #splash .ch, #splash .splash-role, #splash .splash-tag, #splash .splash-skip { opacity: 1; transform: none; }
     #splash .splash-line { width: 200px; }
 }
+

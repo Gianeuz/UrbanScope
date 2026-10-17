@@ -23,6 +23,8 @@ function toggleFilter(show) {
 if (openFilterBtn) openFilterBtn.addEventListener('click', () => toggleFilter(true));
 if (closeFilterBtn) closeFilterBtn.addEventListener('click', () => toggleFilter(false));
 if (drawerBackdrop) drawerBackdrop.addEventListener('click', () => toggleFilter(false));
+const searchToggle = document.getElementById('searchToggle');
+if (searchToggle) searchToggle.addEventListener('click', () => toggleFilter(true));
 
 function scrollCat(direction) {
     const el = document.getElementById('catScroll');

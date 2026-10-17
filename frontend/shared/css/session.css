@@ -151,4 +151,10 @@ html.auth-checking body {
     .profile-name,
     .profile-chevron { display: none; }
     .profile-chip { padding: 4px; }
+    .profile-dropdown {
+        min-width: 220px;
+        max-width: calc(100vw - 20px);
+        right: -4px;
+    }
 }
+

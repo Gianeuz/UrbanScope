@@ -363,20 +363,75 @@
 @media (max-width: 1024px) {
     .listing-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
     }
 }
 
 @media (max-width: 768px) {
+    .properties-container {
+        padding: 20px 4% 60px;
+    }
+
     .listing-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
+
     .filter-drawer {
         position: fixed;
         top: 0;
         left: 0;
         bottom: 0;
-        width: 300px;
+        width: min(320px, 88vw);
         border-radius: 0 16px 16px 0;
         overflow-y: auto;
+    }
+
+    .listing-image {
+        height: 200px;
+    }
+
+    .listing-info {
+        padding: 18px;
+    }
+
+    .listing-info h3 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .properties-container {
+        padding: 16px 3.5% 50px;
+    }
+
+    .listing-category-bar {
+        padding: 3px 6px;
+        margin-bottom: 18px;
+    }
+
+    .category-arrow {
+        width: 28px;
+        height: 28px;
+    }
+
+    .listing-category {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .listing-controls {
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .filter-button {
+        font-size: 14.5px;
+        padding: 6px 10px;
+    }
+
+    .sort-control {
+        font-size: 13px;
     }
 }

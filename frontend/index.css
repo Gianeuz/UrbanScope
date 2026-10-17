@@ -168,10 +168,11 @@
 .category-tabs {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 8px;
     flex: 1;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
 }
 
@@ -189,6 +190,7 @@
     cursor: pointer;
     white-space: nowrap;
     border-radius: 4px;
+    flex-shrink: 0;
     transition: all 0.2s;
 }
 
@@ -534,26 +536,29 @@
 
 /* RESPONSIVE DESIGN FOR HOMEPAGE */
 @media (max-width: 1024px) {
-
     .property-grid,
     .testimonials-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    .hero {
+        padding-bottom: 60px;
     }
 
     .search-bar {
         grid-template-columns: 1fr 1fr;
         border-radius: 20px;
         padding: 20px;
-        position: static;
-        margin: 20px auto 0;
+        position: relative;
+        z-index: 10;
+        margin: 24px 0 0;
+        width: 100%;
+        max-width: 100%;
     }
 
     .search-bar label {
         border-right: none;
-    }
-
-    .hero {
-        padding-bottom: 60px;
     }
 
     .featured {
@@ -562,21 +567,187 @@
 
     .about-content {
         grid-template-columns: 1fr;
+        gap: 40px;
     }
 }
 
 @media (max-width: 768px) {
+    .hero {
+        padding: 40px 5% 44px;
+        min-height: auto;
+    }
 
-    .property-grid,
-    .testimonials-grid {
-        grid-template-columns: 1fr;
+    .hero-content {
+        margin-bottom: 24px;
     }
 
     .hero-content h1 {
-        font-size: 38px;
+        font-size: clamp(2rem, 7.5vw, 2.75rem);
+        line-height: 1.15;
+    }
+
+    .hero-content p {
+        font-size: 16px;
     }
 
     .search-bar {
         grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 16px;
+        margin-top: 16px;
+    }
+
+    .search-bar label {
+        border-right: none;
+        border-bottom: 1px solid #ebf2ec;
+        padding-right: 0;
+        padding-bottom: 8px;
+    }
+
+    .search-bar label.keyword {
+        border-bottom: none;
+        padding-bottom: 2px;
+    }
+
+    .search-submit {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 20px;
+        border-radius: 12px;
+    }
+
+    .featured {
+        padding: 48px 5% 40px;
+    }
+
+    .section-heading h2 {
+        font-size: 26px;
+    }
+
+    .category-tabs-container {
+        padding: 4px 6px;
+        gap: 6px;
+        margin-bottom: 24px;
+    }
+
+    .cat-tab {
+        padding: 7px 12px;
+        font-size: 13.5px;
+    }
+
+    .property-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .property-card {
+        border-radius: 14px;
+    }
+
+    .property-image {
+        height: 200px;
+    }
+
+    .property-info {
+        padding: 18px 18px;
+    }
+
+    .property-info h3 {
+        font-size: 18.5px;
+    }
+
+    .property-details {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+    }
+
+    .about {
+        padding: 50px 5%;
+    }
+
+    .about-content {
+        gap: 28px;
+    }
+
+    .about-text h2 {
+        font-size: 26px;
+        margin-bottom: 14px;
+    }
+
+    .about-text p {
+        font-size: 14.5px;
+        line-height: 1.65;
+    }
+
+    .about-image-card {
+        height: 280px;
+        border-radius: 16px;
+    }
+
+    .testimonials-section {
+        padding: 50px 5%;
+    }
+
+    .testimonials-heading {
+        margin-bottom: 32px;
+    }
+
+    .testimonials-heading h2 {
+        font-size: 26px;
+    }
+
+    .testimonial-card {
+        padding: 24px 20px;
+    }
+
+    .cta-banner {
+        padding: 60px 5%;
+    }
+
+    .cta-content h2 {
+        font-size: 26px;
+    }
+
+    .cta-content p {
+        font-size: 14.5px;
+    }
+
+    .cta-consult-btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 13px 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 32px 4% 36px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.85rem;
+    }
+
+    .search-bar {
+        padding: 14px;
+    }
+
+    .cat-arrow {
+        width: 28px;
+        height: 28px;
+    }
+
+    .view-all-pill {
+        width: 100%;
+        max-width: 280px;
+        padding: 11px 24px;
+    }
+
+    .learn-more-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 24px;
     }
 }
