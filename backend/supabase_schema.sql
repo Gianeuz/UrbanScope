@@ -534,14 +534,9 @@ CREATE POLICY "Allow manage notifications" ON notifications FOR ALL USING (true)
 -- ------------------------------------------------------------------------------
 -- 8.1 Seed: Users (Admin Miriam Lobren & Clients)
 -- Passwords:
-<<<<<<< HEAD
---   urbanscope.cvsu@gmail.com -> urbanscope
---   client@example.com  -> client123
-=======
---   urbanscope.cvsu@gmail.com -> urbanscope2026
+--   urbanscope.cvsu@gmail.com -> urbanscope2026 (or urbanscope)
 --   admin@cdmiranda.com       -> admin123
 --   client@example.com        -> client123
->>>>>>> 0d4bd616c220900cb484c41bbffe17428c006e90
 -- ------------------------------------------------------------------------------
 INSERT INTO users (id, email, password_hash, full_name, phone, role, license_number, avatar_url) VALUES
 (

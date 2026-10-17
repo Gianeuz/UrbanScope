@@ -564,15 +564,9 @@
             const adminEmail = (storedAdmin.email || 'urbanscope.cvsu@gmail.com').trim().toLowerCase();
 
             // Find admin user in Supabase by ID or email
-<<<<<<< HEAD
-            let url = `${REST_BASE}/users?or=(email.eq.urbanscope.cvsu%40gmail.com,email.eq.admin%40cdmiranda.com)&select=*`;
-            if (userId) {
-                url = `${REST_BASE}/users?or=(id.eq.${encodeURIComponent(userId)},email.eq.urbanscope.cvsu%40gmail.com,email.eq.admin%40cdmiranda.com)&select=*`;
-=======
             let url = `${REST_BASE}/users?email=ilike.${encodeURIComponent(adminEmail)}&select=*`;
             if (userId) {
                 url = `${REST_BASE}/users?or=(id.eq.${encodeURIComponent(userId)},email.ilike.${encodeURIComponent(adminEmail)})&select=*`;
->>>>>>> ff876db5019ac2c42a7c3d22d309f0833631c102
             }
 
             const checkRes = await fetch(url, {
@@ -588,11 +582,8 @@
 
             // Verify current password against known seeds, database hash, or local updates
             const isMatch = (
-<<<<<<< HEAD
                 currentPassword === 'urbanscope' ||
-=======
                 currentPassword === 'urbanscope2026' ||
->>>>>>> ff876db5019ac2c42a7c3d22d309f0833631c102
                 currentPassword === 'admin123' ||
                 (locallyUpdated && currentPassword === locallyUpdated) ||
                 (activePass && currentPassword === activePass) ||

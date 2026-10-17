@@ -2,9 +2,7 @@
  * UrbanScope - Session UI (profile chip, dropdown, login notice)
  */
 
-/* Avoid flashing "Log In / Sign Up" before we know the login state */
-html.auth-pending .nav-acts .login-btn,
-html.auth-pending .nav-acts .signup-btn,
+/* User profile badge hidden until authenticated */
 html.auth-pending .user-profile-badge {
     visibility: hidden;
 }

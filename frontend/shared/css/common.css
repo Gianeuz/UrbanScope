@@ -122,18 +122,22 @@ body {
     color: var(--dark-green);
     border: 1.5px solid #a8baa9;
     border-radius: 8px;
-    padding: 8px 24px;
+    padding: 8px 22px;
     font-size: 14.5px;
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .login-btn:hover {
     border-color: var(--green);
     color: var(--green);
+    background-color: var(--light-green);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(45, 92, 57, 0.12);
 }
 
 .signup-btn {
@@ -144,17 +148,21 @@ body {
     color: #ffffff;
     border: 1.5px solid var(--green);
     border-radius: 8px;
-    padding: 8px 24px;
+    padding: 8px 22px;
     font-size: 14.5px;
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(45, 92, 57, 0.2);
 }
 
 .signup-btn:hover {
     background-color: var(--dark-green);
     border-color: var(--dark-green);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(45, 92, 57, 0.3);
 }
 
 /* FOOTER */
@@ -370,14 +378,22 @@ body {
     }
 
     .nav-acts {
-        gap: 10px;
+        gap: 8px;
         flex-shrink: 0;
     }
 
-    /* Keep header clean by moving login/signup to mobile drawer on smaller screens */
-    .nav-acts .login-btn,
+    .nav-acts .login-btn {
+        display: inline-flex;
+        padding: 6px 14px;
+        font-size: 13px;
+        border-radius: 6px;
+    }
+
     .nav-acts .signup-btn {
-        display: none;
+        display: inline-flex;
+        padding: 6px 14px;
+        font-size: 13px;
+        border-radius: 6px;
     }
 
     /* MOBILE NAVIGATION DRAWER */
@@ -584,6 +600,20 @@ body {
         height: 34px;
     }
 
+    .nav-acts {
+        gap: 6px;
+    }
+
+    .nav-acts .login-btn {
+        padding: 5px 11px;
+        font-size: 12px;
+    }
+
+    .nav-acts .signup-btn {
+        padding: 5px 11px;
+        font-size: 12px;
+    }
+
     .footer-bottom {
         flex-direction: column;
         align-items: center;
@@ -595,6 +625,12 @@ body {
         flex-wrap: wrap;
         justify-content: center;
         gap: 14px;
+    }
+}
+
+@media (max-width: 360px) {
+    .nav-acts .signup-btn {
+        display: none;
     }
 }
 
