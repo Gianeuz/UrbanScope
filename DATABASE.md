@@ -230,7 +230,12 @@ Seeding happens inside `init_db()` **only when the table is empty**, per table.
 
 | Email | Password | Role | Name |
 | :--- | :--- | :--- | :--- |
+<<<<<<< HEAD
 | `urbanscope.cvsu@gmail.com` | `urbanscope` | `admin` | Miriam Lobren (Admin) |
+=======
+| `urbanscope.cvsu@gmail.com` | `urbanscope2026` | `admin` | UrbanScope Admin (CvSU) |
+| `admin@cdmiranda.com` | `admin123` | `admin` | Miriam Lobren (Admin) |
+>>>>>>> 0d4bd616c220900cb484c41bbffe17428c006e90
 | `client@example.com` | `client123` | `user` | Sample Client |
 
 **Properties (6)**

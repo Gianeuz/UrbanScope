@@ -6,6 +6,7 @@ Executes the FastAPI application and hosts the entire platform.
 
 import os
 import sys
+# pyrefly: ignore [missing-import]
 import uvicorn
 
 if __name__ == "__main__":
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     print(f" ▸ Properties Catalog:  http://{host}:{port}/pages/properties/properties.html")
     print(f" ▸ Client Sign-In:      http://{host}:{port}/pages/auth/login.html")
     print(f" ▸ Admin Portal:        http://{host}:{port}/pages/admin/login.html")
-    print(f"   Default Admin:       urbanscope.cvsu@gmail.com / urbanscope")
+    print(f"   Default Admin:       urbanscope.cvsu@gmail.com / urbanscope2026 (or admin@cdmiranda.com / admin123)")
     print(f" ▸ Swagger API Docs:    http://{host}:{port}/docs")
     print(f" ▸ ReDoc Documentation: http://{host}:{port}/redoc")
     print("=" * 60 + "\n")
