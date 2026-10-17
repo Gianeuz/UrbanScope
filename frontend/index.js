@@ -412,4 +412,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         applyCurrentFiltersAndRender();
     }
+
+    // 6. Smooth scroll to Discover Our Featured Properties on "Properties" click
+    document.querySelectorAll('a[href="#properties"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = document.getElementById('properties');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+                history.pushState(null, null, '#properties');
+            }
+        });
+    });
 });

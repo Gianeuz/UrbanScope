@@ -621,6 +621,7 @@
 
     .featured {
         padding: 48px 5% 40px;
+        scroll-margin-top: 72px;
     }
 
     .section-heading h2 {
