@@ -20,6 +20,7 @@
 }
 
 html {
+    zoom: 1.25;
     scroll-behavior: smooth;
     scroll-padding-top: 100px;
 }

@@ -16,7 +16,18 @@
     --border-color: #cbd9ce;
 }
 
+html {
+    zoom: 1.25;
+    scroll-behavior: smooth;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     font-family: 'Plus Jakarta Sans', Arial, sans-serif;
     background-color: #f4f8f5;
     color: var(--text-dark);
