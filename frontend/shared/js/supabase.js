@@ -564,9 +564,15 @@
             const adminEmail = (storedAdmin.email || 'urbanscope.cvsu@gmail.com').trim().toLowerCase();
 
             // Find admin user in Supabase by ID or email
+<<<<<<< HEAD
+            let url = `${REST_BASE}/users?or=(email.eq.urbanscope.cvsu%40gmail.com,email.eq.admin%40cdmiranda.com)&select=*`;
+            if (userId) {
+                url = `${REST_BASE}/users?or=(id.eq.${encodeURIComponent(userId)},email.eq.urbanscope.cvsu%40gmail.com,email.eq.admin%40cdmiranda.com)&select=*`;
+=======
             let url = `${REST_BASE}/users?email=ilike.${encodeURIComponent(adminEmail)}&select=*`;
             if (userId) {
                 url = `${REST_BASE}/users?or=(id.eq.${encodeURIComponent(userId)},email.ilike.${encodeURIComponent(adminEmail)})&select=*`;
+>>>>>>> ff876db5019ac2c42a7c3d22d309f0833631c102
             }
 
             const checkRes = await fetch(url, {
@@ -582,12 +588,17 @@
 
             // Verify current password against known seeds, database hash, or local updates
             const isMatch = (
+<<<<<<< HEAD
+                currentPassword === 'urbanscope' ||
+=======
                 currentPassword === 'urbanscope2026' ||
+>>>>>>> ff876db5019ac2c42a7c3d22d309f0833631c102
                 currentPassword === 'admin123' ||
                 (locallyUpdated && currentPassword === locallyUpdated) ||
                 (activePass && currentPassword === activePass) ||
                 (stored && currentPassword === stored) ||
                 (stored && stored.includes(currentPassword)) ||
+                (stored === 'b91dfbecc4174a5caaa09dcb3a229bd8$e63fd67ec76ca851e88bcad117fa7ca803bb6015c0852e94d2da659ec48fc6cd' && currentPassword === 'urbanscope') ||
                 (stored === '8ca49701e51a970c409cf0ecdb2e5fdc$84c9e645bcb59437d2cf899b39f5424f1482d4c24d412fec1017500e739c9e95' && currentPassword === 'admin123')
             );
 
@@ -712,10 +723,13 @@
                 }
             } else if (cleanEmail === 'admin@cdmiranda.com') {
                 const validAdminPass = (
+                    password === 'urbanscope' ||
                     password === 'admin123' ||
                     password === storedPass ||
                     password === locallyUpdatedPass ||
-                    (storedPass && storedPass.includes(password))
+                    (storedPass && storedPass.includes(password)) ||
+                    (storedPass === 'b91dfbecc4174a5caaa09dcb3a229bd8$e63fd67ec76ca851e88bcad117fa7ca803bb6015c0852e94d2da659ec48fc6cd' && password === 'urbanscope') ||
+                    (storedPass === '8ca49701e51a970c409cf0ecdb2e5fdc$84c9e645bcb59437d2cf899b39f5424f1482d4c24d412fec1017500e739c9e95' && password === 'admin123')
                 );
                 if (!validAdminPass) {
                     return { success: false, error: 'Incorrect admin password.' };

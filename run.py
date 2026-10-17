@@ -6,6 +6,7 @@ Executes the FastAPI application and hosts the entire platform.
 
 import os
 import sys
+# pyrefly: ignore [missing-import]
 import uvicorn
 
 if __name__ == "__main__":

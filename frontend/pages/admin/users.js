@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     {
                         id: 99,
                         name: 'Miriam Lobren',
-                        email: 'admin@cdmiranda.com',
+                        email: 'urbanscope.cvsu@gmail.com',
                         phone: '+63 917 555 8888',
                         role: 'admin',
                         created_at: new Date(Date.now() - 86400000 * 60).toISOString()

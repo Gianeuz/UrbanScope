@@ -147,7 +147,13 @@ function addPropertyRow(property) {
     const loc = property.location || "—";
     const priceStr = property.price ? "₱" + Number(property.price).toLocaleString() : "—";
     const status = property.status || "Available";
+<<<<<<< HEAD
+    const imgSrc = property.image_url ?
+        (property.image_url.startsWith('http') ? property.image_url : '../../' + property.image_url.replace(/^(\.\.\/)+/, '')) :
+        '../../assets/images/property1.jpg';
+=======
     const imgSrc = resolveImageSrc(property.image_url);
+>>>>>>> ff876db5019ac2c42a7c3d22d309f0833631c102
 
     const row = document.createElement("tr");
 

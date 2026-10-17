@@ -191,7 +191,11 @@ The backend is organized under the [`backend/`](backend/) directory and provides
 ### 2. Default Seed Accounts & Data
 
 When first launched, the SQLite database is automatically generated and populated:
+<<<<<<< HEAD
+- **Admin Staff:** `urbanscope.cvsu@gmail.com` / `urbanscope`
+=======
 - **Admin Staff:** `urbanscope.cvsu@gmail.com` / `urbanscope2026` (or `admin@cdmiranda.com` / `admin123`)
+>>>>>>> 0d4bd616c220900cb484c41bbffe17428c006e90
 - **Demo Client:** `client@example.com` / `client123`
 - **Properties:** 5 showcase listings (Velemont Residences, Green Valley, Horizon Heights, Liora Homes, Airmen Triplex)
 - **Inquiries:** Sample client leads pre-loaded for dashboard KPI display.
@@ -211,7 +215,11 @@ python3 run.py
 The terminal will launch the server and display all accessible endpoints:
 - **Web Application:** `http://localhost:8000/`
 - **Properties Catalog:** `http://localhost:8000/pages/properties/properties.html`
+<<<<<<< HEAD
+- **Admin Portal:** `http://localhost:8000/pages/admin/login.html` (Login: `urbanscope.cvsu@gmail.com` / `urbanscope`)
+=======
 - **Admin Portal:** `http://localhost:8000/pages/admin/login.html` (Login: `urbanscope.cvsu@gmail.com` / `urbanscope2026`)
+>>>>>>> 0d4bd616c220900cb484c41bbffe17428c006e90
 - **Swagger Interactive API Docs:** `http://localhost:8000/docs`
 - **ReDoc Documentation:** `http://localhost:8000/redoc`
 
