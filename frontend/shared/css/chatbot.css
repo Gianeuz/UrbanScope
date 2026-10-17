@@ -829,5 +829,9 @@
         width: 54px;
         height: 54px;
     }
+
+    .chatbot-input-field {
+        font-size: 16px !important;
+    }
 }
 

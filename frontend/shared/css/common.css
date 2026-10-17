@@ -19,13 +19,25 @@
  
 html {
     scroll-behavior: smooth;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     font-family: 'Plus Jakarta Sans', Arial, sans-serif;
     background-color: #ffffff;
     color: var(--text-dark);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
 }
 
 /* NAVBAR */
@@ -351,6 +363,15 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* Prevent iOS browser auto-zoom on input focus */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+
+    button, .login-btn, .signup-btn, .s-icon-btn, .mobile-nav-toggle {
+        min-height: 40px;
+    }
+
     .navbar {
         height: 72px;
         padding: 0 4%;

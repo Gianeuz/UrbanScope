@@ -1180,7 +1180,7 @@ body.sidebar-is-open {
     .form-group input,
     .form-group select {
         min-height: 44px;
-        font-size: 12px;
+        font-size: 16px;
     }
 
     .form-group textarea {

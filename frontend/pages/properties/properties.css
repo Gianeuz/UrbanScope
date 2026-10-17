@@ -398,6 +398,11 @@
     .listing-info h3 {
         font-size: 18px;
     }
+
+    .filter-group select,
+    .filter-group input {
+        font-size: 16px !important;
+    }
 }
 
 @media (max-width: 480px) {

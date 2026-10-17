@@ -655,6 +655,13 @@ def redirect_user_dashboard():
     return RedirectResponse(url="/index.html", status_code=status.HTTP_302_FOUND)
 
 
+@app.get("/pages/admin/properties.html", include_in_schema=False)
+@app.get("/pages/admin/manage-properties.html", include_in_schema=False)
+def redirect_admin_properties_html():
+    """Redirects legacy or alias admin properties link to propertylist.html."""
+    return RedirectResponse(url="/pages/admin/propertylist.html", status_code=status.HTTP_302_FOUND)
+
+
 # Mount directories for modular pages and assets
 for folder in ["pages", "shared", "assets"]:
     dir_path = FRONTEND_DIR / folder

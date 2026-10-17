@@ -417,6 +417,10 @@ body {
         flex-wrap: wrap;
         gap: 10px;
     }
+
+    .input-box input {
+        font-size: 16px;
+    }
 }
 /* ==========================================
    Registration Page Additions

@@ -294,3 +294,88 @@
     font-weight: 600;
     cursor: pointer;
 }
+
+/* ==========================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE BREAKPOINTS)
+   ========================================================== */
+@media (max-width: 768px) {
+    /* Prevent iOS zoom on input focus */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+
+    .manage-header-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .page-title {
+        font-size: clamp(1.4rem, 5vw, 1.75rem);
+    }
+
+    .add-property-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
+        min-height: 44px;
+    }
+
+    .manage-controls-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-input-card {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .status-select-card {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+
+    .table-container table {
+        min-width: 580px;
+    }
+
+    .modal-card {
+        padding: 20px 16px;
+        max-width: calc(100vw - 24px);
+    }
+
+    .modal-row {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .cancel-modal-btn,
+    .submit-modal-btn {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        min-height: 44px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.35rem;
+    }
+
+    .search-input-card,
+    .status-select-card {
+        height: 46px;
+    }
+}
