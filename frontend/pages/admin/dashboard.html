@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,14 +19,8 @@
     <header class="admin-topbar">
 
         <div class="topbar-left">
-            <button
-                class="hamburger-btn"
-                id="sidebarToggle"
-                type="button"
-                aria-label="Toggle sidebar menu"
-            >
-                <svg width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2.5">
+            <button class="hamburger-btn" id="sidebarToggle" type="button" aria-label="Toggle sidebar menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -33,12 +28,8 @@
             </button>
 
             <div class="brand-badge">
-                <img
-                    src="../../assets/images/logo-urban.png"
-                    alt="Miriam Lobren Real Estate"
-                    class="logo-icon"
-                    onerror="this.style.display='none'"
-                >
+                <img src="../../assets/images/logo-urban.png" alt="Miriam Lobren Real Estate" class="logo-icon"
+                    onerror="this.style.display='none'">
 
                 <div class="brand-text">
                     <h1>Miriam Lobren</h1>
@@ -48,27 +39,18 @@
         </div>
 
         <div class="topbar-search">
-            <svg width="18" height="18" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
 
-            <input
-                type="text"
-                placeholder="Search properties, location, or keywords..."
-            >
+            <input type="text" placeholder="Search properties, location, or keywords...">
         </div>
 
         <div class="topbar-right">
 
-            <button
-                class="notif-btn"
-                type="button"
-                aria-label="Notifications"
-            >
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
+            <button class="notif-btn" type="button" aria-label="Notifications">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
@@ -76,48 +58,43 @@
                 <span class="notif-badge">3</span>
             </button>
 
-<button
-    class="admin-profile-badge"
-    id="profileButton"
-    type="button"
-    aria-haspopup="true"
-    aria-expanded="false"
-    aria-controls="profileDropdown"
->
-    <img src="../../assets/images/agent.jpg" alt="Miriam Lobren"
-        class="avatar-circle">
+            <button class="admin-profile-badge" id="profileButton" type="button" aria-haspopup="true"
+                aria-expanded="false" aria-controls="profileDropdown">
+                <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="avatar-circle">
 
-        
 
-    <svg class="profile-chevron"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        aria-hidden="true">
-        <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-</button>
 
-            
+                <svg class="profile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+
+
             <div class="profile-dropdown" id="profileDropdown" role="menu" hidden>
-                
+
                 <div class="profile-dropdown-info">
-                        <div class="profile-dropdown-info">
-        <img src="../../assets/images/agent.jpg"
-             alt="Miriam Lobren"
-             class="avatar-circle">
-                    
-                    <span class="profile-dropdown-name"><strong>Miriam Lobren</strong><small>Administrator</small></span>
+                    <div class="profile-dropdown-info">
+                        <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="avatar-circle">
+
+                        <span class="profile-dropdown-name"><strong>Miriam
+                                Lobren</strong><small>Administrator</small></span>
+                    </div>
                 </div>
-                </div>
-                
-                
+
+
                 <div class="profile-dropdown-divider"></div>
-                <a href="profile.html" role="menuitem"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M5 21v-2a7 7 0 0 1 14 0v2"></path></svg><span>Profile Settings</span></a>
-                <a href="login.html" role="menuitem" class="profile-signout"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path></svg><span>Sign Out</span></a>
+                <a href="profile.html" role="menuitem"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+                    </svg><span>Profile Settings</span></a>
+                <a href="login.html" role="menuitem" class="profile-signout"><svg viewBox="0 0 24 24" width="20"
+                        height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 17l5-5-5-5"></path>
+                        <path d="M15 12H3"></path>
+                        <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path>
+                    </svg><span>Sign Out</span></a>
             </div>
         </div>
     </header>
@@ -133,12 +110,8 @@
         <div class="sidebar-header">
 
             <div class="brand-badge">
-                <img
-                    src="../../assets/images/logo-urban.png"
-                    alt="Miriam Lobren Real Estate"
-                    class="logo-icon"
-                    onerror="this.style.display='none'"
-                >
+                <img src="../../assets/images/logo-urban.png" alt="Miriam Lobren Real Estate" class="logo-icon"
+                    onerror="this.style.display='none'">
 
                 <div class="brand-text">
                     <h1>Miriam Lobren</h1>
@@ -146,12 +119,7 @@
                 </div>
             </div>
 
-            <button
-                class="close-sidebar-btn"
-                id="closeSidebarBtn"
-                type="button"
-                aria-label="Close sidebar"
-            >
+            <button class="close-sidebar-btn" id="closeSidebarBtn" type="button" aria-label="Close sidebar">
                 &times;
             </button>
         </div>
@@ -160,8 +128,7 @@
         <nav class="sidebar-nav">
 
             <a href="dashboard.html" class="nav-item active">
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
@@ -169,8 +136,7 @@
             </a>
 
             <a href="properties.html" class="nav-item">
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="4" y="2" width="16" height="20" rx="2"></rect>
                     <line x1="9" y1="22" x2="9" y2="22.01"></line>
                     <line x1="15" y1="22" x2="15" y2="22.01"></line>
@@ -187,8 +153,7 @@
             </a>
 
             <a href="clients.html" class="nav-item">
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -200,15 +165,13 @@
             <!-- INQUIRIES SUB-MENU -->
             <div class="nav-group open" id="inquiriesGroup">
                 <div class="nav-item group-header" id="inquiriesToggle">
-                    <svg width="20" height="20" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
                     <span>Inquiries</span>
-                    <svg class="chevron" width="16" height="16"
-                        viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
+                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 </div>
@@ -230,8 +193,7 @@
             </div>
 
             <a href="users.html" class="nav-item">
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
@@ -239,10 +201,11 @@
             </a>
 
             <a href="profile.html" class="nav-item">
-                <svg width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
                 </svg>
                 <span>Profile Settings</span>
             </a>
@@ -256,8 +219,7 @@
             </div>
 
             <a href="login.html" class="logout-link">
-                <svg width="18" height="18" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -267,8 +229,8 @@
         </div>
 
     </aside>
-    
-    
+
+
     <!-- MAIN DASHBOARD -->
     <main class="dashboard-content">
 
@@ -283,10 +245,9 @@
 
             <article class="kpi-card">
                 <div class="kpi-icon blue">
-                    <svg width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
                     </svg>
                 </div>
                 <div class="kpi-info">
@@ -297,12 +258,11 @@
 
             <article class="kpi-card">
                 <div class="kpi-icon green">
-                    <svg width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                 </div>
                 <div class="kpi-info">
@@ -313,10 +273,9 @@
 
             <article class="kpi-card">
                 <div class="kpi-icon purple">
-                    <svg width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <polyline points="22,6 12,13 2,6"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <polyline points="22,6 12,13 2,6" />
                     </svg>
                 </div>
                 <div class="kpi-info">
@@ -327,10 +286,9 @@
 
             <article class="kpi-card">
                 <div class="kpi-icon orange">
-                    <svg width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
                     </svg>
                 </div>
                 <div class="kpi-info">
@@ -341,10 +299,9 @@
 
             <article class="kpi-card">
                 <div class="kpi-icon emerald">
-                    <svg width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
                 </div>
                 <div class="kpi-info">
@@ -376,17 +333,17 @@
 
                     <div class="property-illustration">
                         <div class="property-illustration-icon">
-                            <svg width="34" height="34" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="1.7">
-                                <path d="M3 10.5 12 3l9 7.5"/>
-                                <path d="M5 9v12h14V9"/>
-                                <path d="M9 21v-7h6v7"/>
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7">
+                                <path d="M3 10.5 12 3l9 7.5" />
+                                <path d="M5 9v12h14V9" />
+                                <path d="M9 21v-7h6v7" />
                             </svg>
                         </div>
 
                         <div>
                             <span class="property-highlight-label">
-                                All Available Properties 
+                                All Available Properties
                             </span>
 
                             <strong id="overviewPropertyCount">3</strong>
@@ -398,12 +355,12 @@
                     <div class="property-overview-note">
                         <span class="note-dot"></span>
                         <span>
-                            Keep your listings updated so clients can get an accurate informations and 
+                            Keep your listings updated so clients can get an accurate informations and
                             explore available properties.
                         </span>
                     </div>
 
-                    <a href="properties.html" class="primary-action-btn">
+                    <a href="/frontend/pages/admin/propertylist.html" class="primary-action-btn">
                         Go to Property Listings
                         <span aria-hidden="true">→</span>
                     </a>
@@ -425,9 +382,9 @@
 
                     <a href="properties.html" class="quick-action-item">
                         <span class="quick-action-icon add-icon">
-                            <svg width="23" height="23" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 5v14M5 12h14"/>
+                            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 5v14M5 12h14" />
                             </svg>
                         </span>
 
@@ -438,10 +395,10 @@
 
                     <a href="#recentInquiries" class="quick-action-item">
                         <span class="quick-action-icon inquiry-icon">
-                            <svg width="23" height="23" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="1.8">
-                                <rect x="3" y="4" width="18" height="16" rx="2"/>
-                                <path d="m3 6 9 7 9-7"/>
+                            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8">
+                                <rect x="3" y="4" width="18" height="16" rx="2" />
+                                <path d="m3 6 9 7 9-7" />
                             </svg>
                         </span>
 
@@ -451,13 +408,13 @@
                     </a>
 
                 </div>
-                
-                                <div class="daily-reminder">
+
+                <div class="daily-reminder">
                     <div class="reminder-icon">
-                        <svg width="21" height="21" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="1.8">
-                            <circle cx="12" cy="12" r="9"/>
-                            <path d="M12 7v5l3 2"/>
+                        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M12 7v5l3 2" />
                         </svg>
                     </div>
 
@@ -501,21 +458,12 @@
                 <div class="calendar-main">
 
                     <div class="calendar-month-header">
-                        <button
-                            type="button"
-                            class="calendar-nav-btn"
-                            id="previousMonth"
-                            aria-label="Previous month"
-                        >‹</button>
+                        <button type="button" class="calendar-nav-btn" id="previousMonth"
+                            aria-label="Previous month">‹</button>
 
                         <h4 id="calendarMonthLabel">October 2026</h4>
 
-                        <button
-                            type="button"
-                            class="calendar-nav-btn"
-                            id="nextMonth"
-                            aria-label="Next month"
-                        >›</button>
+                        <button type="button" class="calendar-nav-btn" id="nextMonth" aria-label="Next month">›</button>
                     </div>
 
                     <div class="calendar-weekdays">
@@ -552,18 +500,20 @@
 
             </div>
         </section>
-        
-        
-        
+
+
+
         <!-- MANAGED PROPERTY LISTINGS TABLE -->
         <section class="panel table-panel" id="managedPropertiesPanel" style="margin-top: 24px;">
-            <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div class="panel-heading"
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                 <div>
                     <h2>Managed Property Listings</h2>
                     <p>Review and manage all real estate inventory published on your platform</p>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <a href="properties.html" class="primary-action-btn" style="padding: 8px 16px; font-size: 0.88rem; text-decoration: none; border-radius: 6px; background: var(--green); color: #fff; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <a href="properties.html" class="primary-action-btn"
+                        style="padding: 8px 16px; font-size: 0.88rem; text-decoration: none; border-radius: 6px; background: var(--green); color: #fff; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
                         + Add Property
                     </a>
                 </div>
@@ -583,7 +533,8 @@
                     </thead>
                     <tbody id="dashboardPropertyTableBody">
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 24px; color: #6b7f70;">Loading listings...</td>
+                            <td colspan="6" style="text-align: center; padding: 24px; color: #6b7f70;">Loading
+                                listings...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -624,5 +575,5 @@
     <script src="dashboard.js"></script>
 
 </body>
-</html>
 
+</html>

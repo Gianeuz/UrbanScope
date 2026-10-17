@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Properties - UrbanScope Admin</title>
+    <link rel="icon" href="../assets/images/favicon.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="/frontend/pages/admin/properties.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../shared/js/supabase.js"></script>
+</head>
+
+<body>
+    <!-- TOPBAR -->
+    <header class="admin-topbar">
+        <div class="topbar-left">
+            <button class="hamburger-btn" id="sidebarToggle" type="button" aria-label="Toggle
+sidebar menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="brand-badge">
+                <img src="../assets/images/logo-urban.png" alt="Logo" class="logo-icon"
+                    onerror="this.style.display='none'">
+                <div class="brand-text">
+                    <h1>UrbanScope</h1>
+                    <h2>CD Miranda Realty</h2>
+                </div>
+            </div>
+        </div>
+        <div class="topbar-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Search properties, location, or keywords...">
+        </div>
+        <div class="topbar-right">
+            <button class="notif-btn" type="button" aria-label="Notifications">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </button>
+            <div class="admin-profile-badge">
+                <div class="avatar-circle">ML</div>
+                <div class="user-meta">
+                    <strong>Miriam Lobren</strong>
+                    <small>Admin</small>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- SIDEBAR -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <div class="brand-badge">
+                <img src="../assets/images/logo-urban.png" alt="Logo" class="logo-icon"
+                    onerror="this.style.display='none'">
+                <div class="brand-text">
+                    <h1>UrbanScope</h1>
+                    <h2>CD Miranda Realty</h2>
+                </div>
+            </div>
+            <button class="close-sidebar-btn" id="closeSidebarBtn">&times;</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span>Home</span>
+            </a>
+            <a href="properties.html" class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+                    <line x1="9" y1="22" x2="9" y2="22.01" />
+                    <line x1="15" y1="22" x2="15" y2="22.01" />
+                    <line x1="9" y1="6" x2="9" y2="6.01" />
+                    <line x1="15" y1="6" x2="15" y2="6.01" />
+                    <line x1="9" y1="10" x2="9" y2="10.01" />
+                    <line x1="15" y1="10" x2="15" y2="10.01" />
+                    <line x1="9" y1="14" x2="9" y2="14.01" />
+                    <line x1="15" y1="14" x2="15" y2="14.01" />
+                    <line x1="9" y1="18" x2="9" y2="18.01" />
+                    <line x1="15" y1="18" x2="15" y2="18.01" />
+                </svg>
+                <span>Properties</span>
+            </a>
+            <a href="#" class="nav-item" onclick="alert('Client Management')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0
+0 1 0 7.75"></path>
+                </svg>
+                <span>Clients</span>
+            </a>
+            <a href="dashboard.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1
+0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <span>Inquiries</span>
+            </a>
+            <a href="#" class="nav-item" onclick="alert('User Management')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Users</span>
+            </a>
+            <a href="#" class="nav-item" onclick="alert('Reports')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Reports</span>
+            </a>
+            <a href="#" class="nav-item" onclick="alert('Settings')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33
+1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1
+1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0
+0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0
+0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0
+0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65
+1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0
+1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65
+0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </aside>
+    <!-- MAIN MANAGE PROPERTIES CONTENT (PAGE 15) -->
+    <main class="dashboard-content">
+        <!-- HEADER ROW WITH TITLE & + ADD PROPERTY BUTTON -->
+        <div class="manage-header-row">
+            <div>
+                <h1 class="page-title">Manage Properties</h1>
+                <p class="page-subtitle">Add, edit, and manage your property listings.</p>
+            </div>
+            <button class="add-property-btn" id="openAddModalBtn" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Add Property</span>
+            </button>
+        </div>
+        <!-- SEARCH AND FILTER CONTROLS -->
+        <div class="manage-controls-row">
+            <div class="search-input-card">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="propSearch" placeholder="Search property name or location"
+                    oninput="filterTable()">
+            </div>
+            <div class="status-select-card">
+                <select id="statusFilter" onchange="filterTable()">
+                    <option value="">All Status</option>
+                    <option value="Available">Available</option>
+                    <option value="To be updated">To be updated</option>
+                    <option value="Reserved">Reserved</option>
+                    <option value="Sold">Sold</option>
+                </select>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+        <!-- PROPERTY LISTINGS TABLE CARD -->
+        <div class="table-card">
+            <div class="card-header">
+                <div>
+                    <h3>Property Listings</h3>
+                    <p>Manage your available property records.</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table" id="propertiesTable">
+                    <thead>
+                        <tr>
+                            <th>PROPERTY</th>
+                            <th>LOCATION</th>
+                            <th>TYPE</th>
+                            <th>PRICE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="propTableBody">
+                        <tr>
+                            <td>
+                                <div class="prop-cell">
+                                    <img src="../assets/images/property1.jpg" alt="Liora Homes"
+                                        class="table-prop-thumb">
+                                    <strong>Liora Homes</strong>
+                                </div>
+                            </td>
+                            <td>Naic, Cavite</td>
+                            <td>Subdivision</td>
+                            <td>₱2,462,400</td>
+                            <td><span class="status-badge-table muted">To be updated</span></td>
+                            <td>
+                                <div class="action-links">
+                                    <button class="act-link view" onclick="alert('Viewing Liora
+Homes')">View</button>
+                                    <button class="act-link edit" onclick="alert('Editing Liora
+Homes')">Edit</button>
+                                    <button class="act-link delete" onclick="deleteRow(this)">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="prop-cell">
+                                    <img src="../assets/images/property2.jpg" alt="Velemont Residences"
+                                        class="table-prop-thumb">
+                                    <strong>Velemont Residences</strong>
+                                </div>
+                            </td>
+                            <td>Manuyo, Las Piñas City</td>
+                            <td>Subdivision</td>
+                            <td>₱6,880,000</td>
+                            <td><span class="status-badge-table available">Available</span></td>
+                            <td>
+                                <div class="action-links">
+                                    <button class="act-link view" onclick="alert('Viewing Velemont
+Residences')">View</button>
+                                    <button class="act-link edit" onclick="alert('Editing Velemont
+Residences')">Edit</button>
+                                    <button class="act-link delete" onclick="deleteRow(this)">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="prop-cell">
+                                    <img src="../assets/images/property3.jpg" alt="Green Valley Villa"
+                                        class="table-prop-thumb">
+                                    <strong>Green Valley Villa</strong>
+                                </div>
+                            </td>
+                            <td>Dasmariñas, Cavite</td>
+                            <td>Villa</td>
+                            <td>₱8,200,000</td>
+                            <td><span class="status-badge-table muted">To be updated</span></td>
+                            <td>
+                                <div class="action-links">
+                                    <button class="act-link view" onclick="alert('Viewing Green Valley
+Villa')">View</button>
+                                    <button class="act-link edit" onclick="alert('Editing Green Valley
+Villa')">Edit</button>
+                                    <button class="act-link delete" onclick="deleteRow(this)">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <!-- ADD PROPERTY MODAL -->
+    <div class="modal-backdrop" id="addModalBackdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Add New Property</h3>
+                <button class="close-modal" id="closeAddModalBtn">&times;</button>
+            </div>
+            <form id="addPropertyForm" onsubmit="event.preventDefault(); addNewProperty();">
+                <div class="modal-field">
+                    <label for="newPropName">Property Name</label>
+                    <input type="text" id="newPropName" placeholder="e.g. Sunset Heights" required>
+                </div>
+                <div class="modal-field">
+                    <label for="newPropLoc">Location</label>
+                    <input type="text" id="newPropLoc" placeholder="e.g. Imus, Cavite" required>
+                </div>
+                <div class="modal-row">
+                    <div class="modal-field">
+                        <label for="newPropType">Type</label>
+                        <select id="newPropType">
+                            <option>Subdivision</option>
+                            <option>Villa</option>
+                            <option>Townhouse</option>
+                            <option>Apartment</option>
+                        </select>
+                    </div>
+                    <div class="modal-field">
+                        <label for="newPropPrice">Price (₱)</label>
+                        <input type="text" id="newPropPrice" placeholder="₱3,500,000" required>
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <label for="newPropStatus">Status</label>
+                    <select id="newPropStatus">
+                        <option>Available</option>
+                        <option>To be updated</option>
+                        <option>Reserved</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-modal-btn" onclick="toggleAddModal(false)">Cancel</button>
+                    <button type="submit" class="submit-modal-btn">Save Property</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/frontend/pages/admin/properties.js"></script>
+</body>
+
+</html>
