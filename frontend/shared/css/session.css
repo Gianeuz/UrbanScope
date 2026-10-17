@@ -156,3 +156,10 @@ html.auth-checking body {
     }
 }
 
+@media (min-width: 769px) {
+    .mobile-drawer-auth,
+    .mobile-drawer-user {
+        display: none !important;
+    }
+}
+

@@ -323,7 +323,9 @@ body {
     transform: translateY(-7px) rotate(-45deg);
 }
 
-.mobile-nav-backdrop {
+.mobile-nav-backdrop,
+.mobile-drawer-auth,
+.mobile-drawer-user {
     display: none;
 }
 
