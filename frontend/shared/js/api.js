@@ -316,28 +316,6 @@
                 });
             } catch (e) {}
 
-            // Also update localStorage caches
-            try {
-                const updateCache = (key) => {
-                    const raw = localStorage.getItem(key);
-                    if (raw) {
-                        const list = JSON.parse(raw);
-                        if (Array.isArray(list)) {
-                            const updatedList = list.map(p => {
-                                if (String(p.id) === String(id)) {
-                                    return { ...p, ...property, ...(updated || {}) };
-                                }
-                                return p;
-                            });
-                            localStorage.setItem(key, JSON.stringify(updatedList));
-                        }
-                    }
-                };
-                updateCache('cached_live_properties');
-                updateCache('urbanScopeProperties');
-                updateCache('properties');
-            } catch (e) {}
-
             return updated;
         } catch (err) {
             console.error(`Error updating property #${id} in Supabase:`, err.message);
@@ -360,24 +338,7 @@
                 });
             } catch (e) {}
 
-            // Clean up localStorage caches
-            try {
-                const removeId = (key) => {
-                    const raw = localStorage.getItem(key);
-                    if (raw) {
-                        const parsed = JSON.parse(raw);
-                        if (Array.isArray(parsed)) {
-                            const filtered = parsed.filter(p => String(p.id) !== String(id));
-                            localStorage.setItem(key, JSON.stringify(filtered));
-                        }
-                    }
-                };
-                removeId('cached_live_properties');
-                removeId('urbanScopeProperties');
-                removeId('properties');
-            } catch (e) {}
-
-            return res ? res.ok : true;
+            return res.ok;
         } catch (err) {
             console.error(`Error deleting property #${id} from Supabase:`, err.message);
             return false;
