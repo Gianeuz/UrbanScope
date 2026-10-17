@@ -36,7 +36,10 @@ if (adminLoginForm) {
                 const res = await apiSignIn(adminId, password);
                 if (res && res.success) {
                     const user = res.data?.user;
-                    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
+                    if (user && user.role === 'superadmin') {
+                        window.location.href = res.data?.redirect_url || '../superadmin/dashboard.html';
+                        return;
+                    } else if (user && user.role === 'admin') {
                         window.location.href = 'dashboard.html';
                         return;
                     } else {

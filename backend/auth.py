@@ -156,3 +156,29 @@ def require_admin(user: Optional[dict] = Depends(get_current_user_from_request))
         )
 
     return user
+
+
+AUTHORIZED_SUPERADMIN_EMAILS = {"urbanscope.cvsu@gmail.com"}
+
+
+def require_superadmin(user: Optional[dict] = Depends(get_current_user_from_request)) -> dict:
+    """
+    Strict server-side dependency guard: requires an active session with
+    the authorized superadmin email (urbanscope.cvsu@gmail.com) AND role == 'superadmin'.
+    """
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required. Please log in as Superadmin."
+        )
+
+    clean_email = user.get("email", "").strip().lower()
+    role = user.get("role", "")
+
+    if clean_email != "urbanscope.cvsu@gmail.com" or role != "superadmin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: Exclusive Superadmin access required."
+        )
+
+    return user

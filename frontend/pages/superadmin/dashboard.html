@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superadmin Console - UrbanScope Real Estate</title>
+
+    <link rel="icon" href="../../assets/images/favicon.jpg" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <!-- Supabase Client & Gateway -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../shared/js/supabase.js"></script>
+    <script src="../../shared/js/session.js"></script>
+</head>
+<body class="superadmin-body">
+
+    <!-- TOPBAR NAVIGATION -->
+    <header class="sa-topbar">
+        <div class="sa-topbar-left">
+            <button class="sa-hamburger-btn" id="saSidebarToggle" type="button" aria-label="Toggle Navigation">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="sa-brand-badge">
+                <div class="sa-crown-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <div class="sa-brand-titles">
+                    <h1>UrbanScope</h1>
+                    <span class="sa-sub-badge">Executive Superadmin Console</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sa-topbar-center">
+            <div class="sa-search-wrapper">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="saGlobalSearch" placeholder="Search accounts, roles, properties, or inquiries..." autocomplete="off">
+            </div>
+        </div>
+
+        <div class="sa-topbar-right">
+            <!-- Server Time -->
+            <div class="sa-time-chip" id="saLiveTime" title="System Timestamp">
+                <span class="pulse-dot"></span>
+                <span class="time-text">--:--:-- GMT+8</span>
+            </div>
+
+            <!-- Quick Jump to Admin Portal -->
+            <a href="../admin/dashboard.html" class="sa-quick-link" title="Open Agent Admin Portal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Agent Admin</span>
+            </a>
+
+            <!-- View Public Site -->
+            <a href="../../index.html" class="sa-quick-link" title="View Public Catalog">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                <span>Live Site</span>
+            </a>
+
+            <!-- Superadmin Profile Pill & Dropdown -->
+            <div class="sa-profile-container">
+                <button class="sa-profile-btn" id="saProfileDropdownBtn" type="button" aria-haspopup="true" aria-expanded="false">
+                    <div class="sa-avatar">SA</div>
+                    <div class="sa-user-info">
+                        <span class="sa-user-name" id="saAdminName">Superadmin CVSU</span>
+                        <span class="sa-role-pill">ROOT SUPERADMIN</span>
+                    </div>
+                    <svg class="sa-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+
+                <div class="sa-dropdown-menu" id="saDropdownMenu" hidden>
+                    <div class="sa-dropdown-header">
+                        <p class="sa-dropdown-email" id="saAdminEmail">urbanscope.cvsu@gmail.com</p>
+                        <span class="sa-badge-gold">Level 0 Full Root Privileges</span>
+                    </div>
+                    <div class="sa-dropdown-divider"></div>
+                    <a href="../admin/dashboard.html" class="sa-dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        <span>Agent Management Portal</span>
+                    </a>
+                    <a href="../admin/properties.html" class="sa-dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                            <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                            <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                        </svg>
+                        <span>Properties Catalog</span>
+                    </a>
+                    <div class="sa-dropdown-divider"></div>
+                    <button type="button" class="sa-dropdown-item sa-signout-btn" id="saSignOutBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        <span>Sign Out of Superadmin</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SIDEBAR BACKDROP FOR MOBILE -->
+    <div class="sa-backdrop" id="saBackdrop"></div>
+
+    <!-- MAIN WRAPPER -->
+    <div class="sa-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sa-sidebar" id="saSidebar">
+            <div class="sa-sidebar-header">
+                <div class="sa-role-banner">
+                    <span class="role-icon">🛡️</span>
+                    <div>
+                        <div class="role-title">SYSTEM GOVERNANCE</div>
+                        <div class="role-desc">Role-Based Access Control</div>
+                    </div>
+                </div>
+                <button class="sa-close-sidebar" id="saCloseSidebar" type="button" aria-label="Close Sidebar">&times;</button>
+            </div>
+
+            <nav class="sa-nav">
+                <button type="button" class="sa-nav-item active" data-tab="overview">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="9"></rect>
+                        <rect x="14" y="3" width="7" height="5"></rect>
+                        <rect x="14" y="12" width="7" height="9"></rect>
+                        <rect x="3" y="16" width="7" height="5"></rect>
+                    </svg>
+                    <span>Master Overview</span>
+                </button>
+
+                <button type="button" class="sa-nav-item" data-tab="users">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>Users & RBAC Roles</span>
+                    <span class="sa-badge-count" id="saUsersCountBadge">--</span>
+                </button>
+
+                <button type="button" class="sa-nav-item" data-tab="properties">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                        <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                        <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                        <line x1="9" y1="6" x2="9" y2="6.01"></line>
+                        <line x1="15" y1="6" x2="15" y2="6.01"></line>
+                        <line x1="9" y1="10" x2="9" y2="10.01"></line>
+                        <line x1="15" y1="10" x2="15" y2="10.01"></line>
+                    </svg>
+                    <span>Properties Catalog</span>
+                    <span class="sa-badge-count" id="saPropsCountBadge">--</span>
+                </button>
+
+                <button type="button" class="sa-nav-item" data-tab="inquiries">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <span>Client Inquiries</span>
+                    <span class="sa-badge-count" id="saInqCountBadge">--</span>
+                </button>
+
+                <button type="button" class="sa-nav-item" data-tab="system">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Database & Security</span>
+                </button>
+            </nav>
+
+            <div class="sa-sidebar-footer">
+                <div class="sa-sys-card">
+                    <div class="sa-sys-header">
+                        <span class="status-indicator online"></span>
+                        <strong>SQLite Engine Status</strong>
+                    </div>
+                    <p class="sa-sys-details" id="saDbFileStatus">Database: urbanscope.db</p>
+                    <span class="sa-sys-badge" id="saTriggerStatusBadge">Trigger: Active</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN DASHBOARD CONTENT AREA -->
+        <main class="sa-content" id="saMainContent">
+
+            <!-- ============================================================== -->
+            <!-- TAB 1: MASTER OVERVIEW -->
+            <!-- ============================================================== -->
+            <section class="sa-tab-pane active" id="pane-overview">
+                
+                <!-- EXECUTIVE GREETING BANNER -->
+                <div class="sa-hero-card">
+                    <div class="sa-hero-text">
+                        <span class="sa-executive-tag">EXECUTIVE COMMAND CENTER</span>
+                        <h2>Welcome, Superadministrator</h2>
+                        <p>Complete governance over UrbanScope database tables, RBAC permissions, listing inventories, and client communications.</p>
+                    </div>
+                    <div class="sa-hero-actions">
+                        <button type="button" class="sa-btn-gold" id="btnOpenCreateUserModal">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>Add New User / Admin</span>
+                        </button>
+                        <button type="button" class="sa-btn-outline" id="btnRefreshStats">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            <span>Refresh Live Data</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MASTER KPI STATS GRID -->
+                <div class="sa-stats-grid">
+                    <!-- Total Accounts -->
+                    <div class="sa-stat-card">
+                        <div class="stat-icon users">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-body">
+                            <span class="stat-label">Total Accounts</span>
+                            <div class="stat-value" id="kpiTotalUsers">--</div>
+                            <span class="stat-sub" id="kpiUsersBreakdown">1 Superadmin · 1 Admin · 0 Clients</span>
+                        </div>
+                    </div>
+
+                    <!-- Properties Listed -->
+                    <div class="sa-stat-card">
+                        <div class="stat-icon properties">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-body">
+                            <span class="stat-label">Properties Catalog</span>
+                            <div class="stat-value" id="kpiTotalProperties">--</div>
+                            <span class="stat-sub" id="kpiPropertiesBreakdown">Available for Sale</span>
+                        </div>
+                    </div>
+
+                    <!-- Client Inquiries -->
+                    <div class="sa-stat-card">
+                        <div class="stat-icon inquiries">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-body">
+                            <span class="stat-label">Client Inquiries</span>
+                            <div class="stat-value" id="kpiTotalInquiries">--</div>
+                            <span class="stat-sub" id="kpiInquiriesBreakdown">Pending & Under Review</span>
+                        </div>
+                    </div>
+
+                    <!-- SQLite Storage -->
+                    <div class="sa-stat-card">
+                        <div class="stat-icon storage">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-body">
+                            <span class="stat-label">Database Storage</span>
+                            <div class="stat-value" id="kpiDbSize">-- KB</div>
+                            <span class="stat-sub">SQLite 3 Persistent File</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OVERVIEW PANELS: SYSTEM OVERVIEW & QUICK SHORTCUTS -->
+                <div class="sa-overview-grid">
+                    
+                    <!-- RBAC Security Card -->
+                    <div class="sa-card">
+                        <div class="sa-card-header">
+                            <div>
+                                <h3>RBAC Access Controls & System Authority</h3>
+                                <p class="sa-card-subtitle">Active database trigger and verified administrative accounts</p>
+                            </div>
+                            <span class="sa-badge-green">Trigger Online</span>
+                        </div>
+                        <div class="sa-card-body">
+                            <div class="sa-authority-list">
+                                <div class="sa-authority-item root">
+                                    <div class="authority-icon">👑</div>
+                                    <div class="authority-details">
+                                        <strong>Root Superadministrator</strong>
+                                        <p><code>urbanscope.cvsu@gmail.com</code> &bull; Role: <code>superadmin</code></p>
+                                        <small class="text-gold">Full executive governance, database oversight, role assignment</small>
+                                    </div>
+                                    <span class="sa-badge-gold">Root Access</span>
+                                </div>
+
+                                <div class="sa-authority-item admin">
+                                    <div class="authority-icon">🏢</div>
+                                    <div class="authority-details">
+                                        <strong>Primary Realty Administrator</strong>
+                                        <p><code>admin.realestate@gmail.com</code> &bull; Role: <code>admin</code></p>
+                                        <small class="text-muted">Agent property listings, client communication, lead processing</small>
+                                    </div>
+                                    <span class="sa-badge-emerald">Agent Admin</span>
+                                </div>
+
+                                <div class="sa-authority-item normal">
+                                    <div class="authority-icon">👤</div>
+                                    <div class="authority-details">
+                                        <strong>Standard Client Users</strong>
+                                        <p>All other verified registrations &bull; Role: <code>user</code></p>
+                                        <small class="text-muted">Public catalog viewing, property inquiries, profile management</small>
+                                    </div>
+                                    <span class="sa-badge-gray">Client Access</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Operations Card -->
+                    <div class="sa-card">
+                        <div class="sa-card-header">
+                            <div>
+                                <h3>Executive Quick Actions</h3>
+                                <p class="sa-card-subtitle">One-click administrative workflows</p>
+                            </div>
+                        </div>
+                        <div class="sa-card-body">
+                            <div class="sa-action-buttons">
+                                <button type="button" class="sa-action-btn" id="btnQuickAddUser">
+                                    <div class="icon">➕</div>
+                                    <div class="info">
+                                        <strong>Create Account</strong>
+                                        <span>Register new client or administrator</span>
+                                    </div>
+                                </button>
+
+                                <a href="../admin/add-property.html" class="sa-action-btn">
+                                    <div class="icon">🏡</div>
+                                    <div class="info">
+                                        <strong>Post New Property</strong>
+                                        <span>Add listing to public catalog</span>
+                                    </div>
+                                </a>
+
+                                <button type="button" class="sa-action-btn" id="btnQuickManageRoles">
+                                    <div class="icon">⚙️</div>
+                                    <div class="info">
+                                        <strong>Manage User Roles</strong>
+                                        <span>Elevate or revoke admin rights</span>
+                                    </div>
+                                </button>
+
+                                <button type="button" class="sa-action-btn" id="btnQuickRunIntegrity">
+                                    <div class="icon">🔍</div>
+                                    <div class="info">
+                                        <strong>Run DB Integrity Check</strong>
+                                        <span>Verify SQLite foreign keys & indices</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- TAB 2: USERS & RBAC ROLES MANAGEMENT -->
+            <!-- ============================================================== -->
+            <section class="sa-tab-pane" id="pane-users">
+                <div class="sa-pane-header">
+                    <div>
+                        <h2>Account Governance & RBAC Roles</h2>
+                        <p>Manage all registered accounts, view identities, and promote or demote permissions.</p>
+                    </div>
+                    <div class="sa-pane-actions">
+                        <button type="button" class="sa-btn-gold" id="btnCreateUserFromTable">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>Create Account</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FILTER & SEARCH BAR -->
+                <div class="sa-table-toolbar">
+                    <div class="toolbar-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="userFilterInput" placeholder="Filter users by email, name, or phone...">
+                    </div>
+
+                    <div class="toolbar-filters">
+                        <label for="userRoleFilter">Role Filter:</label>
+                        <select id="userRoleFilter" class="sa-select">
+                            <option value="all">All Roles</option>
+                            <option value="superadmin">Superadmin</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User (Client)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- USERS TABLE -->
+                <div class="sa-table-container">
+                    <table class="sa-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User Account</th>
+                                <th>Contact Number</th>
+                                <th>Assigned Role</th>
+                                <th>Joined Date</th>
+                                <th style="text-align: right;">Access Controls</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Loading user records from database...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- TAB 3: PROPERTY CATALOG OVERSIGHT -->
+            <!-- ============================================================== -->
+            <section class="sa-tab-pane" id="pane-properties">
+                <div class="sa-pane-header">
+                    <div>
+                        <h2>Property Catalog Oversight</h2>
+                        <p>Comprehensive audit of all real estate listings active across Miriam Lobren Realty.</p>
+                    </div>
+                    <div class="sa-pane-actions">
+                        <a href="../admin/add-property.html" class="sa-btn-gold">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>Add New Listing</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="sa-table-toolbar">
+                    <div class="toolbar-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="propFilterInput" placeholder="Search properties by title, location, or type...">
+                    </div>
+                    <div class="toolbar-filters">
+                        <label for="propStatusFilter">Status:</label>
+                        <select id="propStatusFilter" class="sa-select">
+                            <option value="all">All Statuses</option>
+                            <option value="available">Available</option>
+                            <option value="sold">Sold</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sa-table-container">
+                    <table class="sa-table" id="propertiesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Property Details</th>
+                                <th>Category</th>
+                                <th>Listing Price</th>
+                                <th>Specifications</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="propertiesTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-4">Loading property records...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- TAB 4: CLIENT INQUIRIES AUDIT -->
+            <!-- ============================================================== -->
+            <section class="sa-tab-pane" id="pane-inquiries">
+                <div class="sa-pane-header">
+                    <div>
+                        <h2>Client Communications & Inquiries</h2>
+                        <p>Audit trail of all client property requests and consultation bookings.</p>
+                    </div>
+                </div>
+
+                <div class="sa-table-toolbar">
+                    <div class="toolbar-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="inqFilterInput" placeholder="Search inquiries by client name, email, or property...">
+                    </div>
+                </div>
+
+                <div class="sa-table-container">
+                    <table class="sa-table" id="inquiriesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client Info</th>
+                                <th>Property Title</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Submitted Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inquiriesTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Loading client inquiries...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- TAB 5: DATABASE & SECURITY OPS -->
+            <!-- ============================================================== -->
+            <section class="sa-tab-pane" id="pane-system">
+                <div class="sa-pane-header">
+                    <div>
+                        <h2>Database Engine & System Security</h2>
+                        <p>Low-level diagnostics, SQLite trigger verification, and operational logs.</p>
+                    </div>
+                </div>
+
+                <div class="sa-system-grid">
+                    <div class="sa-card">
+                        <div class="sa-card-header">
+                            <h3>SQLite Database Diagnostics</h3>
+                        </div>
+                        <div class="sa-card-body">
+                            <ul class="sa-diag-list">
+                                <li>
+                                    <span>Database File Location</span>
+                                    <code>backend/urbanscope.db</code>
+                                </li>
+                                <li>
+                                    <span>Database File Size</span>
+                                    <strong id="diagDbSize">-- KB</strong>
+                                </li>
+                                <li>
+                                    <span>Integrity Status</span>
+                                    <span class="sa-badge-green" id="diagIntegrity">OK (Verified)</span>
+                                </li>
+                                <li>
+                                    <span>Role-Trigger Name</span>
+                                    <code>set_user_role_on_insert</code>
+                                </li>
+                                <li>
+                                    <span>Trigger Status</span>
+                                    <span class="sa-badge-gold">Active & Enforcing</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="sa-card">
+                        <div class="sa-card-header">
+                            <h3>Role Hierarchy & Permissions Matrix</h3>
+                        </div>
+                        <div class="sa-card-body">
+                            <div class="sa-perm-matrix">
+                                <div class="perm-row header">
+                                    <span>Permission</span>
+                                    <span>User</span>
+                                    <span>Admin</span>
+                                    <span>Superadmin</span>
+                                </div>
+                                <div class="perm-row">
+                                    <span>Browse Property Catalog</span>
+                                    <span class="check">✓</span>
+                                    <span class="check">✓</span>
+                                    <span class="check">✓</span>
+                                </div>
+                                <div class="perm-row">
+                                    <span>Submit Consultation Inquiry</span>
+                                    <span class="check">✓</span>
+                                    <span class="check">✓</span>
+                                    <span class="check">✓</span>
+                                </div>
+                                <div class="perm-row">
+                                    <span>Manage Property Listings</span>
+                                    <span class="cross">✕</span>
+                                    <span class="check">✓</span>
+                                    <span class="check">✓</span>
+                                </div>
+                                <div class="perm-row">
+                                    <span>View Client Inquiries</span>
+                                    <span class="cross">✕</span>
+                                    <span class="check">✓</span>
+                                    <span class="check">✓</span>
+                                </div>
+                                <div class="perm-row">
+                                    <span>Promote / Demote Account Roles</span>
+                                    <span class="cross">✕</span>
+                                    <span class="cross">✕</span>
+                                    <span class="check gold">✓ (Root Only)</span>
+                                </div>
+                                <div class="perm-row">
+                                    <span>Direct Database Inspection</span>
+                                    <span class="cross">✕</span>
+                                    <span class="cross">✕</span>
+                                    <span class="check gold">✓ (Root Only)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: CREATE USER / ADMIN -->
+    <!-- ============================================================== -->
+    <div class="sa-modal-backdrop" id="createUserModal" hidden>
+        <div class="sa-modal" role="dialog" aria-labelledby="modalTitle">
+            <div class="sa-modal-header">
+                <h3 id="modalTitle">Create New Account</h3>
+                <button type="button" class="sa-modal-close" id="btnCloseCreateUserModal">&times;</button>
+            </div>
+            <form id="createUserForm">
+                <div class="sa-modal-body">
+                    <div class="sa-form-group">
+                        <label for="newFullName">Full Legal Name *</label>
+                        <input type="text" id="newFullName" required placeholder="e.g. John Doe">
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="newEmail">Email Address *</label>
+                        <input type="email" id="newEmail" required placeholder="name@example.com">
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="newPhone">Contact Phone</label>
+                        <input type="text" id="newPhone" placeholder="+63 912 345 6789">
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="newPassword">Password * (min. 6 chars)</label>
+                        <input type="password" id="newPassword" required minlength="6" placeholder="Enter secure password">
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="newRole">Assign Role *</label>
+                        <select id="newRole" class="sa-select">
+                            <option value="user">User (Normal Client)</option>
+                            <option value="admin">Admin (Realty Administrator)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sa-modal-footer">
+                    <button type="button" class="sa-btn-outline" id="btnCancelCreateUser">Cancel</button>
+                    <button type="submit" class="sa-btn-gold" id="btnSubmitCreateUser">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: CONFIRM ROLE CHANGE -->
+    <!-- ============================================================== -->
+    <div class="sa-modal-backdrop" id="roleChangeModal" hidden>
+        <div class="sa-modal sm" role="dialog">
+            <div class="sa-modal-header">
+                <h3>Confirm Role Modification</h3>
+                <button type="button" class="sa-modal-close" id="btnCloseRoleModal">&times;</button>
+            </div>
+            <div class="sa-modal-body">
+                <p id="roleChangeMessage">Are you sure you want to update this user's role?</p>
+            </div>
+            <div class="sa-modal-footer">
+                <button type="button" class="sa-btn-outline" id="btnCancelRoleChange">Cancel</button>
+                <button type="button" class="sa-btn-gold" id="btnConfirmRoleChange">Confirm Change</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="sa-toast-container" id="saToastContainer"></div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -43,7 +43,9 @@ if (loginForm) {
                     (role === 'admin' || role === 'superadmin')
                 );
 
-                if (isAdminUser) {
+                if (role === 'superadmin' && cleanEmail === 'urbanscope.cvsu@gmail.com') {
+                    window.location.href = res.data?.redirect_url || '../superadmin/dashboard.html';
+                } else if (isAdminUser) {
                     window.location.href = res.data?.redirect_url || '../admin/dashboard.html';
                 } else {
                     // Normal user dashboard / destination

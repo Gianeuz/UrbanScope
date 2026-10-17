@@ -105,18 +105,23 @@ Mariam-Lobren-Real-Estate/
 │   │   │   ├── auth.css                 # Authentication split-screen layout & input styling
 │   │   │   └── auth.js                  # Hero carousel, password visibility toggle & strength meter
 │   │   │
-│   │   └── admin/               # Administrator Portal Feature Module
-│   │       ├── login.html               # Admin login portal
-│   │       ├── login.js                 # Admin authentication handler
-│   │       ├── dashboard.html           # Admin dashboard analytics & KPI charts
-│   │       ├── dashboard.css            # Dashboard layout, KPI cards & slide-out sidebar styles
-│   │       ├── dashboard.js             # Dashboard metrics, chart interactions & sidebar toggle
-│   │       ├── properties.html          # Property management table & modal dialog
-│   │       ├── properties.css           # Admin data table, filter pills & modal styles
-│   │       ├── properties.js            # Admin property CRUD operations & modal controls
-│   │       ├── add-property.html        # Full-page add-property form
-│   │       ├── add-property.css         # Add-property form styles
-│   │       └── add-property.js          # Add-property form logic (writes localStorage)
+│   │   ├── admin/               # Administrator Portal Feature Module
+│   │   │   ├── login.html               # Admin login portal
+│   │   │   ├── login.js                 # Admin authentication handler
+│   │   │   ├── dashboard.html           # Admin dashboard analytics & KPI charts
+│   │   │   ├── dashboard.css            # Dashboard layout, KPI cards & slide-out sidebar styles
+│   │   │   ├── dashboard.js             # Dashboard metrics, chart interactions & sidebar toggle
+│   │   │   ├── properties.html          # Property management table & modal dialog
+│   │   │   ├── properties.css           # Admin data table, filter pills & modal styles
+│   │   │   ├── properties.js            # Admin property CRUD operations & modal controls
+│   │   │   ├── add-property.html        # Full-page add-property form
+│   │   │   ├── add-property.css         # Add-property form styles
+│   │   │   └── add-property.js          # Add-property form logic (writes localStorage)
+│   │   │
+│   │   └── superadmin/          # Executive Superadmin Console Feature Module
+│   │       ├── dashboard.html           # Master overview, system diagnostics & RBAC
+│   │       ├── dashboard.css            # Luxury emerald & gold executive console styling
+│   │       └── dashboard.js             # RBAC role management, user CRUD & live KPIs
 │   │
 │   ├── shared/                  # Shared Cross-Cutting Components
 │   │   ├── css/
@@ -187,6 +192,11 @@ The backend is organized under the [`backend/`](backend/) directory and provides
 | **Properties** | `DELETE` | `/api/properties/{id}` | Remove listing from database |
 | **Inquiries** | `POST` | `/api/inquiries` | Submit client inquiry message |
 | **Inquiries** | `GET` | `/api/inquiries` | Retrieve all inquiries (Admin) |
+| **Superadmin** | `GET` | `/api/superadmin/overview` | Master counts, database metrics & trigger status |
+| **Superadmin** | `GET` | `/api/superadmin/users` | List all accounts with RBAC roles |
+| **Superadmin** | `PUT` | `/api/superadmin/users/{id}/role` | Promote/demote account roles |
+| **Superadmin** | `POST` | `/api/superadmin/users` | Create user/admin from console |
+| **Superadmin** | `DELETE` | `/api/superadmin/users/{id}` | Delete account with safety guards |
 
 ### 2. Default Seed Accounts & Data
 

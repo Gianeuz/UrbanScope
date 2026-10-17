@@ -120,3 +120,20 @@ class InquiryResponse(BaseModel):
     message: str
     status: str = "Under Review"
     created_at: Optional[str] = None
+
+
+# ==========================================================
+# SUPERADMIN SCHEMAS
+# ==========================================================
+
+class UserRoleUpdate(BaseModel):
+    role: str = Field(..., description="Target role: 'user', 'admin', or 'superadmin'")
+
+
+class SuperadminCreateUser(BaseModel):
+    email: str = Field(..., description="New user email address")
+    password: str = Field(..., min_length=6, description="Account password")
+    full_name: str = Field(..., description="Full legal name")
+    phone: Optional[str] = Field(default="", description="Contact phone number")
+    role: Optional[str] = Field(default="user", description="Account role ('user', 'admin')")
+

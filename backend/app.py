@@ -23,8 +23,10 @@ from backend.auth import (
     get_current_user_from_request,
     get_current_user_from_header,
     require_admin,
+    require_superadmin,
     AUTHORIZED_ADMIN_EMAILS,
-    AUTHORIZED_ADMIN_ROLES
+    AUTHORIZED_ADMIN_ROLES,
+    AUTHORIZED_SUPERADMIN_EMAILS
 )
 from backend.models import (
     UserRegister,
@@ -35,8 +37,11 @@ from backend.models import (
     PropertyUpdate,
     PropertyResponse,
     InquiryCreate,
-    InquiryResponse
+    InquiryResponse,
+    UserRoleUpdate,
+    SuperadminCreateUser
 )
+
 
 # Root directory of the repository
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -156,15 +161,129 @@ FORBIDDEN_HTML = """<!DOCTYPE html>
 </body>
 </html>"""
 
+FORBIDDEN_SUPERADMIN_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden - Superadmin Clearance Required</title>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            background: #0f1610;
+            color: #e8eee9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .error-box {
+            max-width: 520px;
+            width: 100%;
+            background: #172219;
+            border: 1.5px solid #2d4530;
+            border-radius: 16px;
+            padding: 42px 34px;
+            text-align: center;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(201, 162, 74, 0.15);
+            color: #e5c068;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid rgba(201, 162, 74, 0.35);
+            border-radius: 999px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        h1 {
+            font-size: 1.85rem;
+            color: #ffffff;
+            margin: 0 0 12px;
+            font-weight: 800;
+        }
+        p {
+            font-size: 0.95rem;
+            color: #9cb1a2;
+            line-height: 1.6;
+            margin: 0 0 28px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-admin {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background: #c9a24a;
+            color: #0d140e;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.92rem;
+            transition: background 0.2s;
+        }
+        .btn-admin:hover {
+            background: #dfb960;
+        }
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background: #253928;
+            color: #ffffff;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: background 0.2s;
+        }
+        .btn-home:hover {
+            background: #2e4732;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <span class="badge">403 SUPERADMIN CLEARANCE REQUIRED</span>
+        <h1>Executive Access Restricted</h1>
+        <p>Access to the UrbanScope Superadmin Console is strictly restricted to the primary superadministrator (<code>urbanscope.cvsu@gmail.com</code>). Regular administrator and client accounts are forbidden from accessing this console.</p>
+        <div class="btn-group">
+            <a href="/pages/admin/dashboard.html" class="btn-admin">Go to Admin Portal</a>
+            <a href="/" class="btn-home">Return to Home</a>
+        </div>
+    </div>
+</body>
+</html>"""
+
 
 @app.middleware("http")
 async def rbac_admin_guard_middleware(request: Request, call_next):
     """
-    Strict server-side route guard ensuring ONLY authorized administrators
-    (admin.realestate@gmail.com / urbanscope.cvsu@gmail.com) with active
-    admin/superadmin roles can access any admin page or portal URL.
+    Strict server-side route guard:
+    - Superadmin portal (/superadmin, /pages/superadmin/*): ONLY urbanscope.cvsu@gmail.com with role == 'superadmin'.
+    - Admin portal (/admin, /pages/admin/*): ONLY authorized admins/superadmins (admin.realestate@gmail.com / urbanscope.cvsu@gmail.com).
     """
     path = request.url.path
+
+    # Check if request targets superadmin portal page
+    is_superadmin_path = (
+        path == "/superadmin" or
+        path.startswith("/superadmin/") or
+        path == "/pages/superadmin" or
+        path.startswith("/pages/superadmin/")
+    )
 
     # Check if request targets an admin portal page
     is_admin_path = (
@@ -174,11 +293,11 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
         path.startswith("/pages/admin/")
     )
 
-    if is_admin_path:
+    if is_superadmin_path or is_admin_path:
         file_name = path.split("/")[-1].lower()
 
-        # Public files in admin directory (login page and static assets)
-        is_public_admin_file = (
+        # Public files in portal directories (login page and static assets)
+        is_public_portal_file = (
             file_name in ("login.html", "login.js") or
             file_name.endswith(".css") or
             file_name.endswith(".js.map") or
@@ -190,7 +309,7 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
             file_name.endswith(".webp")
         )
 
-        if not is_public_admin_file:
+        if not is_public_portal_file:
             # Extract token from authorization header or cookie
             token = None
             auth_header = request.headers.get("authorization")
@@ -222,15 +341,24 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
             user_email = user_row["email"].lower().strip()
             user_role = user_row["role"]
 
-            # 2. Strict Role Check: ONLY authorized emails AND admin/superadmin roles
-            is_authorized = (
-                user_email in AUTHORIZED_ADMIN_EMAILS and
-                user_role in AUTHORIZED_ADMIN_ROLES
-            )
+            # 2. Strict Role Checks:
+            if is_superadmin_path:
+                # ONLY urbanscope.cvsu@gmail.com with role == 'superadmin'
+                is_authorized_superadmin = (
+                    user_email in AUTHORIZED_SUPERADMIN_EMAILS and
+                    user_role == "superadmin"
+                )
+                if not is_authorized_superadmin:
+                    return HTMLResponse(content=FORBIDDEN_SUPERADMIN_HTML, status_code=status.HTTP_403_FORBIDDEN)
 
-            if not is_authorized:
-                # Normal user or unauthorized account -> Block with HTTP 403 Forbidden
-                return HTMLResponse(content=FORBIDDEN_HTML, status_code=status.HTTP_403_FORBIDDEN)
+            elif is_admin_path:
+                # Authorized admin or superadmin
+                is_authorized_admin = (
+                    user_email in AUTHORIZED_ADMIN_EMAILS and
+                    user_role in AUTHORIZED_ADMIN_ROLES
+                )
+                if not is_authorized_admin:
+                    return HTMLResponse(content=FORBIDDEN_HTML, status_code=status.HTTP_403_FORBIDDEN)
 
     response = await call_next(request)
     return response
@@ -330,7 +458,9 @@ def register_user(payload: UserRegister, response: Response):
     )
 
     # Automatic login redirection based on identity and role
-    if user_dict["role"] in AUTHORIZED_ADMIN_ROLES and clean_email in AUTHORIZED_ADMIN_EMAILS:
+    if user_dict["role"] == "superadmin" and clean_email in AUTHORIZED_SUPERADMIN_EMAILS:
+        redirect_url = "/pages/superadmin/dashboard.html"
+    elif user_dict["role"] in AUTHORIZED_ADMIN_ROLES and clean_email in AUTHORIZED_ADMIN_EMAILS:
         redirect_url = "/pages/admin/dashboard.html"
     else:
         redirect_url = "/index.html"
@@ -349,7 +479,8 @@ def login_user(payload: UserLogin, response: Response):
     """
     Authenticates a user against verified database credentials and issues
     token with automatic redirection based on role:
-    - Authorized admins -> /pages/admin/dashboard.html
+    - Superadmin (urbanscope.cvsu@gmail.com) -> /pages/superadmin/dashboard.html
+    - Authorized admins (admin.realestate@gmail.com) -> /pages/admin/dashboard.html
     - Normal users -> /index.html (User dashboard)
     """
     conn = get_db_connection()
@@ -390,10 +521,12 @@ def login_user(payload: UserLogin, response: Response):
     )
 
     # Automatic redirection logic:
-    # If email is admin.realestate@gmail.com or urbanscope.cvsu@gmail.com
-    # AND database role is admin or superadmin -> Admin Dashboard
-    # Otherwise -> Normal user dashboard
-    if user_email in AUTHORIZED_ADMIN_EMAILS and user_role in AUTHORIZED_ADMIN_ROLES:
+    # - urbanscope.cvsu@gmail.com (superadmin) -> Superadmin Dashboard
+    # - admin.realestate@gmail.com (admin) -> Admin Dashboard
+    # - Otherwise -> Normal user dashboard
+    if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
+        redirect_url = "/pages/superadmin/dashboard.html"
+    elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
         redirect_url = "/pages/admin/dashboard.html"
     else:
         redirect_url = "/index.html"
@@ -636,10 +769,193 @@ def list_inquiries(admin_user: dict = Depends(require_admin)):
 
 
 # ==========================================================
+# SUPERADMIN EXECUTIVE ENDPOINTS
+# ==========================================================
+
+@app.get("/api/superadmin/overview", tags=["Superadmin"])
+def get_superadmin_overview(current_superadmin: dict = Depends(require_superadmin)):
+    """Executive overview with master counts, database metrics, and system status."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # User counts by role
+    cursor.execute("SELECT COUNT(*) FROM users")
+    total_users = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'superadmin'")
+    superadmin_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'admin'")
+    admin_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'user'")
+    normal_users_count = cursor.fetchone()[0]
+
+    # Properties stats
+    cursor.execute("SELECT COUNT(*) FROM properties")
+    total_properties = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM properties WHERE LOWER(status) = 'available'")
+    available_properties = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM properties WHERE LOWER(status) = 'sold'")
+    sold_properties = cursor.fetchone()[0]
+
+    # Inquiries stats
+    cursor.execute("SELECT COUNT(*) FROM inquiries")
+    total_inquiries = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM inquiries WHERE LOWER(status) LIKE '%review%' OR LOWER(status) LIKE '%pending%'")
+    pending_inquiries = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM inquiries WHERE LOWER(status) LIKE '%approved%'")
+    approved_inquiries = cursor.fetchone()[0]
+
+    # Database file stats
+    db_path = ROOT_DIR / "backend" / "urbanscope.db"
+    db_size_kb = round(db_path.stat().st_size / 1024, 2) if db_path.exists() else 0.0
+
+    # Trigger health check
+    cursor.execute("SELECT name FROM sqlite_master WHERE type = 'trigger' AND name = 'set_user_role_on_insert'")
+    trigger_exists = bool(cursor.fetchone())
+
+    conn.close()
+
+    return {
+        "status": "operational",
+        "superadmin_email": current_superadmin.get("email"),
+        "metrics": {
+            "total_users": total_users,
+            "superadmins": superadmin_count,
+            "admins": admin_count,
+            "regular_users": normal_users_count,
+            "total_properties": total_properties,
+            "available_properties": available_properties,
+            "sold_properties": sold_properties,
+            "total_inquiries": total_inquiries,
+            "pending_inquiries": pending_inquiries,
+            "approved_inquiries": approved_inquiries,
+            "db_size_kb": db_size_kb,
+            "trigger_active": trigger_exists
+        }
+    }
+
+
+@app.get("/api/superadmin/users", tags=["Superadmin"])
+def list_superadmin_users(current_superadmin: dict = Depends(require_superadmin)):
+    """Retrieves all registered user accounts with role classifications."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, email, full_name, phone, role, created_at FROM users ORDER BY id ASC")
+    rows = cursor.fetchall()
+    conn.close()
+    return [row_to_dict(r) for r in rows]
+
+
+@app.put("/api/superadmin/users/{user_id}/role", tags=["Superadmin"])
+def update_user_role(user_id: int, payload: UserRoleUpdate, current_superadmin: dict = Depends(require_superadmin)):
+    """Updates the role of a user account. Root superadmin account is protected."""
+    target_role = payload.role.strip().lower()
+    if target_role not in ("user", "admin", "superadmin"):
+        raise HTTPException(status_code=400, detail="Invalid role. Must be 'user', 'admin', or 'superadmin'.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, email, role FROM users WHERE id = ?", (user_id,))
+    target_user = cursor.fetchone()
+    if not target_user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="User account not found.")
+
+    target_email = target_user["email"].lower().strip()
+
+    # Protection: Root superadmin cannot be demoted
+    if target_email == "urbanscope.cvsu@gmail.com" and target_role != "superadmin":
+        conn.close()
+        raise HTTPException(status_code=400, detail="The root Superadmin account (urbanscope.cvsu@gmail.com) cannot be demoted.")
+
+    cursor.execute("UPDATE users SET role = ? WHERE id = ?", (target_role, user_id))
+    conn.commit()
+
+    cursor.execute("SELECT id, email, full_name, phone, role, created_at FROM users WHERE id = ?", (user_id,))
+    updated_user = row_to_dict(cursor.fetchone())
+    conn.close()
+
+    return {"success": True, "message": f"Role updated to '{target_role}'", "user": updated_user}
+
+
+@app.post("/api/superadmin/users", tags=["Superadmin"])
+def superadmin_create_user(payload: SuperadminCreateUser, current_superadmin: dict = Depends(require_superadmin)):
+    """Creates a new user or admin account directly from Superadmin console."""
+    clean_email = payload.email.strip().lower()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id FROM users WHERE LOWER(email) = ?", (clean_email,))
+    if cursor.fetchone():
+        conn.close()
+        raise HTTPException(status_code=400, detail="Email is already registered.")
+
+    assigned_role = payload.role.strip().lower()
+    if assigned_role not in ("user", "admin", "superadmin"):
+        assigned_role = "user"
+
+    password_hash = hash_password(payload.password)
+    cursor.execute(
+        "INSERT INTO users (email, password_hash, full_name, phone, role) VALUES (?, ?, ?, ?, ?)",
+        (clean_email, password_hash, payload.full_name.strip(), payload.phone.strip(), assigned_role)
+    )
+    conn.commit()
+    new_id = cursor.lastrowid
+    cursor.execute("SELECT id, email, full_name, phone, role, created_at FROM users WHERE id = ?", (new_id,))
+    new_user = row_to_dict(cursor.fetchone())
+    conn.close()
+
+    return {"success": True, "message": "Account created successfully.", "user": new_user}
+
+
+@app.delete("/api/superadmin/users/{user_id}", tags=["Superadmin"])
+def delete_user_account(user_id: int, current_superadmin: dict = Depends(require_superadmin)):
+    """Deletes a user account. Root superadmin and primary admin accounts are protected."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, email, role FROM users WHERE id = ?", (user_id,))
+    target_user = cursor.fetchone()
+    if not target_user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="User account not found.")
+
+    target_email = target_user["email"].lower().strip()
+
+    if target_email == "urbanscope.cvsu@gmail.com":
+        conn.close()
+        raise HTTPException(status_code=400, detail="Cannot delete root Superadmin account.")
+
+    if target_email == "admin.realestate@gmail.com":
+        conn.close()
+        raise HTTPException(status_code=400, detail="Cannot delete primary Realty Admin account.")
+
+    cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+    return {"success": True, "message": f"User account {target_email} deleted successfully."}
+
+
+# ==========================================================
 # STATIC FILES & WEB HOSTING
 # ==========================================================
 
-# Direct shortcut routes for admin and user dashboards
+# Direct shortcut routes for superadmin, admin, and user dashboards
+@app.get("/superadmin", include_in_schema=False)
+@app.get("/superadmin/", include_in_schema=False)
+def redirect_superadmin():
+    """Shortcut redirect to the superadmin dashboard."""
+    return RedirectResponse(url="/pages/superadmin/dashboard.html", status_code=status.HTTP_302_FOUND)
+
+
 @app.get("/admin", include_in_schema=False)
 @app.get("/admin/", include_in_schema=False)
 @app.get("/admin_dashboard", include_in_schema=False)
@@ -653,6 +969,7 @@ def redirect_admin():
 def redirect_user_dashboard():
     """Shortcut redirect to normal user page."""
     return RedirectResponse(url="/index.html", status_code=status.HTTP_302_FOUND)
+
 
 
 @app.get("/pages/admin/properties.html", include_in_schema=False)

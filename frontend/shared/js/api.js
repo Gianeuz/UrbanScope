@@ -753,9 +753,9 @@
                 localStorage.setItem('adminUser', JSON.stringify(sessionUser));
             }
 
-            const redirectUrl = (role === 'admin' || role === 'superadmin') 
-                ? '/pages/admin/dashboard.html' 
-                : '/index.html';
+            const redirectUrl = (role === 'superadmin') 
+                ? '/pages/superadmin/dashboard.html' 
+                : (role === 'admin' ? '/pages/admin/dashboard.html' : '/index.html');
 
             return {
                 success: true,
