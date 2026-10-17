@@ -73,7 +73,8 @@ async function loadPropertyFromDb() {
     
     if (statusBadge && property.status) {
         statusBadge.innerText = property.status;
-        statusBadge.className = 'status-badge ' + (property.status.toLowerCase() === 'available' ? 'available' : 'reserved');
+        const isAvail = String(property.status).trim().toLowerCase() === 'available';
+        statusBadge.className = 'status-badge ' + (isAvail ? 'available' : 'sold');
     }
 
     if (mainImgEl && property.image_url) {

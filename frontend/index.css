@@ -259,6 +259,103 @@
     z-index: 5;
 }
 
+/* PROPERTY STATUS BADGE & SOLD OUT STYLES */
+.property-status-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    line-height: 1;
+}
+
+.property-status-badge .badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Available badge */
+.property-status-badge.badge-available {
+    background: rgba(22, 101, 52, 0.92);
+    color: #ffffff;
+    border: 1px solid rgba(187, 247, 208, 0.4);
+}
+
+.property-status-badge.badge-available .badge-dot {
+    background: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+}
+
+/* Sold Out badge */
+.property-status-badge.badge-sold {
+    background: rgba(185, 28, 28, 0.92);
+    color: #ffffff;
+    border: 1px solid rgba(254, 202, 202, 0.45);
+}
+
+.property-status-badge.badge-sold .badge-dot {
+    background: #fca5a5;
+    box-shadow: 0 0 6px #fca5a5;
+}
+
+/* Greyed-out treatment for Sold property cards */
+.property-card.card-sold {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    opacity: 0.82;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+
+.property-card.card-sold .property-image img {
+    filter: grayscale(100%) contrast(90%);
+}
+
+.property-card.card-sold .property-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.18);
+    pointer-events: none;
+}
+
+.property-card.card-sold .property-info {
+    background: #f8fafc;
+    filter: grayscale(100%);
+}
+
+.property-card.card-sold .property-info h3,
+.property-card.card-sold .property-info .property-price {
+    color: #64748b;
+}
+
+.property-card.card-sold .property-details span,
+.property-card.card-sold .property-location {
+    color: #94a3b8;
+}
+
+.property-card.card-sold:hover {
+    opacity: 0.96;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.property-card.card-sold:hover .property-image img {
+    filter: grayscale(60%) contrast(95%);
+}
+
 .card-icon-btn {
     width: 32px;
     height: 32px;

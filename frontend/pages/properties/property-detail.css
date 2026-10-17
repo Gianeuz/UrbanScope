@@ -29,6 +29,18 @@
     margin-bottom: 8px;
 }
 
+.status-badge.sold,
+.status-badge.reserved {
+    display: inline-block;
+    padding: 5px 14px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
 .property-title {
     font-size: 36px;
     font-weight: 800;

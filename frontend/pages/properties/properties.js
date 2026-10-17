@@ -122,9 +122,17 @@ function renderProperties(list) {
         const specsText = `${item.bedrooms || 0} Beds &bull; ${item.bathrooms || 0} Baths &bull; ${item.lot_area || 0} sqm Lot` + 
             (item.floor_area ? ` (${item.floor_area} sqm Flr)` : '');
 
+        const rawStatus = String(item.status || 'Available').trim().toLowerCase();
+        const isSold = rawStatus === 'sold' || rawStatus === 'sold out';
+        const statusLabel = isSold ? 'Sold Out' : 'Available';
+
         return `
-        <article class="listing-card" onclick="location.href='property-detail.html?id=${item.id}'">
-            <div class="listing-image">
+        <article class="listing-card ${isSold ? 'card-sold' : ''}" onclick="location.href='property-detail.html?id=${item.id}'">
+            <div class="listing-image" style="position: relative;">
+                <span class="property-status-badge ${isSold ? 'badge-sold' : 'badge-available'}">
+                    <span class="badge-dot"></span>
+                    ${statusLabel}
+                </span>
                 <img src="${imgSrc}" alt="${item.title}" onerror="this.src='../../assets/images/property1.jpg'">
             </div>
             <div class="listing-info">

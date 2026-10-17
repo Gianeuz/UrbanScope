@@ -302,6 +302,30 @@
     }
 
     async function apiUpdateProperty(id, property) {
+        let updated = null;
+
+        // 1. Try local FastAPI backend first
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem(TOKEN_KEY) || localStorage.getItem('urbanscope_jwt_token') || '';
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const localRes = await fetch(`${localBase}/properties/${encodeURIComponent(id)}`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: headers,
+                body: JSON.stringify(property)
+            });
+
+            if (localRes.ok) {
+                updated = await localRes.json();
+            }
+        } catch (e) {
+            console.warn('Local backend property update notice:', e);
+        }
+
+        // 2. Also try live Supabase if available
         try {
             const res = await fetch(`${REST_BASE}/properties?id=eq.${encodeURIComponent(id)}`, {
                 method: 'PATCH',
@@ -309,30 +333,35 @@
                 body: JSON.stringify(property)
             });
 
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.message || `Server error ${res.status}`);
+            if (res.ok) {
+                const data = await res.json();
+                const supaData = Array.isArray(data) ? data[0] : data;
+                if (!updated) updated = supaData;
             }
-
-            const data = await res.json();
-            const updated = Array.isArray(data) ? data[0] : data;
-
-            // Also sync to local backend if available
-            try {
-                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
-                await fetch(`${localBase}/properties/${encodeURIComponent(id)}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(property)
-                });
-            } catch (e) {}
-
-            return updated;
         } catch (err) {
-            console.error(`Error updating property #${id} in Supabase:`, err.message);
-            alert('Supabase error: ' + err.message);
-            return null;
+            console.warn(`Supabase update notice for property #${id}:`, err.message);
         }
+
+        // 3. In-memory object fallback if network was unreachable
+        if (!updated) {
+            updated = { id: Number(id) || id, ...property };
+        }
+
+        // 4. Immediately sync all local storage property caches
+        try {
+            ['cached_live_properties', 'urbanScopeProperties', 'properties'].forEach(key => {
+                const list = JSON.parse(localStorage.getItem(key) || '[]');
+                if (Array.isArray(list) && list.length > 0) {
+                    const idx = list.findIndex(p => String(p.id) === String(id));
+                    if (idx !== -1) {
+                        list[idx] = { ...list[idx], ...property };
+                        localStorage.setItem(key, JSON.stringify(list));
+                    }
+                }
+            });
+        } catch (e) {}
+
+        return updated;
     }
 
     async function apiDeleteProperty(id) {

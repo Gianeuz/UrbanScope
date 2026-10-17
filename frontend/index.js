@@ -93,10 +93,17 @@ function renderFeaturedGrid(list) {
         const imgSrc = resolveCardImage(item.image_url);
         const detailUrl = getPropertyDetailUrl(item);
         const specsLot = item.lot_area ? `${item.lot_area} sqm` : (item.floor_area ? `${item.floor_area} sqm` : 'N/A');
+        const rawStatus = String(item.status || 'Available').trim().toLowerCase();
+        const isSold = rawStatus === 'sold' || rawStatus === 'sold out';
+        const statusLabel = isSold ? 'Sold Out' : 'Available';
 
         return `
-        <article class="property-card" onclick="location.href='${detailUrl}'">
+        <article class="property-card ${isSold ? 'card-sold' : ''}" onclick="location.href='${detailUrl}'">
             <div class="property-image">
+                <span class="property-status-badge ${isSold ? 'badge-sold' : 'badge-available'}">
+                    <span class="badge-dot"></span>
+                    ${statusLabel}
+                </span>
                 <img src="${imgSrc}" alt="${item.title}" onerror="this.src='assets/images/property1.jpg'">
                 <div class="card-actions">
                     <button class="card-icon-btn fav-btn" type="button" aria-label="Add to favorites"

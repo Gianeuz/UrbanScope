@@ -599,18 +599,21 @@ function renderDashboardProperties(list) {
         const type = p.property_type || "—";
         const loc = p.location || "—";
         const price = p.price ? "₱" + Number(p.price).toLocaleString() : "—";
-        const status = p.status || "Available";
+        const rawStatus = (p.status || "Available").trim();
+        const isSold = rawStatus.toLowerCase() === 'sold' || rawStatus.toLowerCase() === 'sold out';
+        const displayStatus = isSold ? 'Sold' : 'Available';
+
         const imgSrc = p.image_url ? 
             (p.image_url.startsWith('http') || p.image_url.startsWith('data:') ? p.image_url : '../../' + p.image_url.replace(/^(\.\.\/)+/, '')) : 
             '../../assets/images/property1.jpg';
 
         return `
-        <tr>
+        <tr style="${isSold ? 'background:#fcfdfc;' : ''}">
             <td>
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <img src="${imgSrc}" alt="${title}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" onerror="this.src='../../assets/images/property1.jpg'">
+                    <img src="${imgSrc}" alt="${title}" style="width:44px; height:44px; border-radius:6px; object-fit:cover; ${isSold ? 'filter:grayscale(1); opacity:0.8;' : ''}" onerror="this.src='../../assets/images/property1.jpg'">
                     <div>
-                        <strong style="color:#1b2e21; font-size:0.92rem;">${title}</strong><br>
+                        <strong style="${isSold ? 'color:#64748b;' : 'color:#1b2e21;'} font-size:0.92rem;">${title}</strong><br>
                         <small style="color:#6b7f70;">ID #${p.id}</small>
                     </div>
                 </div>
@@ -618,11 +621,18 @@ function renderDashboardProperties(list) {
             <td style="color:#2d3748; font-size:0.9rem;">${loc}</td>
             <td><span style="padding:4px 9px; border-radius:4px; background:#eef5ef; color:#1a3b23; font-size:0.8rem; font-weight:600;">${type}</span></td>
             <td style="font-weight:700; color:#1b2e21;">${price}</td>
-            <td><span style="padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:600; background:#e8f5e9; color:#2e7d32;">${status}</span></td>
             <td>
-                <div style="display:flex; gap:8px;">
+                <span style="padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:600; display:inline-flex; align-items:center; gap:5px; ${isSold ? 'background:#fee2e2; color:#b91c1c; border:1px solid #fecaca;' : 'background:#dcfce7; color:#15803d; border:1px solid #bbf7d0;'}">
+                    <span style="width:6px; height:6px; border-radius:50%; background:${isSold ? '#ef4444' : '#22c55e'}; display:inline-block;"></span>
+                    ${displayStatus}
+                </span>
+            </td>
+            <td>
+                <div style="display:flex; gap:8px; align-items:center;">
                     <a href="../properties/property-detail.html?id=${p.id}" target="_blank" style="padding:5px 12px; border-radius:4px; background:#eef5ef; color:#1a3b23; text-decoration:none; font-size:0.82rem; font-weight:600;">View</a>
-                    <button type="button" onclick="deletePropertyFromHome(${p.id}, '${title.replace(/'/g, "\\'")}')" style="padding:5px 12px; border-radius:4px; background:#fee2e2; color:#b91c1c; border:none; cursor:pointer; font-size:0.82rem; font-weight:600;">Delete</button>
+                    <button type="button" onclick="togglePropertyStatus(${p.id}, '${displayStatus}')" style="padding:5px 12px; border-radius:4px; cursor:pointer; font-size:0.82rem; font-weight:600; transition:all 0.2s; ${isSold ? 'background:#dcfce7; color:#15803d; border:1px solid #86efac;' : 'background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;'}">
+                        ${isSold ? 'Mark Available' : 'Mark as Sold'}
+                    </button>
                 </div>
             </td>
         </tr>
@@ -630,19 +640,27 @@ function renderDashboardProperties(list) {
     }).join('');
 }
 
-window.deletePropertyFromHome = async function(id, name) {
-    if (!confirm(`Are you sure you want to delete property "${name}"? This action cannot be undone.`)) {
-        return;
-    }
+window.togglePropertyStatus = async function(id, currentStatus) {
+    const isCurrentlySold = (currentStatus || '').toLowerCase() === 'sold' || (currentStatus || '').toLowerCase() === 'sold out';
+    const newStatus = isCurrentlySold ? 'Available' : 'Sold';
 
-    if (typeof apiDeleteProperty === 'function') {
-        const ok = await apiDeleteProperty(id);
-        if (ok) {
-            alert(`✓ Property "${name}" has been deleted.`);
-            loadDashboardData();
+    try {
+        if (typeof apiUpdateProperty === 'function') {
+            await apiUpdateProperty(id, { status: newStatus });
         } else {
-            alert('Failed to delete property. Please check your connection.');
+            ['properties', 'cached_live_properties', 'urbanScopeProperties'].forEach(key => {
+                const list = JSON.parse(localStorage.getItem(key) || '[]');
+                const idx = list.findIndex(p => String(p.id) === String(id));
+                if (idx !== -1) {
+                    list[idx].status = newStatus;
+                    localStorage.setItem(key, JSON.stringify(list));
+                }
+            });
         }
+        await loadDashboardData();
+    } catch (err) {
+        console.error("Dashboard toggle status error:", err);
+        alert("Failed to update property status. Please check your connection.");
     }
 };
 

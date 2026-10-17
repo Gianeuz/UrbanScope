@@ -440,3 +440,98 @@
         font-size: 13px;
     }
 }
+
+/* PROPERTY STATUS BADGE & SOLD OUT STYLES */
+.property-status-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    line-height: 1;
+}
+
+.property-status-badge .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.property-status-badge.badge-available {
+    background: rgba(22, 101, 52, 0.92);
+    color: #ffffff;
+    border: 1px solid rgba(187, 247, 208, 0.4);
+}
+
+.property-status-badge.badge-available .badge-dot {
+    background: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+}
+
+.property-status-badge.badge-sold {
+    background: rgba(185, 28, 28, 0.92);
+    color: #ffffff;
+    border: 1px solid rgba(254, 202, 202, 0.45);
+}
+
+.property-status-badge.badge-sold .badge-dot {
+    background: #fca5a5;
+    box-shadow: 0 0 6px #fca5a5;
+}
+
+.listing-card.card-sold {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    opacity: 0.82;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+
+.listing-card.card-sold .listing-image img {
+    filter: grayscale(100%) contrast(90%);
+}
+
+.listing-card.card-sold .listing-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.18);
+    pointer-events: none;
+}
+
+.listing-card.card-sold .listing-info {
+    background: #f8fafc;
+    filter: grayscale(100%);
+}
+
+.listing-card.card-sold .listing-info h3,
+.listing-card.card-sold .listing-info .listing-price {
+    color: #64748b;
+}
+
+.listing-card.card-sold .listing-specs,
+.listing-card.card-sold .listing-location {
+    color: #94a3b8;
+}
+
+.listing-card.card-sold:hover {
+    opacity: 0.96;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.listing-card.card-sold:hover .listing-image img {
+    filter: grayscale(60%) contrast(95%);
+}
+

@@ -8,8 +8,10 @@
     <link rel="icon" href="../../assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="properties.css">
+    <link rel="stylesheet" href="proplist.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../shared/js/supabase.js"></script>
+    <script src="../../shared/js/session.js"></script>
 </head>
 
 <body>
@@ -202,72 +204,9 @@
                             <th>ACTIONS</th>
                         </tr>
                     </thead>
-                    <tbody id="propTableBody">
+                    <tbody id="propertyTableBody">
                         <tr>
-                            <td>
-                                <div class="prop-cell">
-                                    <img src="../assets/images/property1.jpg" alt="Liora Homes"
-                                        class="table-prop-thumb">
-                                    <strong>Liora Homes</strong>
-                                </div>
-                            </td>
-                            <td>Naic, Cavite</td>
-                            <td>Subdivision</td>
-                            <td>₱2,462,400</td>
-                            <td><span class="status-badge-table muted">To be updated</span></td>
-                            <td>
-                                <div class="action-links">
-                                    <button class="act-link view" onclick="alert('Viewing Liora
-Homes')">View</button>
-                                    <button class="act-link edit" onclick="alert('Editing Liora
-Homes')">Edit</button>
-                                    <button class="act-link delete" onclick="deleteRow(this)">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="prop-cell">
-                                    <img src="../assets/images/property2.jpg" alt="Velemont Residences"
-                                        class="table-prop-thumb">
-                                    <strong>Velemont Residences</strong>
-                                </div>
-                            </td>
-                            <td>Manuyo, Las Piñas City</td>
-                            <td>Subdivision</td>
-                            <td>₱6,880,000</td>
-                            <td><span class="status-badge-table available">Available</span></td>
-                            <td>
-                                <div class="action-links">
-                                    <button class="act-link view" onclick="alert('Viewing Velemont
-Residences')">View</button>
-                                    <button class="act-link edit" onclick="alert('Editing Velemont
-Residences')">Edit</button>
-                                    <button class="act-link delete" onclick="deleteRow(this)">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="prop-cell">
-                                    <img src="../assets/images/property3.jpg" alt="Green Valley Villa"
-                                        class="table-prop-thumb">
-                                    <strong>Green Valley Villa</strong>
-                                </div>
-                            </td>
-                            <td>Dasmariñas, Cavite</td>
-                            <td>Villa</td>
-                            <td>₱8,200,000</td>
-                            <td><span class="status-badge-table muted">To be updated</span></td>
-                            <td>
-                                <div class="action-links">
-                                    <button class="act-link view" onclick="alert('Viewing Green Valley
-Villa')">View</button>
-                                    <button class="act-link edit" onclick="alert('Editing Green Valley
-Villa')">Edit</button>
-                                    <button class="act-link delete" onclick="deleteRow(this)">Delete</button>
-                                </div>
-                            </td>
+                            <td colspan="6" style="text-align: center; padding: 24px; color: #6b7f70;">Loading listings...</td>
                         </tr>
                     </tbody>
                 </table>
