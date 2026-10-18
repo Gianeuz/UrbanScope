@@ -227,6 +227,9 @@
                 <!-- Header -->
                 <div class="chatbot-header">
                     <div class="chatbot-header-profile">
+                        <button type="button" class="chatbot-mobile-back-btn" id="chatbotMobileBackBtn" title="Back" aria-label="Close chat">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
                         <div class="chatbot-avatar-wrap">
                             <img src="${URLS.logo}" alt="Logo" onerror="this.outerHTML='<span style=\\'font-weight:800;color:#2d5c39;font-size:0.9rem\\'>ML</span>'">
                             <span class="chatbot-status-dot"></span>
@@ -301,6 +304,11 @@
             const callout = document.getElementById('chatbotCallout');
             if (callout) callout.style.display = 'none';
         }
+
+        // Auto-open if deep-linked via URL parameter or hash
+        if (window.location.search.includes('open_chat=1') || window.location.hash === '#chat') {
+            setTimeout(() => toggleChatbot(true), 150);
+        }
     }
 
     // ----------------------------------------------------------
@@ -317,6 +325,25 @@
 
         toggleBtn.addEventListener('click', toggleChatbot);
         closeBtn.addEventListener('click', () => toggleChatbot(false));
+
+        const mobileBackBtn = document.getElementById('chatbotMobileBackBtn');
+        if (mobileBackBtn) {
+            mobileBackBtn.addEventListener('click', () => toggleChatbot(false));
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                toggleChatbot(false);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                document.body.classList.remove('chatbot-open');
+            } else if (isOpen) {
+                document.body.classList.add('chatbot-open');
+            }
+        });
 
         if (callout) {
             callout.addEventListener('click', (e) => {
@@ -384,24 +411,32 @@
         const btn = document.getElementById('chatbotToggleBtn');
         const callout = document.getElementById('chatbotCallout');
         const badge = document.getElementById('chatbotUnreadBadge');
+        const container = document.getElementById('chatbotContainer');
 
         isOpen = typeof forceState === 'boolean' ? forceState : !isOpen;
 
         if (isOpen) {
             win.classList.add('is-open');
             btn.classList.add('is-active');
+            if (container) container.classList.add('is-open');
             if (callout) callout.style.display = 'none';
             if (badge) badge.classList.add('is-hidden');
             sessionStorage.setItem('urbanscope_callout_closed', '1');
 
+            if (window.innerWidth <= 768) {
+                document.body.classList.add('chatbot-open');
+            }
+
             setTimeout(() => {
                 const input = document.getElementById('chatbotInput');
-                if (input && window.innerWidth > 600) input.focus();
+                if (input && window.innerWidth > 768) input.focus();
                 scrollBottom();
             }, 250);
         } else {
             win.classList.remove('is-open');
             btn.classList.remove('is-active');
+            if (container) container.classList.remove('is-open');
+            document.body.classList.remove('chatbot-open');
         }
     }
 

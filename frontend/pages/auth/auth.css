@@ -389,6 +389,9 @@ body {
 
 /* Mobile & Tablet Responsiveness */
 @media (max-width: 900px) {
+    html {
+        zoom: 1;
+    }
     .main-container {
         flex-direction: column;
         min-height: 100vh;

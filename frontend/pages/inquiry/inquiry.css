@@ -356,6 +356,9 @@ body {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+    html {
+        zoom: 1;
+    }
     .user-info-row {
         grid-template-columns: 1fr;
     }

@@ -10,7 +10,7 @@
     var root = document.documentElement;
 
     try {
-        if (sessionStorage.getItem(KEY)) return;
+        if (sessionStorage.getItem(KEY) || window.location.search.includes('no_splash=1') || window.location.search.includes('open_chat=1')) return;
         sessionStorage.setItem(KEY, '1');
     } catch (e) { /* storage blocked - still show splash */ }
 

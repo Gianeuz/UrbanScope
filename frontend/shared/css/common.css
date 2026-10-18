@@ -364,6 +364,10 @@ img, video, canvas, svg {
 }
 
 @media (max-width: 768px) {
+    html {
+        zoom: 1; /* Reset desktop zoom on mobile viewports to prevent cramped layouts */
+    }
+
     /* Prevent iOS browser auto-zoom on input focus */
     input, select, textarea {
         font-size: 16px !important;
@@ -374,31 +378,35 @@ img, video, canvas, svg {
     }
 
     .navbar {
-        height: 72px;
-        padding: 0 4%;
+        height: 70px;
+        padding: 0 16px;
         justify-content: space-between;
         gap: 12px;
     }
 
     .brand-logo {
-        width: 46px;
-        height: 40px;
+        width: 44px;
+        height: 38px;
         flex-shrink: 0;
     }
 
     .Cname {
         gap: 10px;
         min-width: 0;
+        flex: 1;
     }
 
     .Cname strong {
-        font-size: 17px;
-        letter-spacing: 1px;
+        font-size: 16.5px;
+        letter-spacing: 0.8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .Cname small {
-        font-size: 9.5px;
-        letter-spacing: 1.5px;
+        font-size: 9px;
+        letter-spacing: 1.2px;
     }
 
     .mobile-nav-toggle {
@@ -410,18 +418,10 @@ img, video, canvas, svg {
         flex-shrink: 0;
     }
 
-    .nav-acts .login-btn {
-        display: inline-flex;
-        padding: 6px 14px;
-        font-size: 13px;
-        border-radius: 6px;
-    }
-
+    /* Hide redundant top bar login/signup buttons on mobile - they are accessed cleanly via the mobile drawer */
+    .nav-acts .login-btn,
     .nav-acts .signup-btn {
-        display: inline-flex;
-        padding: 6px 14px;
-        font-size: 13px;
-        border-radius: 6px;
+        display: none !important;
     }
 
     /* MOBILE NAVIGATION DRAWER */
