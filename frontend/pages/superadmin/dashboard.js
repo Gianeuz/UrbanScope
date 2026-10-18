@@ -104,8 +104,10 @@
     function showToast(message, isError = false) {
         if (!elements.toastContainer) return;
         const toast = document.createElement('div');
-        toast.className = 'sa-toast' + (isError ? ' error' : '');
-        toast.innerHTML = (isError ? '⚠️ ' : '✓ ') + escapeHtml(message);
+        const iconSvg = isError
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        toast.innerHTML = iconSvg + ' ' + escapeHtml(message);
         elements.toastContainer.appendChild(toast);
         setTimeout(() => {
             toast.style.opacity = '0';

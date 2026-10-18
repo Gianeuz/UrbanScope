@@ -485,7 +485,14 @@ select:focus-visible {
 }
 
 .role-icon {
-    font-size: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(45, 92, 57, 0.12);
+    color: var(--green);
     flex-shrink: 0;
 }
 
@@ -919,8 +926,27 @@ select:focus-visible {
 }
 
 .authority-icon {
-    font-size: 22px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     flex-shrink: 0;
+}
+
+.authority-icon.root-icon {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.authority-icon.admin-icon {
+    background: #eef5ef;
+    color: var(--green);
+}
+
+.authority-icon.user-icon {
+    background: #e0f2fe;
+    color: #0284c7;
 }
 
 .authority-details {
@@ -1040,8 +1066,14 @@ select:focus-visible {
     top: 14px;
     right: 14px;
     color: #4d8a5c;
-    font-size: 15px;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s;
+}
+
+.quick-action-item:hover .quick-action-arrow {
+    transform: translateX(2px);
 }
 
 /* ============================================================== */
@@ -1368,6 +1400,9 @@ tr:hover td {
 .perm-row .check {
     color: #16a34a;
     font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .perm-row .check.gold {
@@ -1377,6 +1412,9 @@ tr:hover td {
 .perm-row .cross {
     color: #dc2626;
     font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 /* ============================================================== */
@@ -1505,6 +1543,9 @@ tr:hover td {
 }
 
 .sa-toast {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     background: #ffffff;
     border: 1px solid #bbf7d0;
     border-left: 5px solid #16a34a;
