@@ -81,10 +81,10 @@ body {
 }
 
 
-/* Left Showcase Panel - 40% Full Screen */
+/* Left Showcase Panel - 44% Full Screen */
 .showcase-panel {
     position: relative;
-    width: 40%;
+    width: 44%;
     height: 100vh;
     max-height: 100vh;
     background-color: #17241a;
@@ -95,7 +95,7 @@ body {
     overflow: hidden;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
 .showcase-img {
@@ -121,35 +121,39 @@ body {
     z-index: 2;
 }
 
-/* Brand badge in upper left */
+/* Brand badge in upper left of showcase */
 .brand-badge {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    background: rgba(255, 255, 255, 0);
-    padding: 0;
-    border-radius: 6px;
-    backdrop-filter: blur(6px);
+    background: rgba(12, 28, 17, 0.55);
+    padding: 8px 16px 8px 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .logo-icon {
-    width: clamp(54px, 6.5vh, 72px);
-    height: clamp(54px, 6.5vh, 72px);
+    width: clamp(48px, 5.5vh, 64px);
+    height: clamp(48px, 5.5vh, 64px);
     object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
 .brand-text h1 {
-    font-size: clamp(22px, 2.8vh, 26px);
+    font-size: clamp(20px, 2.6vh, 24px);
     font-weight: 700;
-    color: var(--brand-dark-green);
-    line-height: 1.1;
+    color: #ffffff;
+    line-height: 1.15;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
 .brand-text h2 {
-    font-size: clamp(15px, 2vh, 18px);
+    font-size: clamp(12px, 1.6vh, 14px);
     font-weight: 600;
-    color: #4a6750;
-    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
 }
 
 /* Middle Cursive Tagline */
@@ -199,51 +203,120 @@ body {
     border-radius: 10px;
 }
 
-/* Right Form Panel - 60% Full Screen */
+/* Right Form Panel - 56% Full Screen */
 .form-panel {
     flex: 1;
-    width: 60%;
+    width: 56%;
     height: 100vh;
     max-height: 100vh;
     background-color: var(--bg-tint);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(12px, 2vh, 24px) clamp(20px, 3vw, 40px);
+    padding: clamp(16px, 2.5vh, 32px) clamp(20px, 3vw, 40px);
     overflow-y: auto;
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(45, 92, 57, 0.25) transparent;
 }
 
 .form-panel::-webkit-scrollbar {
-    display: none;
+    width: 6px;
 }
 
+.form-panel::-webkit-scrollbar-thumb {
+    background-color: rgba(45, 92, 57, 0.25);
+    border-radius: 4px;
+}
+
+/* Auth Card Wrapper - Clean, Grounded Card Container */
 .form-wrapper {
     width: 100%;
-    max-width: 390px;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 30px 34px 22px;
+    box-shadow: 0 10px 30px rgba(23, 43, 29, 0.07), 0 1px 4px rgba(23, 43, 29, 0.04);
+    border: 1px solid rgba(121, 138, 124, 0.2);
 }
 
 .form-wrapper.register-wrapper {
-    max-width: 470px;
+    max-width: 520px;
+    padding: 26px 34px 20px;
+}
+
+/* Brand Logo Badge directly ABOVE Login / Signup text */
+.form-brand-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.form-brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    padding: 6px 16px 6px 10px;
+    border-radius: 50px;
+    background: rgba(45, 92, 57, 0.06);
+    border: 1px solid rgba(45, 92, 57, 0.15);
+    transition: all 0.2s ease;
+}
+
+.form-brand-badge:hover {
+    background: rgba(45, 92, 57, 0.12);
+    border-color: rgba(45, 92, 57, 0.28);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 92, 57, 0.12);
+}
+
+.form-brand-logo {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(32, 67, 41, 0.18));
+}
+
+.form-brand-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-brand-text .brand-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--brand-dark-green);
+    line-height: 1.15;
+    letter-spacing: -0.2px;
+}
+
+.form-brand-text .brand-subtitle {
+    font-size: 10px;
+    font-weight: 600;
+    color: #4a6750;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    line-height: 1.1;
 }
 
 .welcome-header {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
 }
 
 .welcome-header h1 {
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
+    letter-spacing: -0.3px;
 }
 
 .welcome-header p {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    color: #385740;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
     margin-top: 3px;
 }
 
@@ -251,31 +324,31 @@ body {
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 11px;
 }
 
 .form-row-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
 }
 
 .form-group label {
     display: block;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
-    color: #273629;
-    margin-bottom: 3px;
+    color: #233626;
+    margin-bottom: 4px;
 }
 
 .input-box input {
     width: 100%;
-    height: 36px;
-    padding: 0 13px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
     background-color: #ffffff;
-    font-size: 13px;
+    font-size: 13.5px;
     color: var(--text-primary);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -283,62 +356,74 @@ body {
 
 .input-box input:focus {
     border-color: var(--brand-primary-green);
-    box-shadow: 0 0 0 3px rgba(45, 92, 57, 0.15);
+    box-shadow: 0 0 0 3px rgba(45, 92, 57, 0.16);
 }
 
 .form-options {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 12.5px;
     margin-top: 1px;
 }
 
 .remember-label {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     cursor: pointer;
     color: var(--text-secondary);
+    font-size: 12.5px;
 }
 
 .remember-label input {
     accent-color: var(--brand-primary-green);
+    width: 15px;
+    height: 15px;
 }
 
 .forgot-link {
     text-decoration: none;
-    color: var(--text-secondary);
-    font-size: 12px;
+    color: var(--brand-primary-green);
+    font-size: 12.5px;
+    font-weight: 600;
 }
 
 .forgot-link:hover {
     text-decoration: underline;
+    color: var(--brand-dark-green);
 }
 
 .btn-submit {
     width: 100%;
-    height: 38px;
+    height: 44px;
     background-color: var(--brand-primary-green);
     color: #ffffff;
     border: none;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: 8px;
+    font-size: 14.5px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 2px;
-    transition: background-color 0.2s ease;
+    margin-top: 3px;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(45, 92, 57, 0.2);
 }
 
 .btn-submit:hover {
     background-color: var(--brand-hover-green);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(45, 92, 57, 0.28);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
 }
 
 /* Divider & Social Login */
 .divider {
     position: relative;
     text-align: center;
-    margin: 8px 0;
+    margin: 10px 0;
 }
 
 .divider::before {
@@ -348,54 +433,62 @@ body {
     top: 50%;
     width: 100%;
     height: 1px;
-    background-color: #c9d8cc;
+    background-color: #dce7de;
 }
 
 .divider span {
     position: relative;
-    background-color: var(--bg-tint);
+    background-color: #ffffff;
     padding: 0 12px;
-    font-size: 11.5px;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--text-muted);
 }
 
 .btn-google {
     width: 100%;
-    height: 36px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     background-color: #ffffff;
-    border: 1px solid #7c8e80;
-    border-radius: 6px;
-    font-size: 13px;
+    border: 1.5px solid #c2d2c5;
+    border-radius: 8px;
+    font-size: 13.5px;
     font-weight: 600;
     color: #283a2d;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
 .btn-google:hover {
-    background-color: #edf4ee;
+    background-color: #f6faf6;
+    border-color: #9cb2a1;
+    transform: translateY(-1px);
+}
+
+.btn-google:active {
+    transform: translateY(0);
 }
 
 .register-prompt {
-    margin-top: 8px;
+    margin-top: 10px;
     text-align: center;
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--text-secondary);
 }
 
 .register-prompt a {
     text-decoration: none;
-    color: var(--text-primary);
+    color: var(--brand-primary-green);
     font-weight: 700;
     margin-left: 5px;
 }
 
 .register-prompt a:hover {
     text-decoration: underline;
+    color: var(--brand-dark-green);
 }
 
 /* Mobile & Tablet Responsiveness */
@@ -512,74 +605,87 @@ body {
     }
 }
 
-/* Compact viewport height adjustments so login & register fit 1 page on laptops */
-@media (min-width: 901px) and (max-height: 840px) {
+/* Graceful compact adjustments only for very low-height desktop windows (<640px) */
+@media (min-width: 901px) and (max-height: 640px) {
     .form-panel {
-        padding: 6px 20px;
+        padding: 8px 16px;
+    }
+    .form-wrapper {
+        padding: 16px 22px 14px;
+    }
+    .form-brand-header {
+        margin-bottom: 6px;
+    }
+    .form-brand-logo {
+        width: 30px;
+        height: 30px;
+    }
+    .form-brand-text .brand-title {
+        font-size: 15px;
     }
     .welcome-header {
-        margin-bottom: 4px;
+        margin-bottom: 8px;
     }
     .welcome-header h1 {
-        font-size: 22px;
+        font-size: 20px;
     }
     .welcome-header p {
-        font-size: 11px;
+        font-size: 11.5px;
         margin-top: 1px;
     }
     .auth-form {
-        gap: 4px;
+        gap: 6px;
     }
     .form-row-2col {
         gap: 8px;
     }
     .form-group label {
-        font-size: 11px;
-        margin-bottom: 1px;
+        font-size: 11.5px;
+        margin-bottom: 2px;
     }
     .input-box input {
-        height: 33px;
+        height: 36px;
         font-size: 12.5px;
         padding: 0 11px;
     }
     .form-options {
-        font-size: 11px;
+        font-size: 11.5px;
         margin-top: 0;
     }
     .btn-submit {
-        height: 34px;
-        font-size: 13px;
-        margin-top: 1px;
+        height: 38px;
+        font-size: 13.5px;
+        margin-top: 2px;
     }
     .divider {
-        margin: 4px 0;
+        margin: 6px 0;
     }
     .btn-google {
-        height: 33px;
-        font-size: 12px;
+        height: 36px;
+        font-size: 12.5px;
     }
     .register-prompt {
-        margin-top: 4px;
-        font-size: 11px;
+        margin-top: 6px;
+        font-size: 11.5px;
     }
     .form-footer {
-        margin-top: 4px;
-        padding-top: 4px;
-        font-size: 10px;
+        margin-top: 6px;
+        padding-top: 6px;
+        font-size: 10.5px;
     }
     .form-footer p {
         margin-bottom: 1px;
     }
     .form-footer-links {
-        font-size: 9.5px;
+        font-size: 10px;
         gap: 6px;
     }
     .back-home-link {
-        margin-bottom: 2px;
-        font-size: 0.72rem;
+        margin-bottom: 6px;
+        font-size: 11.5px;
     }
     .terms-label {
-        font-size: 10px;
+        font-size: 10.5px;
         line-height: 1.25;
     }
     .strength-meter {
@@ -588,11 +694,6 @@ body {
     .strength-meter small,
     .match-hint {
         margin-top: 1px;
-        font-size: 9.5px;
-    }
-    .admin-security-card {
-        margin-top: 5px;
-        padding: 5px 8px;
         font-size: 9.5px;
     }
     .showcase-caption p {
