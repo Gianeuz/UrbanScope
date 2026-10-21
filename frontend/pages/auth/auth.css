@@ -46,14 +46,17 @@ body {
     overflow: hidden;
 }
 
-/* In-form compact footer */
+/* Bottom panel footer aligned at the bottom */
 .form-footer {
-    margin-top: 18px;
-    padding-top: 12px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding-top: 14px;
     border-top: 1px solid rgba(121, 138, 124, 0.2);
     text-align: center;
     font-size: 11.5px;
     color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 .form-footer p {
@@ -65,7 +68,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 11px;
 }
 
@@ -211,9 +214,10 @@ body {
     max-height: 100vh;
     background-color: #ffffff;
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    padding: clamp(24px, 4vh, 48px) clamp(32px, 5vw, 64px);
+    padding: clamp(24px, 3.5vh, 40px) clamp(32px, 5vw, 64px) clamp(16px, 2.5vh, 28px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(45, 92, 57, 0.25) transparent;
@@ -228,32 +232,44 @@ body {
     border-radius: 4px;
 }
 
-/* Form Content Wrapper - No box, seamlessly placed on the whole right side */
+/* Top Navigation Bar in Form Panel */
+.form-top-bar {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Form Content Wrapper - Perfectly Centered in remaining vertical space */
 .form-wrapper {
     width: 100%;
-    max-width: 480px;
+    max-width: 500px;
+    margin: auto auto;
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding: 12px 0;
+    flex-shrink: 0;
 }
 
 .form-wrapper.register-wrapper {
-    max-width: 540px;
-    padding: 0;
+    max-width: 560px;
+    padding: 6px 0;
 }
 
-/* Brand Logo directly ABOVE Login / Signup text - No pill box */
+/* Brand Logo directly ABOVE Login / Signup text - Prominent and centered */
 .form-brand-header {
     display: flex;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
 .form-brand-badge {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     text-decoration: none;
     padding: 0;
     background: transparent;
@@ -268,10 +284,10 @@ body {
 }
 
 .form-brand-logo {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     object-fit: contain;
-    filter: drop-shadow(0 2px 4px rgba(32, 67, 41, 0.15));
+    filter: drop-shadow(0 2px 5px rgba(32, 67, 41, 0.16));
 }
 
 .form-brand-text {
@@ -281,7 +297,7 @@ body {
 }
 
 .form-brand-text .brand-title {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--brand-dark-green);
     line-height: 1.15;
@@ -289,21 +305,21 @@ body {
 }
 
 .form-brand-text .brand-subtitle {
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 600;
     color: #4a6750;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.9px;
     text-transform: uppercase;
-    line-height: 1.1;
+    line-height: 1.15;
 }
 
 .welcome-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .welcome-header h1 {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
@@ -311,41 +327,41 @@ body {
 }
 
 .welcome-header p {
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 500;
     color: var(--text-secondary);
-    margin-top: 4px;
+    margin-top: 5px;
 }
 
-/* Forms & Inputs */
+/* Forms & Inputs - Extra high, spacious and proportional */
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
 }
 
 .form-row-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px;
 }
 
 .form-group label {
     display: block;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
     color: #233626;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .input-box input {
     width: 100%;
-    height: 46px;
+    height: 50px;
     padding: 0 16px;
     border: 1.5px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 9px;
     background-color: #ffffff;
-    font-size: 14px;
+    font-size: 14.5px;
     color: var(--text-primary);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -360,8 +376,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12.5px;
-    margin-top: 1px;
+    font-size: 13px;
+    margin-top: 2px;
 }
 
 .remember-label {
@@ -370,19 +386,19 @@ body {
     gap: 8px;
     cursor: pointer;
     color: var(--text-secondary);
-    font-size: 12.5px;
+    font-size: 13px;
 }
 
 .remember-label input {
     accent-color: var(--brand-primary-green);
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
 }
 
 .forgot-link {
     text-decoration: none;
     color: var(--brand-primary-green);
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 600;
 }
 
@@ -393,23 +409,23 @@ body {
 
 .btn-submit {
     width: 100%;
-    height: 46px;
+    height: 50px;
     background-color: var(--brand-primary-green);
     color: #ffffff;
     border: none;
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 9px;
+    font-size: 15.5px;
     font-weight: 600;
     cursor: pointer;
     margin-top: 4px;
     transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 12px rgba(45, 92, 57, 0.2);
+    box-shadow: 0 4px 14px rgba(45, 92, 57, 0.22);
 }
 
 .btn-submit:hover {
     background-color: var(--brand-hover-green);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(45, 92, 57, 0.28);
+    box-shadow: 0 6px 18px rgba(45, 92, 57, 0.3);
 }
 
 .btn-submit:active {
