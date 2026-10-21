@@ -2,126 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../../assets/images/favicon.jpg" type="image/x-icon">
-    <link rel="stylesheet" href="../../shared/css/common.css">
-    <link rel="stylesheet" href="../auth/auth.css">
-    <title>Admin Portal - UrbanScope | CD Miranda Realty</title>
-    <meta name="description" content="UrbanScope Administrator Portal. Restricted access for CD Miranda Realty internal administration and property management.">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../../shared/js/supabase.js"></script>
-    <script src="../auth/auth.js" defer></script>
+    <meta http-equiv="refresh" content="0; url=../auth/login.html">
+    <title>Redirecting to UrbanScope Sign-In...</title>
+    <script>
+        // Redirect to unified shared login page preserving query parameters
+        const search = window.location.search || '';
+        const hash = window.location.hash || '';
+        window.location.replace('../auth/login.html' + search + hash);
+    </script>
 </head>
-<body>
-
-    <div class="main-container">
-        
-        <!-- LEFT PANEL: Image, Branding & Showcase -->
-        <div class="showcase-panel">
-         
-            <img src="../../assets/images/Urban.jpg" alt="UrbanScope Property" class="showcase-img" id="slideImage">
-            <div class="overlay"></div>
-
-            <div class="showcase-header">
-                <div class="brand-badge">
-                    <img src="../../assets/images/logo-urban.png" alt="Logo" class="logo-icon" onerror="this.style.display='none'">
-                    <div class="brand-text">
-                        <h1>UrbanScope</h1>
-                        <h2>CD Miranda Realty</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="cursive-tagline">
-                Better Homes,<br>Brighter Futures
-            </div>
-
-            <div class="showcase-caption">
-                <h2 id="slideTitle">Your Next Home is<br>Just a Click away</h2>
-                <p id="slideDesc">Access property details, submit inquiries, upload your requirements, and track your journey.</p>
-                
-                <div class="dots-container">
-                    <button class="dot active" type="button" onclick="setSlide(0)" aria-label="Slide 1"></button>
-                    <button class="dot" type="button" onclick="setSlide(1)" aria-label="Slide 2"></button>
-                    <button class="dot" type="button" onclick="setSlide(2)" aria-label="Slide 3"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- RIGHT PANEL: Admin Login Form -->
-        <div class="form-panel">
-            <div class="form-wrapper">
-                
-                <div class="welcome-header">
-                    <div class="admin-badge-pill">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                        Admin Access Only
-                    </div>
-                    <h1>Admin Login</h1>
-                    <p>AUTHORIZED PERSONNEL ONLY</p>
-                </div>
-
-                <form action="dashboard.html" method="GET" class="auth-form" id="adminLoginForm">
-                    <div class="form-group">
-                        <label for="admin_id">Admin Username or Email</label>
-                        <div class="input-box">
-                            <input type="text" id="admin_id" name="admin_id" placeholder="urbanscope.cvsu@gmail.com or admin email" autocomplete="username" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="input-box has-toggle">
-                            <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
-                            <button type="button" class="toggle-pw" onclick="togglePassword('password', this)" aria-label="Show or hide password">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                                    <circle cx="12" cy="12" r="3"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-options">
-                        <label class="remember-label">
-                            <input type="checkbox" name="remember_admin">
-                            <span>Remember workstation</span>
-                        </label>
-                        <a href="#" class="forgot-link" onclick="alert('Contact the head system administrator to reset credentials.')">Forgot password?</a>
-                    </div>
-
-                    <button type="submit" class="btn-submit">Sign In to Dashboard</button>
-                </form>
-
-                <div class="admin-security-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    <span><strong>Restricted Portal:</strong> Unauthorized access attempts are monitored and recorded. For credential issues, contact the system administrator.</span>
-                </div>
-
-                <div class="register-prompt">
-                    <span>Not an administrator?</span>
-                    <a href="../auth/login.html">Return to User Login</a>
-                </div>
-
-                <div class="form-footer">
-                    <p>&copy; 2026 Miriam Lobren &bull; CD Miranda Realty</p>
-                    <div class="form-footer-links">
-                        <a href="../../index.html">Home</a> &bull;
-                        <a href="#">Privacy Policy</a> &bull;
-                        <a href="#">Terms of Service</a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-
-    <script src="login.js"></script>
+<body style="font-family: sans-serif; text-align: center; padding: 40px; color: #1b2e21;">
+    <p>Redirecting to the <a href="../auth/login.html">UrbanScope Sign-In Page</a>...</p>
 </body>
 </html>

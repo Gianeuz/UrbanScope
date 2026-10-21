@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('adminToken') || localStorage.getItem('supabase_token');
     const storedAdmin = JSON.parse(localStorage.getItem('adminUser') || '{}');
     if (!token && !storedAdmin.email) {
-        window.location.href = 'login.html';
+        window.location.href = '../auth/login.html';
         return;
     }
 
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('adminUser');
             localStorage.removeItem('supabase_token');
             if (typeof apiSignOut === 'function') apiSignOut();
-            window.location.href = 'login.html';
+            window.location.href = '../auth/login.html?logout=1';
         });
     });
 

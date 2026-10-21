@@ -103,14 +103,14 @@
                         </svg>
                         <span>Agent Management Portal</span>
                     </a>
-                    <a href="../admin/properties.html" class="sa-dropdown-item" role="menuitem">
+                    <button type="button" class="sa-dropdown-item" role="menuitem" data-goto-tab="properties">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="4" y="2" width="16" height="20" rx="2"></rect>
                             <line x1="9" y1="22" x2="9" y2="22.01"></line>
                             <line x1="15" y1="22" x2="15" y2="22.01"></line>
                         </svg>
                         <span>Properties Catalog</span>
-                    </a>
+                    </button>
                     <div class="profile-dropdown-divider"></div>
                     <button type="button" class="sa-dropdown-item sa-signout-btn profile-signout" id="saSignOutBtn">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -327,7 +327,7 @@
                                 <h3>RBAC Access Controls & System Authority</h3>
                                 <p>Active database trigger and verified administrative accounts</p>
                             </div>
-                            <span class="sa-badge-green">Trigger Online</span>
+                            <span class="sa-badge-green" id="saTriggerOnlineBadge">Trigger Online</span>
                         </div>
                         <div class="sa-card-body">
                             <div class="sa-authority-list">
@@ -417,22 +417,21 @@
                                     </span>
                                 </button>
 
-                                <a href="../admin/add-property.html" class="quick-action-item sa-action-btn">
+                                <button type="button" class="quick-action-item sa-action-btn" id="btnQuickReviewInquiries">
                                     <div class="quick-action-icon inquiry-icon">
                                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                                         </svg>
                                     </div>
-                                    <strong>Post New Property</strong>
-                                    <span>Add listing to public catalog</span>
+                                    <strong>Review Inquiries</strong>
+                                    <span>Audit client consultation requests</span>
                                     <span class="quick-action-arrow">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <line x1="5" y1="12" x2="19" y2="12"></line>
                                             <polyline points="12 5 19 12 12 19"></polyline>
                                         </svg>
                                     </span>
-                                </a>
+                                </button>
 
                                 <button type="button" class="quick-action-item sa-action-btn" id="btnQuickManageRoles">
                                     <div class="quick-action-icon add-icon">
@@ -549,16 +548,7 @@
                     <div>
                         <span class="section-eyebrow">CATALOG OVERSIGHT</span>
                         <h2>Property Catalog Oversight</h2>
-                        <p>Comprehensive audit of all real estate listings active across Miriam Lobren Realty.</p>
-                    </div>
-                    <div class="sa-pane-actions">
-                        <a href="../admin/add-property.html" class="primary-action-btn sa-btn-gold">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            <span>Add New Listing</span>
-                        </a>
+                        <p>Read-only audit of all listings across Miriam Lobren Realty. Listings are posted and edited by the Agent Admin.</p>
                     </div>
                 </div>
 
@@ -669,6 +659,13 @@
                                 <h3>Database Diagnostics</h3>
                                 <p>File structure and integrity check status</p>
                             </div>
+                            <button type="button" class="sa-btn-outline" id="btnRunIntegrity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <span>Run Check</span>
+                            </button>
                         </div>
                         <div class="sa-card-body">
                             <ul class="sa-diag-list">
@@ -682,15 +679,19 @@
                                 </li>
                                 <li>
                                     <span>Integrity Status</span>
-                                    <span class="sa-badge-green" id="diagIntegrity">OK (Verified)</span>
+                                    <span class="sa-badge-gray" id="diagIntegrity">Not checked yet</span>
+                                </li>
+                                <li>
+                                    <span>Foreign Key Violations</span>
+                                    <strong id="diagFkViolations">&mdash;</strong>
                                 </li>
                                 <li>
                                     <span>Role-Trigger Name</span>
-                                    <code>set_user_role_on_insert</code>
+                                    <code>trg_user_role_insert</code>
                                 </li>
                                 <li>
                                     <span>Trigger Status</span>
-                                    <span class="sa-badge-gold">Active & Enforcing</span>
+                                    <span class="sa-badge-gold" id="diagTriggerStatus">Active & Enforcing</span>
                                 </li>
                             </ul>
                         </div>
@@ -725,10 +726,10 @@
                                     <span class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
                                 </div>
                                 <div class="perm-row">
-                                    <span>Manage Property Listings</span>
+                                    <span>Post / Edit Property Listings</span>
                                     <span class="cross"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>
                                     <span class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-                                    <span class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                                    <span class="cross"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>
                                 </div>
                                 <div class="perm-row">
                                     <span>View Client Inquiries</span>

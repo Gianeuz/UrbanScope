@@ -20,7 +20,7 @@
         inquiry: basePath + 'pages/inquiry/inquiry.html',
         login: basePath + 'pages/auth/login.html',
         register: basePath + 'pages/auth/register.html',
-        adminLogin: basePath + 'pages/admin/login.html',
+        adminLogin: basePath + 'pages/auth/login.html',
         logo: basePath + 'assets/images/logo.png',
         images: basePath + 'assets/images/'
     };

@@ -296,9 +296,9 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
     if is_superadmin_path or is_admin_path:
         file_name = path.split("/")[-1].lower()
 
-        # Public files in portal directories (login page and static assets)
+        # Public files in portal directories (legacy login URL and static assets)
         is_public_portal_file = (
-            file_name in ("login.html", "login.js") or
+            file_name == "login.html" or
             file_name.endswith(".css") or
             file_name.endswith(".js.map") or
             file_name.endswith(".png") or
@@ -318,14 +318,14 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
             elif "access_token" in request.cookies:
                 token = request.cookies.get("access_token")
 
-            # 1. Unauthenticated visitors: redirect to Admin Login
+            # 1. Unauthenticated visitors: redirect to the shared login page
             if not token:
-                login_redirect = f"/pages/admin/login.html?redirect={request.url.path}"
+                login_redirect = f"/pages/auth/login.html?redirect={request.url.path.lstrip('/')}"
                 return RedirectResponse(url=login_redirect, status_code=status.HTTP_302_FOUND)
 
             payload = decode_access_token(token)
             if not payload:
-                login_redirect = "/pages/admin/login.html?reason=expired"
+                login_redirect = "/pages/auth/login.html?reason=expired"
                 return RedirectResponse(url=login_redirect, status_code=status.HTTP_302_FOUND)
 
             user_id = payload.get("sub") or payload.get("id")
@@ -336,7 +336,7 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
             conn.close()
 
             if not user_row:
-                return RedirectResponse(url="/pages/admin/login.html", status_code=status.HTTP_302_FOUND)
+                return RedirectResponse(url="/pages/auth/login.html", status_code=status.HTTP_302_FOUND)
 
             user_email = user_row["email"].lower().strip()
             user_role = user_row["role"]
@@ -816,7 +816,7 @@ def get_superadmin_overview(current_superadmin: dict = Depends(require_superadmi
     db_size_kb = round(db_path.stat().st_size / 1024, 2) if db_path.exists() else 0.0
 
     # Trigger health check
-    cursor.execute("SELECT name FROM sqlite_master WHERE type = 'trigger' AND name = 'set_user_role_on_insert'")
+    cursor.execute("SELECT name FROM sqlite_master WHERE type = 'trigger' AND name IN ('trg_user_role_insert', 'set_user_role_on_insert')")
     trigger_exists = bool(cursor.fetchone())
 
     conn.close()
@@ -944,6 +944,36 @@ def delete_user_account(user_id: int, current_superadmin: dict = Depends(require
     return {"success": True, "message": f"User account {target_email} deleted successfully."}
 
 
+@app.get("/api/superadmin/integrity", tags=["Superadmin"])
+def run_integrity_check(current_superadmin: dict = Depends(require_superadmin)):
+    """Runs SQLite integrity and foreign-key checks and verifies the role trigger."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("PRAGMA integrity_check")
+    integrity_rows = [row[0] for row in cursor.fetchall()]
+    integrity_ok = integrity_rows == ["ok"]
+
+    cursor.execute("PRAGMA foreign_key_check")
+    fk_violations = len(cursor.fetchall())
+
+    cursor.execute("SELECT name FROM sqlite_master WHERE type = 'trigger' AND name IN ('trg_user_role_insert', 'set_user_role_on_insert')")
+    trigger_active = bool(cursor.fetchone())
+
+    cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")
+    table_count = cursor.fetchone()[0]
+
+    conn.close()
+
+    return {
+        "success": integrity_ok and fk_violations == 0,
+        "integrity": "ok" if integrity_ok else "; ".join(integrity_rows[:5]),
+        "foreign_key_violations": fk_violations,
+        "trigger_active": trigger_active,
+        "table_count": table_count
+    }
+
+
 # ==========================================================
 # STATIC FILES & WEB HOSTING
 # ==========================================================
@@ -977,6 +1007,15 @@ def redirect_user_dashboard():
 def redirect_admin_properties_html():
     """Redirects legacy or alias admin properties link to propertylist.html."""
     return RedirectResponse(url="/pages/admin/propertylist.html", status_code=status.HTTP_302_FOUND)
+
+
+@app.get("/pages/admin/login.html", include_in_schema=False)
+def redirect_admin_login_html(request: Request):
+    """The separate admin login page was removed; everyone signs in on the shared login page."""
+    target = "/pages/auth/login.html"
+    if request.url.query:
+        target += f"?{request.url.query}"
+    return RedirectResponse(url=target, status_code=status.HTTP_302_FOUND)
 
 
 # Mount directories for modular pages and assets

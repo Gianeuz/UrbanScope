@@ -669,6 +669,16 @@ window.togglePropertyStatus = async function(id, currentStatus) {
 document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
     renderAgenda();
-
     loadDashboardData();
+
+    document.querySelectorAll('.profile-signout, .logout-link').forEach(el => {
+        el.addEventListener('click', () => {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            localStorage.removeItem('supabase_token');
+            localStorage.removeItem('urbanscope_jwt_token');
+            localStorage.removeItem('urbanscope_user');
+            if (typeof apiSignOut === 'function') apiSignOut();
+        });
+    });
 });

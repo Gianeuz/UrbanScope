@@ -1,9 +1,25 @@
 /**
- * UrbanScope - Client Login Controller
- * Handles credentials submission, Supabase authentication, and post-login redirection.
+ * UrbanScope - Shared Login Controller
+ * Single sign-in page for clients, admins, and the superadmin. Handles credentials
+ * submission, sign-out (?logout=1), and role-based post-login redirection.
  */
 
 const params = new URLSearchParams(window.location.search);
+
+// Admin / superadmin "Sign Out" links land here with ?logout=1 — clear the session
+// (localStorage + server cookie) and drop the flag from the URL.
+if (params.get('logout') === '1') {
+    if (typeof apiSignOut === 'function') {
+        apiSignOut();
+    } else {
+        localStorage.removeItem('urbanscope_jwt_token');
+        localStorage.removeItem('urbanscope_user');
+        localStorage.removeItem('adminUser');
+    }
+    params.delete('logout');
+    const rest = params.toString();
+    history.replaceState(null, '', window.location.pathname + (rest ? '?' + rest : ''));
+}
 const rawNext = params.get('redirect') || '';
 // Allow valid redirect paths relative to the frontend root (e.g. index.html, pages/properties/properties.html, pages/inquiry/inquiry.html)
 const safeNext = /^[A-Za-z0-9_\-\/]+\.html([?#][A-Za-z0-9_\-=&%.]*)?$/.test(rawNext) ? rawNext : 'index.html';
@@ -43,10 +59,11 @@ if (loginForm) {
                     (role === 'admin' || role === 'superadmin')
                 );
 
+                // Relative paths so this works from both the FastAPI server and Live Server
                 if (role === 'superadmin' && cleanEmail === 'urbanscope.cvsu@gmail.com') {
-                    window.location.href = res.data?.redirect_url || '../superadmin/dashboard.html';
+                    window.location.href = '../superadmin/dashboard.html';
                 } else if (isAdminUser) {
-                    window.location.href = res.data?.redirect_url || '../admin/dashboard.html';
+                    window.location.href = '../admin/dashboard.html';
                 } else {
                     // Normal user dashboard / destination
                     if (safeNext && safeNext !== 'index.html') {

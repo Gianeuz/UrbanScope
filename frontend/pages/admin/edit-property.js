@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const adminUser = localStorage.getItem("adminUser") || localStorage.getItem("urbanscope_user");
         if (!adminUser) {
             alert("Please log in as an administrator to manage listings.");
-            window.location.href = "login.html";
+            window.location.href = "../auth/login.html";
             return false;
         }
         return true;

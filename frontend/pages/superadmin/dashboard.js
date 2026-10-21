@@ -79,7 +79,16 @@
         // Actions
         btnRefreshStats: document.getElementById('btnRefreshStats'),
         btnQuickManageRoles: document.getElementById('btnQuickManageRoles'),
+        btnQuickReviewInquiries: document.getElementById('btnQuickReviewInquiries'),
         btnQuickRunIntegrity: document.getElementById('btnQuickRunIntegrity'),
+        btnRunIntegrity: document.getElementById('btnRunIntegrity'),
+
+        // Diagnostics
+        diagIntegrity: document.getElementById('diagIntegrity'),
+        diagFkViolations: document.getElementById('diagFkViolations'),
+        diagTriggerStatus: document.getElementById('diagTriggerStatus'),
+        saTriggerOnlineBadge: document.getElementById('saTriggerOnlineBadge'),
+        saTriggerStatusBadge: document.getElementById('saTriggerStatusBadge'),
 
         // Toast
         toastContainer: document.getElementById('saToastContainer')
@@ -189,7 +198,7 @@
             } catch (e) {}
 
             if (!user) {
-                window.location.href = '../admin/login.html?redirect=/pages/superadmin/dashboard.html';
+                window.location.href = '../auth/login.html?redirect=pages/superadmin/dashboard.html';
                 return false;
             }
 
@@ -211,7 +220,7 @@
             return true;
         } catch (err) {
             console.error('Superadmin verification error:', err);
-            window.location.href = '../admin/login.html';
+            window.location.href = '../auth/login.html';
             return false;
         }
     }
@@ -255,9 +264,63 @@
                 if (elements.usersCountBadge) elements.usersCountBadge.textContent = m.total_users ?? '--';
                 if (elements.propsCountBadge) elements.propsCountBadge.textContent = m.total_properties ?? '--';
                 if (elements.inqCountBadge) elements.inqCountBadge.textContent = m.total_inquiries ?? '--';
+
+                if (elements.saTriggerOnlineBadge) {
+                    elements.saTriggerOnlineBadge.textContent = m.trigger_active ? 'Trigger Online' : 'Trigger Inactive';
+                    elements.saTriggerOnlineBadge.className = m.trigger_active ? 'sa-badge-green' : 'sa-badge-gray';
+                }
+                if (elements.saTriggerStatusBadge) {
+                    elements.saTriggerStatusBadge.textContent = m.trigger_active ? 'Trigger: Active' : 'Trigger: Inactive';
+                }
             }
         } catch (err) {
             console.warn('Overview fetch notice:', err);
+        }
+    }
+
+    // 1b. Real Database Integrity Check
+    async function executeIntegrityCheck(silent = false) {
+        try {
+            if (!silent) showToast('Running SQLite integrity checks...');
+            const res = await fetch(`${getApiBase()}/superadmin/integrity`, {
+                headers: getAuthHeaders()
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (elements.diagIntegrity) {
+                    if (data.success) {
+                        elements.diagIntegrity.className = 'sa-badge-green';
+                        elements.diagIntegrity.textContent = 'OK (0 Errors)';
+                    } else {
+                        elements.diagIntegrity.className = 'sa-badge-red';
+                        elements.diagIntegrity.textContent = data.integrity || 'Issues Found';
+                    }
+                }
+                if (elements.diagFkViolations) {
+                    elements.diagFkViolations.textContent = `${data.foreign_key_violations || 0} Violations`;
+                    elements.diagFkViolations.style.color = (data.foreign_key_violations === 0) ? '#15803d' : '#b91c1c';
+                }
+                if (elements.diagTriggerStatus) {
+                    elements.diagTriggerStatus.textContent = data.trigger_active ? 'Active & Enforcing' : 'Inactive';
+                    elements.diagTriggerStatus.className = data.trigger_active ? 'sa-badge-gold' : 'sa-badge-gray';
+                }
+                if (elements.saTriggerOnlineBadge) {
+                    elements.saTriggerOnlineBadge.textContent = data.trigger_active ? 'Trigger Online' : 'Trigger Inactive';
+                    elements.saTriggerOnlineBadge.className = data.trigger_active ? 'sa-badge-green' : 'sa-badge-gray';
+                }
+                if (elements.saTriggerStatusBadge) {
+                    elements.saTriggerStatusBadge.textContent = data.trigger_active ? 'Trigger: Active' : 'Trigger: Inactive';
+                }
+                if (!silent) {
+                    showToast(`SQLite integrity check: ${data.success ? 'PASSED (0 violations)' : 'Issues detected'}.`);
+                }
+            } else {
+                if (!silent) showToast('Integrity check endpoint returned HTTP ' + res.status, true);
+            }
+        } catch (err) {
+            console.error('Integrity check error:', err);
+            if (!silent) showToast('Failed to run integrity check.', true);
         }
     }
 
@@ -443,7 +506,7 @@
                         <small class="text-muted">${escapeHtml(inq.client_email)} · ${escapeHtml(inq.client_phone || '')}</small>
                     </td>
                     <td><strong>${escapeHtml(inq.property_title || 'General Consultation')}</strong></td>
-                    <td><span style="font-size:0.82rem;color:var(--sa-text-muted)">${escapeHtml((inq.message || '').substring(0, 70))}...</span></td>
+                    <td><span style="font-size:0.82rem;color:var(--sa-text-muted)" title="${escapeHtml(inq.message || '')}">${escapeHtml((inq.message || '').substring(0, 70))}${(inq.message || '').length > 70 ? '...' : ''}</span></td>
                     <td>${statusBadge}</td>
                     <td>${formatDate(inq.created_at)}</td>
                 </tr>
@@ -635,18 +698,35 @@
         });
     }
 
-    // Global Search
+    // Global Search: searches active tab or intelligently routes to users/properties/inquiries
     if (elements.globalSearch) {
         elements.globalSearch.addEventListener('input', (e) => {
             const q = e.target.value.toLowerCase().trim();
-            if (!q) return;
+            const activePane = document.querySelector('.sa-tab-pane.active');
+            const activeTabId = activePane ? activePane.id.replace('pane-', '') : 'overview';
 
-            // Switch to users tab if searching emails
-            if (q.includes('@')) {
-                switchTab('users');
-                if (elements.userFilterInput) {
-                    elements.userFilterInput.value = q;
-                    applyUserFilters();
+            if (activeTabId === 'users' && elements.userFilterInput) {
+                elements.userFilterInput.value = q;
+                applyUserFilters();
+            } else if (activeTabId === 'properties' && elements.propFilterInput) {
+                elements.propFilterInput.value = q;
+                applyPropFilters();
+            } else if (activeTabId === 'inquiries' && elements.inqFilterInput) {
+                elements.inqFilterInput.value = q;
+                elements.inqFilterInput.dispatchEvent(new Event('input'));
+            } else if (q) {
+                if (q.includes('@')) {
+                    switchTab('users');
+                    if (elements.userFilterInput) {
+                        elements.userFilterInput.value = q;
+                        applyUserFilters();
+                    }
+                } else if (/villa|townhouse|condo|house|cavite|piñas|lot/i.test(q)) {
+                    switchTab('properties');
+                    if (elements.propFilterInput) {
+                        elements.propFilterInput.value = q;
+                        applyPropFilters();
+                    }
                 }
             }
         });
@@ -673,14 +753,38 @@
         });
     });
 
+    // Dropdown items that navigate to specific tabs (e.g. Properties Catalog)
+    document.querySelectorAll('[data-goto-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-goto-tab');
+            if (tabId) {
+                switchTab(tabId);
+                if (elements.profileBtn && elements.profileMenu) {
+                    elements.profileBtn.setAttribute('aria-expanded', 'false');
+                    elements.profileMenu.hidden = true;
+                }
+            }
+        });
+    });
+
     if (elements.btnQuickManageRoles) {
         elements.btnQuickManageRoles.addEventListener('click', () => switchTab('users'));
+    }
+
+    if (elements.btnQuickReviewInquiries) {
+        elements.btnQuickReviewInquiries.addEventListener('click', () => switchTab('inquiries'));
     }
 
     if (elements.btnQuickRunIntegrity) {
         elements.btnQuickRunIntegrity.addEventListener('click', () => {
             switchTab('system');
-            showToast('SQLite integrity check verified: OK. Triggers active.');
+            executeIntegrityCheck(false);
+        });
+    }
+
+    if (elements.btnRunIntegrity) {
+        elements.btnRunIntegrity.addEventListener('click', () => {
+            executeIntegrityCheck(false);
         });
     }
 
@@ -691,6 +795,7 @@
             await loadUsers();
             await loadProperties();
             await loadInquiries();
+            await executeIntegrityCheck(true);
             showToast('Live metrics refreshed.');
         });
     }
@@ -712,7 +817,7 @@
         });
     }
 
-    // Sign Out
+    // Sign Out -> Proceed to shared login page with ?logout=1
     if (elements.signOutBtn) {
         elements.signOutBtn.addEventListener('click', async () => {
             if (typeof apiSignOut === 'function') {
@@ -720,8 +825,9 @@
             } else {
                 localStorage.removeItem('urbanscope_jwt_token');
                 localStorage.removeItem('urbanscope_user');
+                localStorage.removeItem('adminUser');
             }
-            window.location.href = '../admin/login.html';
+            window.location.href = '../auth/login.html?logout=1';
         });
     }
 
@@ -754,7 +860,8 @@
             loadOverview(),
             loadUsers(),
             loadProperties(),
-            loadInquiries()
+            loadInquiries(),
+            executeIntegrityCheck(true)
         ]);
 
         // Deep linking / direct tab support via ?tab=... or #...

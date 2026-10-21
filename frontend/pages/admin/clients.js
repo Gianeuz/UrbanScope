@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('adminToken') || localStorage.getItem('supabase_token');
     const role = localStorage.getItem('user_role') || (localStorage.getItem('adminUser') ? 'admin' : '');
     if (!token && !localStorage.getItem('adminUser')) {
-        window.location.href = 'login.html';
+        window.location.href = '../auth/login.html';
         return;
     }
 
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('adminUser');
             localStorage.removeItem('supabase_token');
             if (typeof apiSignOut === 'function') apiSignOut();
-            window.location.href = 'login.html';
+            window.location.href = '../auth/login.html?logout=1';
         });
     });
 

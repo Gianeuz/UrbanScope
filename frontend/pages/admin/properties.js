@@ -280,3 +280,14 @@ if (profileButton && profileDropdown) {
         if (event.key === "Escape") closeProfileDropdown();
     });
 }
+
+document.querySelectorAll('.profile-signout, .logout-link').forEach(el => {
+    el.addEventListener('click', () => {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUser');
+        localStorage.removeItem('supabase_token');
+        localStorage.removeItem('urbanscope_jwt_token');
+        localStorage.removeItem('urbanscope_user');
+        if (typeof apiSignOut === 'function') apiSignOut();
+    });
+});

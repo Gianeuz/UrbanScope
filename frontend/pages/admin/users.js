@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. Auth check
     const token = localStorage.getItem('adminToken') || localStorage.getItem('supabase_token');
     if (!token && !localStorage.getItem('adminUser')) {
-        window.location.href = 'login.html';
+        window.location.href = '../auth/login.html';
         return;
     }
 
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('adminUser');
             localStorage.removeItem('supabase_token');
             if (typeof apiSignOut === 'function') apiSignOut();
-            window.location.href = 'login.html';
+            window.location.href = '../auth/login.html?logout=1';
         });
     });
 
