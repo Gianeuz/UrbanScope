@@ -428,12 +428,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 propertyForm.reset();
-                window.location.href = "properties.html";
+                window.location.href = "propertylist.html";
 
             } catch (error) {
                 console.error("Unable to save property:", error);
                 alert("Property saved to database! Redirecting to properties list.");
-                window.location.href = "properties.html";
+                window.location.href = "propertylist.html";
             }
         });
     }

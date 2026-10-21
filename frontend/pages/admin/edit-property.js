@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!propertyId || !/^\d+$/.test(propertyId)) {
         alert("Invalid or missing property ID.");
-        window.location.href = "properties.html";
+        window.location.href = "propertylist.html";
         return;
     }
 
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!data) {
             alert("The selected property was not found.");
-            window.location.href = "properties.html";
+            window.location.href = "propertylist.html";
             return;
         }
 
@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             } catch (e) {}
 
             alert("✓ Property updated successfully!");
-            window.location.href = "properties.html";
+            window.location.href = "propertylist.html";
         } catch (error) {
             console.error("Error updating property:", error);
             alert("Could not update property: " + error.message);
