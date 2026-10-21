@@ -48,16 +48,16 @@ body {
 
 /* In-form compact footer */
 .form-footer {
-    margin-top: 10px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(121, 138, 124, 0.22);
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(121, 138, 124, 0.2);
     text-align: center;
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--text-muted);
 }
 
 .form-footer p {
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     color: var(--text-secondary);
 }
 
@@ -66,7 +66,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 10.5px;
+    font-size: 11px;
 }
 
 .form-footer-links a {
@@ -203,17 +203,17 @@ body {
     border-radius: 10px;
 }
 
-/* Right Form Panel - 56% Full Screen */
+/* Right Form Panel - Seamless Full Screen Right Side */
 .form-panel {
     flex: 1;
-    width: 56%;
+    width: 58%;
     height: 100vh;
     max-height: 100vh;
-    background-color: var(--bg-tint);
+    background-color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(16px, 2.5vh, 32px) clamp(20px, 3vw, 40px);
+    padding: clamp(24px, 4vh, 48px) clamp(32px, 5vw, 64px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(45, 92, 57, 0.25) transparent;
@@ -228,27 +228,26 @@ body {
     border-radius: 4px;
 }
 
-/* Auth Card Wrapper - Clean, Grounded Card Container */
+/* Form Content Wrapper - No box, seamlessly placed on the whole right side */
 .form-wrapper {
     width: 100%;
-    max-width: 440px;
-    background: #ffffff;
-    border-radius: 18px;
-    padding: 30px 34px 22px;
-    box-shadow: 0 10px 30px rgba(23, 43, 29, 0.07), 0 1px 4px rgba(23, 43, 29, 0.04);
-    border: 1px solid rgba(121, 138, 124, 0.2);
+    max-width: 480px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 .form-wrapper.register-wrapper {
-    max-width: 520px;
-    padding: 26px 34px 20px;
+    max-width: 540px;
+    padding: 0;
 }
 
-/* Brand Logo Badge directly ABOVE Login / Signup text */
+/* Brand Logo directly ABOVE Login / Signup text - No pill box */
 .form-brand-header {
     display: flex;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .form-brand-badge {
@@ -256,25 +255,23 @@ body {
     align-items: center;
     gap: 12px;
     text-decoration: none;
-    padding: 6px 16px 6px 10px;
-    border-radius: 50px;
-    background: rgba(45, 92, 57, 0.06);
-    border: 1px solid rgba(45, 92, 57, 0.15);
-    transition: all 0.2s ease;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .form-brand-badge:hover {
-    background: rgba(45, 92, 57, 0.12);
-    border-color: rgba(45, 92, 57, 0.28);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(45, 92, 57, 0.12);
+    opacity: 0.9;
 }
 
 .form-brand-logo {
-    width: 38px;
-    height: 38px;
+    width: 46px;
+    height: 46px;
     object-fit: contain;
-    filter: drop-shadow(0 2px 4px rgba(32, 67, 41, 0.18));
+    filter: drop-shadow(0 2px 4px rgba(32, 67, 41, 0.15));
 }
 
 .form-brand-text {
@@ -284,15 +281,15 @@ body {
 }
 
 .form-brand-text .brand-title {
-    font-size: 17px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--brand-dark-green);
     line-height: 1.15;
-    letter-spacing: -0.2px;
+    letter-spacing: -0.3px;
 }
 
 .form-brand-text .brand-subtitle {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     color: #4a6750;
     letter-spacing: 0.8px;
@@ -302,53 +299,53 @@ body {
 
 .welcome-header {
     text-align: center;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
 }
 
 .welcome-header h1 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
 }
 
 .welcome-header p {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text-secondary);
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 /* Forms & Inputs */
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 11px;
+    gap: 14px;
 }
 
 .form-row-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 14px;
 }
 
 .form-group label {
     display: block;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 600;
     color: #233626;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 
 .input-box input {
     width: 100%;
-    height: 42px;
-    padding: 0 14px;
+    height: 46px;
+    padding: 0 16px;
     border: 1.5px solid var(--border-color);
     border-radius: 8px;
     background-color: #ffffff;
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--text-primary);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -396,15 +393,15 @@ body {
 
 .btn-submit {
     width: 100%;
-    height: 44px;
+    height: 46px;
     background-color: var(--brand-primary-green);
     color: #ffffff;
     border: none;
     border-radius: 8px;
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 3px;
+    margin-top: 4px;
     transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
     box-shadow: 0 4px 12px rgba(45, 92, 57, 0.2);
 }
@@ -423,7 +420,7 @@ body {
 .divider {
     position: relative;
     text-align: center;
-    margin: 10px 0;
+    margin: 14px 0;
 }
 
 .divider::before {
@@ -439,15 +436,15 @@ body {
 .divider span {
     position: relative;
     background-color: #ffffff;
-    padding: 0 12px;
-    font-size: 12px;
+    padding: 0 14px;
+    font-size: 12.5px;
     font-weight: 500;
     color: var(--text-muted);
 }
 
 .btn-google {
     width: 100%;
-    height: 42px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -455,7 +452,7 @@ body {
     background-color: #ffffff;
     border: 1.5px solid #c2d2c5;
     border-radius: 8px;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 600;
     color: #283a2d;
     cursor: pointer;
@@ -473,9 +470,9 @@ body {
 }
 
 .register-prompt {
-    margin-top: 10px;
+    margin-top: 14px;
     text-align: center;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--text-secondary);
 }
 
@@ -864,9 +861,9 @@ input:user-invalid {
 .back-home-link {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    margin-bottom: 8px;
-    font-size: 0.8rem;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
     font-weight: 600;
     color: #2d5c39;
     text-decoration: none;
