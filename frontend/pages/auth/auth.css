@@ -259,17 +259,17 @@ body {
     padding: 6px 0;
 }
 
-/* Brand Logo directly ABOVE Login / Signup text - Prominent and centered */
+/* Brand Logo directly ABOVE Login / Signup text - Big, prominent, and high above */
 .form-brand-header {
     display: flex;
     justify-content: center;
-    margin-bottom: 18px;
+    margin-bottom: 28px;
 }
 
 .form-brand-badge {
     display: inline-flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     text-decoration: none;
     padding: 0;
     background: transparent;
@@ -279,15 +279,15 @@ body {
 }
 
 .form-brand-badge:hover {
-    transform: translateY(-1px);
-    opacity: 0.9;
+    transform: translateY(-2px);
+    opacity: 0.92;
 }
 
 .form-brand-logo {
-    width: 50px;
-    height: 50px;
+    width: 68px;
+    height: 68px;
     object-fit: contain;
-    filter: drop-shadow(0 2px 5px rgba(32, 67, 41, 0.16));
+    filter: drop-shadow(0 3px 6px rgba(32, 67, 41, 0.18));
 }
 
 .form-brand-text {
@@ -297,40 +297,34 @@ body {
 }
 
 .form-brand-text .brand-title {
-    font-size: 24px;
+    font-size: 34px;
     font-weight: 700;
     color: var(--brand-dark-green);
-    line-height: 1.15;
-    letter-spacing: -0.3px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
 }
 
 .form-brand-text .brand-subtitle {
-    font-size: 11.5px;
+    font-size: 13px;
     font-weight: 600;
     color: #4a6750;
-    letter-spacing: 0.9px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
-    line-height: 1.15;
+    line-height: 1.2;
+    margin-top: 2px;
 }
 
 .welcome-header {
     text-align: center;
-    margin-bottom: 22px;
+    margin-bottom: 26px;
 }
 
 .welcome-header h1 {
-    font-size: 30px;
+    font-size: 38px;
     font-weight: 700;
     color: var(--text-primary);
-    line-height: 1.2;
-    letter-spacing: -0.4px;
-}
-
-.welcome-header p {
-    font-size: 14.5px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-top: 5px;
+    line-height: 1.15;
+    letter-spacing: -0.6px;
 }
 
 /* Forms & Inputs - Extra high, spacious and proportional */
