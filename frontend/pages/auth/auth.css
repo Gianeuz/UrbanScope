@@ -215,9 +215,9 @@ body {
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
-    padding: clamp(24px, 3.5vh, 40px) clamp(32px, 5vw, 64px) clamp(16px, 2.5vh, 28px);
+    justify-content: center;
+    padding: clamp(14px, 2vh, 22px) clamp(24px, 4vw, 48px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(45, 92, 57, 0.25) transparent;
@@ -232,44 +232,115 @@ body {
     border-radius: 4px;
 }
 
+/* Form Container - Sits higher up and perfectly proportional */
+.form-container {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    margin: -60px auto 0;
+}
+
+.form-container.register-container {
+    max-width: 530px;
+    margin: -80px auto 0;
+}
+
+.register-container .form-brand-header {
+    margin-bottom: 12px;
+}
+
+.register-container .welcome-header {
+    margin-bottom: 12px;
+}
+
+.register-container .welcome-header h1 {
+    font-size: 31px;
+}
+
+.register-container .auth-form {
+    gap: 8px;
+}
+
+.register-container .form-row-2col {
+    gap: 8px;
+}
+
+.register-container .form-group label {
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.register-container .input-box input {
+    height: 40px;
+}
+
+.register-container .btn-submit {
+    height: 42px;
+    margin-top: 1px;
+}
+
+.register-container .divider {
+    margin: 8px 0;
+}
+
+.register-container .btn-google {
+    height: 40px;
+}
+
+.register-container .register-prompt {
+    margin-top: 8px;
+}
+
+.register-container .form-footer {
+    margin-top: 10px;
+    padding-top: 8px;
+}
+
 /* Top Navigation Bar in Form Panel */
 .form-top-bar {
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    flex-shrink: 0;
 }
 
-/* Form Content Wrapper - Perfectly Centered in remaining vertical space */
+.back-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d5c39;
+    text-decoration: none;
+    transition: transform 0.2s, color 0.2s;
+}
+.back-home-link:hover { transform: translateX(-3px); color: #1a3b23; }
+
+/* Form Content Wrapper */
 .form-wrapper {
     width: 100%;
-    max-width: 500px;
-    margin: auto auto;
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 12px 0;
-    flex-shrink: 0;
+    padding: 0;
 }
 
 .form-wrapper.register-wrapper {
-    max-width: 560px;
-    padding: 6px 0;
+    padding: 0;
 }
 
 /* Brand Logo directly ABOVE Login / Signup text - Big, prominent, and high above */
 .form-brand-header {
     display: flex;
     justify-content: center;
-    margin-bottom: 28px;
+    margin-bottom: 18px;
 }
 
 .form-brand-badge {
     display: inline-flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     text-decoration: none;
     padding: 0;
     background: transparent;
@@ -284,8 +355,8 @@ body {
 }
 
 .form-brand-logo {
-    width: 68px;
-    height: 68px;
+    width: 60px;
+    height: 60px;
     object-fit: contain;
     filter: drop-shadow(0 3px 6px rgba(32, 67, 41, 0.18));
 }
@@ -297,7 +368,7 @@ body {
 }
 
 .form-brand-text .brand-title {
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 700;
     color: var(--brand-dark-green);
     line-height: 1.1;
@@ -305,7 +376,7 @@ body {
 }
 
 .form-brand-text .brand-subtitle {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #4a6750;
     letter-spacing: 1.2px;
@@ -316,46 +387,46 @@ body {
 
 .welcome-header {
     text-align: center;
-    margin-bottom: 26px;
+    margin-bottom: 18px;
 }
 
 .welcome-header h1 {
-    font-size: 38px;
+    font-size: 35px;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.15;
     letter-spacing: -0.6px;
 }
 
-/* Forms & Inputs - Extra high, spacious and proportional */
+/* Forms & Inputs */
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 11px;
 }
 
 .form-row-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 10px;
 }
 
 .form-group label {
     display: block;
-    font-size: 13.5px;
+    font-size: 12.5px;
     font-weight: 600;
     color: #233626;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .input-box input {
     width: 100%;
-    height: 50px;
-    padding: 0 16px;
+    height: 44px;
+    padding: 0 15px;
     border: 1.5px solid var(--border-color);
-    border-radius: 9px;
+    border-radius: 8px;
     background-color: #ffffff;
-    font-size: 14.5px;
+    font-size: 13.5px;
     color: var(--text-primary);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -370,8 +441,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 13px;
-    margin-top: 2px;
+    font-size: 12.5px;
+    margin-top: 1px;
 }
 
 .remember-label {
@@ -380,19 +451,19 @@ body {
     gap: 8px;
     cursor: pointer;
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 12.5px;
 }
 
 .remember-label input {
     accent-color: var(--brand-primary-green);
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
 }
 
 .forgot-link {
     text-decoration: none;
     color: var(--brand-primary-green);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
 }
 
@@ -403,23 +474,23 @@ body {
 
 .btn-submit {
     width: 100%;
-    height: 50px;
+    height: 44px;
     background-color: var(--brand-primary-green);
     color: #ffffff;
     border: none;
-    border-radius: 9px;
-    font-size: 15.5px;
+    border-radius: 8px;
+    font-size: 14.5px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 4px;
+    margin-top: 2px;
     transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 14px rgba(45, 92, 57, 0.22);
+    box-shadow: 0 4px 12px rgba(45, 92, 57, 0.2);
 }
 
 .btn-submit:hover {
     background-color: var(--brand-hover-green);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(45, 92, 57, 0.3);
+    box-shadow: 0 6px 16px rgba(45, 92, 57, 0.28);
 }
 
 .btn-submit:active {
@@ -430,7 +501,7 @@ body {
 .divider {
     position: relative;
     text-align: center;
-    margin: 14px 0;
+    margin: 10px 0;
 }
 
 .divider::before {
@@ -447,14 +518,14 @@ body {
     position: relative;
     background-color: #ffffff;
     padding: 0 14px;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-muted);
 }
 
 .btn-google {
     width: 100%;
-    height: 44px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -462,7 +533,7 @@ body {
     background-color: #ffffff;
     border: 1.5px solid #c2d2c5;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 600;
     color: #283a2d;
     cursor: pointer;
@@ -480,10 +551,34 @@ body {
 }
 
 .register-prompt {
-    margin-top: 14px;
+    margin-top: 10px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-secondary);
+}
+
+/* Bottom panel footer */
+.form-footer {
+    width: 100%;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(121, 138, 124, 0.18);
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.form-footer p {
+    margin-bottom: 2px;
+    color: var(--text-secondary);
+}
+
+.form-footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 10.5px;
 }
 
 .register-prompt a {
