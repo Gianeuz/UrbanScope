@@ -170,8 +170,8 @@
 .category-tabs {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 10px;
     flex: 1;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -670,6 +670,13 @@
     }
 }
 
+@media (max-width: 900px) {
+    .category-tabs {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+}
+
 @media (max-width: 768px) {
     .hero {
         padding: 40px 5% 44px;
@@ -729,6 +736,11 @@
         padding: 4px 6px;
         gap: 6px;
         margin-bottom: 24px;
+    }
+
+    .category-tabs {
+        justify-content: flex-start;
+        gap: 6px;
     }
 
     .cat-tab {
