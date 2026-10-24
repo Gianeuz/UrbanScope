@@ -27,15 +27,12 @@
                 </svg>
             </button>
 
-            <div class="brand-badge">
-                <img src="../../assets/images/logo-urban.png" alt="Miriam Lobren Real Estate" class="logo-icon"
-                    onerror="this.style.display='none'">
-
+            <a href="dashboard.html" class="brand-badge">
+                <img src="../../assets/images/logo-urban.png" alt="UrbanScope Logo" class="logo-icon">
                 <div class="brand-text">
-                    <h1>Miriam Lobren</h1>
-                    <h2>Real Estate Agent</h2>
+                    <h1>UrbanScope</h1>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="topbar-search">
@@ -108,25 +105,17 @@
     <aside class="admin-sidebar" id="adminSidebar">
 
         <div class="sidebar-header">
-
             <div class="brand-badge">
-                <img src="../../assets/images/logo-urban.png" alt="Miriam Lobren Real Estate" class="logo-icon"
-                    onerror="this.style.display='none'">
-
+                <img src="../../assets/images/logo-urban.png" alt="UrbanScope Logo" class="logo-icon">
                 <div class="brand-text">
-                    <h1>Miriam Lobren</h1>
-                    <h2>Real Estate Agent</h2>
+                    <h1>UrbanScope</h1>
                 </div>
             </div>
 
-            <button class="close-sidebar-btn" id="closeSidebarBtn" type="button" aria-label="Close sidebar">
-                &times;
-            </button>
+            <button class="close-sidebar-btn" id="closeSidebarBtn" type="button" aria-label="Close sidebar">&times;</button>
         </div>
 
-
         <nav class="sidebar-nav">
-
             <a href="dashboard.html" class="nav-item active">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -137,7 +126,7 @@
 
             <a href="propertylist.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
                     <line x1="9" y1="22" x2="9" y2="22.01"></line>
                     <line x1="15" y1="22" x2="15" y2="22.01"></line>
                     <line x1="9" y1="6" x2="9" y2="6.01"></line>
@@ -162,35 +151,13 @@
                 <span>Clients</span>
             </a>
 
-            <!-- INQUIRIES SUB-MENU -->
-            <div class="nav-group open" id="inquiriesGroup">
-                <div class="nav-item group-header" id="inquiriesToggle">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                    <span>Inquiries</span>
-                    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
-
-                <div class="sub-menu">
-                    <a href="clients.html" class="sub-item">
-                        <span>All Inquiries</span>
-                    </a>
-                    <a href="clients.html?status=Under%20Review" class="sub-item">
-                        <span>Pending Review</span>
-                    </a>
-                    <a href="clients.html?status=Approved" class="sub-item">
-                        <span>Approved</span>
-                    </a>
-                    <a href="clients.html?status=Completed" class="sub-item">
-                        <span>Completed</span>
-                    </a>
-                </div>
-            </div>
+            <a href="clients.html?view=inquiries" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <span>Inquiries</span>
+            </a>
 
             <a href="users.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -203,26 +170,18 @@
             <a href="profile.html" class="nav-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"></circle>
-                    <path
-                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                    </path>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
-                <span>Profile Settings</span>
+                <span>Settings</span>
             </a>
-
         </nav>
 
-
         <div class="sidebar-footer">
-            <div class="cursive-tagline">
-                Better Homes,<br>Brighter Futures
-            </div>
-
             <a href="../auth/login.html?logout=1" class="logout-link">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 17l5-5-5-5"></path>
+                    <path d="M15 12H3"></path>
+                    <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path>
                 </svg>
                 <span>Sign Out</span>
             </a>
