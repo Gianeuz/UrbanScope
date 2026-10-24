@@ -633,6 +633,9 @@ function renderDashboardProperties(list) {
                     <button type="button" onclick="togglePropertyStatus(${p.id}, '${displayStatus}')" style="padding:5px 12px; border-radius:4px; cursor:pointer; font-size:0.82rem; font-weight:600; transition:all 0.2s; ${isSold ? 'background:#dcfce7; color:#15803d; border:1px solid #86efac;' : 'background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;'}">
                         ${isSold ? 'Mark Available' : 'Mark as Sold'}
                     </button>
+                    <button type="button" onclick="deletePropertyListing(${p.id}, '${title.replace(/'/g, "\\'")}')" style="padding:5px 12px; border-radius:4px; cursor:pointer; font-size:0.82rem; font-weight:600; transition:all 0.2s; background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;">
+                        Delete
+                    </button>
                 </div>
             </td>
         </tr>
@@ -661,6 +664,36 @@ window.togglePropertyStatus = async function(id, currentStatus) {
     } catch (err) {
         console.error("Dashboard toggle status error:", err);
         alert("Failed to update property status. Please check your connection.");
+    }
+};
+
+window.deletePropertyListing = async function(id, title) {
+    const propTitle = title || 'this property';
+    if (!confirm(`Are you sure you want to permanently delete "${propTitle}"?\n\nThis will remove it from the catalog and database.`)) {
+        return;
+    }
+
+    try {
+        let success = false;
+        if (typeof apiDeleteProperty === 'function') {
+            success = await apiDeleteProperty(id);
+        } else {
+            ['properties', 'cached_live_properties', 'urbanScopeProperties'].forEach(key => {
+                const list = JSON.parse(localStorage.getItem(key) || '[]');
+                const filtered = list.filter(p => String(p.id) !== String(id));
+                localStorage.setItem(key, JSON.stringify(filtered));
+            });
+            success = true;
+        }
+
+        if (success) {
+            await loadDashboardData();
+        } else {
+            alert("Could not delete property. Please verify your admin session.");
+        }
+    } catch (err) {
+        console.error("Dashboard delete property error:", err);
+        alert("Failed to delete property: " + (err.message || "Unknown error"));
     }
 };
 

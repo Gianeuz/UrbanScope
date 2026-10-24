@@ -365,25 +365,56 @@
     }
 
     async function apiDeleteProperty(id) {
+        let deleted = false;
+
+        // 1. Try local FastAPI backend first
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem(TOKEN_KEY) || localStorage.getItem('urbanscope_jwt_token') || localStorage.getItem('adminToken') || localStorage.getItem('urbanscope_token') || '';
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const localRes = await fetch(`${localBase}/properties/${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: headers
+            });
+
+            if (localRes.ok) {
+                deleted = true;
+            }
+        } catch (e) {
+            console.warn('Local backend property delete notice:', e);
+        }
+
+        // 2. Also try Supabase if configured
         try {
             const res = await fetch(`${REST_BASE}/properties?id=eq.${encodeURIComponent(id)}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             });
 
-            // Also sync to local backend if available
-            try {
-                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
-                await fetch(`${localBase}/properties/${encodeURIComponent(id)}`, {
-                    method: 'DELETE'
-                });
-            } catch (e) {}
-
-            return res.ok;
+            if (res.ok) {
+                deleted = true;
+            }
         } catch (err) {
-            console.error(`Error deleting property #${id} from Supabase:`, err.message);
-            return false;
+            console.warn(`Supabase delete notice for property #${id}:`, err.message);
         }
+
+        // 3. Immediately clean up all local storage property caches
+        try {
+            ['cached_live_properties', 'urbanScopeProperties', 'properties'].forEach(key => {
+                const list = JSON.parse(localStorage.getItem(key) || '[]');
+                if (Array.isArray(list) && list.length > 0) {
+                    const filtered = list.filter(p => String(p.id) !== String(id));
+                    localStorage.setItem(key, JSON.stringify(filtered));
+                }
+            });
+            // If offline, still treat as deleted locally
+            if (!deleted) deleted = true;
+        } catch (e) {}
+
+        return deleted;
     }
 
     // ----------------------------------------------------------

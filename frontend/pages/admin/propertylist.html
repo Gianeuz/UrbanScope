@@ -251,6 +251,30 @@
             </form>
         </div>
     </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="delete-modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <div class="delete-modal-content">
+            <div class="delete-icon">!</div>
+            <h2 id="deleteModalTitle">Delete Property Listing?</h2>
+            <p>
+                Are you sure you want to permanently delete
+                <strong id="propertyToDelete">this property</strong>?
+            </p>
+            <span class="delete-warning">
+                This action cannot be undone and will remove it from the public catalog.
+            </span>
+            <div class="delete-actions">
+                <button type="button" class="cancel-delete" id="cancelDelete">
+                    Cancel
+                </button>
+                <button type="button" class="confirm-delete" id="confirmDelete">
+                    Delete Property
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="properties.js"></script>
 </body>
 

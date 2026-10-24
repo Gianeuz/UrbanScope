@@ -97,6 +97,12 @@ function addPropertyRow(property) {
                     style="${isSold ? 'background:#dcfce7; color:#15803d; border:1px solid #86efac;' : 'background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;'} padding:6px 13px; border-radius:6px; font-weight:600; font-size:0.82rem; cursor:pointer; transition:all 0.2s;">
                     ${isSold ? 'Mark Available' : 'Mark as Sold'}
                 </button>
+                <button type="button" class="delete-btn" 
+                    data-id="${property.id}"
+                    data-title="${String(title).replace(/"/g, '&quot;')}"
+                    style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:6px 13px; border-radius:6px; font-weight:600; font-size:0.82rem; cursor:pointer; transition:all 0.2s;">
+                    Delete
+                </button>
             </div>
         </td>
     `;
@@ -106,7 +112,74 @@ function addPropertyRow(property) {
 
 
 // ================================
-// BUTTON ACTIONS (VIEW, EDIT, STATUS TOGGLE)
+// DELETE MODAL STATE & HANDLERS
+// ================================
+
+let selectedPropertyId = null;
+
+const cancelDelete = document.getElementById("cancelDelete");
+const confirmDelete = document.getElementById("confirmDelete");
+const deleteModal = document.getElementById("deleteModal");
+
+if (cancelDelete) {
+    cancelDelete.addEventListener("click", function () {
+        if (deleteModal) deleteModal.classList.remove("show");
+        selectedPropertyId = null;
+    });
+}
+
+if (confirmDelete) {
+    confirmDelete.addEventListener("click", async function () {
+        if (!selectedPropertyId) return;
+
+        confirmDelete.disabled = true;
+        confirmDelete.innerText = "Deleting...";
+
+        try {
+            let success = false;
+            if (typeof apiDeleteProperty === "function") {
+                success = await apiDeleteProperty(selectedPropertyId);
+            } else {
+                ['properties', 'cached_live_properties', 'urbanScopeProperties'].forEach(key => {
+                    const list = JSON.parse(localStorage.getItem(key) || '[]');
+                    const filtered = list.filter(p => String(p.id) !== String(selectedPropertyId));
+                    localStorage.setItem(key, JSON.stringify(filtered));
+                });
+                success = true;
+            }
+
+            if (deleteModal) deleteModal.classList.remove("show");
+            selectedPropertyId = null;
+            await loadSavedProperties();
+        } catch (err) {
+            console.error("Delete notice:", err);
+            alert("Could not delete property: " + (err.message || "Unknown error"));
+        } finally {
+            confirmDelete.disabled = false;
+            confirmDelete.innerText = "Delete Property";
+        }
+    });
+}
+
+if (deleteModal) {
+    deleteModal.addEventListener("click", function (event) {
+        if (event.target === deleteModal) {
+            deleteModal.classList.remove("show");
+            selectedPropertyId = null;
+        }
+    });
+}
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && deleteModal && deleteModal.classList.contains("show")) {
+        deleteModal.classList.remove("show");
+        selectedPropertyId = null;
+    }
+});
+
+
+// ================================
+// BUTTON ACTIONS (VIEW, EDIT, STATUS TOGGLE, DELETE)
 // ================================
 
 document.addEventListener(
@@ -175,6 +248,64 @@ document.addEventListener(
                 button.disabled = false;
                 button.innerText = isCurrentlySold ? 'Mark Available' : 'Mark as Sold';
             }
+            return;
+        }
+
+
+        // ============================
+        // DELETE
+        // ============================
+
+        if (event.target.classList.contains("delete-btn")) {
+            const button = event.target;
+            const propertyId = button.dataset.id;
+            const propertyTitle = button.dataset.title || button.closest("tr")?.querySelector("strong")?.textContent || "this property";
+
+            if (!propertyId) {
+                alert("This property cannot be deleted yet.");
+                return;
+            }
+
+            if (deleteModal) {
+                selectedPropertyId = propertyId;
+                const propToDeleteEl = document.getElementById("propertyToDelete");
+                if (propToDeleteEl) {
+                    propToDeleteEl.textContent = `"${propertyTitle}"`;
+                }
+                deleteModal.classList.add("show");
+            } else {
+                if (confirm(`Are you sure you want to permanently delete "${propertyTitle}"?\n\nThis will remove it from the catalog and database.`)) {
+                    button.disabled = true;
+                    button.innerText = 'Deleting...';
+                    try {
+                        let success = false;
+                        if (typeof apiDeleteProperty === "function") {
+                            success = await apiDeleteProperty(propertyId);
+                        } else {
+                            ['properties', 'cached_live_properties', 'urbanScopeProperties'].forEach(key => {
+                                const list = JSON.parse(localStorage.getItem(key) || '[]');
+                                const filtered = list.filter(p => String(p.id) !== String(propertyId));
+                                localStorage.setItem(key, JSON.stringify(filtered));
+                            });
+                            success = true;
+                        }
+
+                        if (success) {
+                            await loadSavedProperties();
+                        } else {
+                            alert("Could not delete property. Please check your admin permissions.");
+                            button.disabled = false;
+                            button.innerText = 'Delete';
+                        }
+                    } catch (err) {
+                        console.error("Delete notice:", err);
+                        alert("Could not delete property: " + (err.message || "Unknown error"));
+                        button.disabled = false;
+                        button.innerText = 'Delete';
+                    }
+                }
+            }
+            return;
         }
 
     }
