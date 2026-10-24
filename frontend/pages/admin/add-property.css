@@ -491,8 +491,8 @@ img {
     display: flex;
     flex-direction: column;
 
-    width: 310px;
-    max-width: 85vw;
+    width: 300px;
+    max-width: 88vw;
     padding: 24px;
 
     background: linear-gradient(
@@ -525,7 +525,7 @@ img {
 }
 
 .sidebar-header .brand-text h1 {
-    color: var(--white);
+    color: #ffffff !important;
 }
 
 .sidebar-header .brand-text h2 {
@@ -538,14 +538,14 @@ img {
 
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.7);
+    color: #ffffff;
 
-    font-size: 26px;
+    font-size: 27px;
     cursor: pointer;
 }
 
 .close-sidebar-btn:hover {
-    color: var(--white);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .sidebar-nav {
@@ -560,15 +560,19 @@ img {
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 13px;
+    width: 100%;
 
-    padding: 11px 16px;
+    padding: 12px 14px;
 
-    border-radius: 8px;
+    border: 0;
+    border-radius: 9px;
 
+    background: transparent;
     color: rgba(255, 255, 255, 0.82);
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
     text-decoration: none;
 
     transition: background 0.2s ease,
@@ -578,7 +582,7 @@ img {
 .nav-item:hover,
 .nav-item.active {
     background: rgba(255, 255, 255, 0.12);
-    color: var(--white);
+    color: #ffffff;
 }
 
 .nav-group.open .sub-menu {
@@ -656,17 +660,15 @@ img {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-
     color: #fca5a5;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     text-decoration: none;
-
     transition: color 0.2s ease;
 }
 
 .logout-link:hover {
-    color: #ef4444;
+    color: #fecaca;
 }
 
 

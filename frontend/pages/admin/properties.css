@@ -471,7 +471,7 @@ select:focus-visible {
     display: flex;
     flex-direction: column;
 
-    width: 290px;
+    width: 300px;
     max-width: 88vw;
     padding: 24px;
 
@@ -509,7 +509,7 @@ select:focus-visible {
 }
 
 .sidebar-header .brand-text h1 {
-    color: var(--white);
+    color: #ffffff !important;
 }
 
 .sidebar-header .brand-text h2 {
@@ -521,9 +521,10 @@ select:focus-visible {
 
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.75);
+    color: #ffffff;
 
-    font-size: 26px;
+    font-size: 27px;
+    cursor: pointer;
 }
 
 .sidebar-nav {
@@ -539,25 +540,25 @@ select:focus-visible {
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-
-    padding: 11px 16px;
-
-    border-radius: 8px;
-
+    gap: 13px;
+    width: 100%;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
     color: rgba(255, 255, 255, 0.82);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
     text-decoration: none;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    transition: background 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
 }
 
 .nav-item:hover,
 .nav-item.active {
     background: rgba(255, 255, 255, 0.12);
-    color: var(--white);
+    color: #ffffff;
 }
 
 .nav-group.open .sub-menu {
@@ -636,18 +637,15 @@ select:focus-visible {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-
     color: #fca5a5;
+    font-size: 13px;
+    font-weight: 700;
     text-decoration: none;
-
-    font-size: 14px;
-    font-weight: 600;
-
     transition: color 0.2s ease;
 }
 
 .logout-link:hover {
-    color: #ef4444;
+    color: #fecaca;
 }
 
 
