@@ -158,7 +158,8 @@ Mariam-Lobren-Real-Estate/
 │           ├── logo-urban.png       # UrbanScope agency logo
 │           ├── favicon.jpg          # Browser tab icon
 │           ├── home-bg.png          # Hero backdrop photography
-│           ├── Urban.jpg            # Authentication showcase photography
+│           ├── auth-slide1.jpg, ... # Authentication showcase carousel slides (1-4)
+│           ├── Urban.jpg            # Hero showcase photography
 │           ├── agent.jpg            # Agent portrait (Miriam Lobren)
 │           ├── property1.jpg        # Property showcase 1 (Velemont)
 │           ├── property2.jpg        # Property showcase 2 (Green Valley)
