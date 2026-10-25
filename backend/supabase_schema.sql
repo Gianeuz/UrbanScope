@@ -536,7 +536,7 @@ CREATE POLICY "Allow manage notifications" ON notifications FOR ALL USING (true)
 -- Passwords:
 --   urbanscope.cvsu@gmail.com -> urbanscope2026 (or urbanscope)
 --   admin@cdmiranda.com       -> admin123
---   client@example.com        -> client123
+--   client@gmail.com        -> client123
 -- ------------------------------------------------------------------------------
 INSERT INTO users (id, email, password_hash, full_name, phone, role, license_number, avatar_url) VALUES
 (
@@ -561,7 +561,7 @@ INSERT INTO users (id, email, password_hash, full_name, phone, role, license_num
 ),
 (
     2,
-    'client@example.com',
+    'client@gmail.com',
     'e9705b77308841cf0438e44c4ffe5558$3bd6218d77fe579d417878e3e46ce1ea0df816ea49ec9e7d4ec2853e8ff49085',
     'Sample Client',
     '+63 912 345 6789',
@@ -571,7 +571,7 @@ INSERT INTO users (id, email, password_hash, full_name, phone, role, license_num
 ),
 (
     3,
-    'sarah.j@example.com',
+    'sarah.j@gmail.com',
     NULL,
     'Sarah Jenkins',
     '+63 917 111 2233',
@@ -581,7 +581,7 @@ INSERT INTO users (id, email, password_hash, full_name, phone, role, license_num
 ),
 (
     4,
-    'mark.cruz@example.com',
+    'mark.cruz@gmail.com',
     NULL,
     'Mark Anthony Cruz',
     '+63 928 444 5566',
@@ -591,7 +591,7 @@ INSERT INTO users (id, email, password_hash, full_name, phone, role, license_num
 ),
 (
     5,
-    'maria.santos@example.com',
+    'maria.santos@gmail.com',
     NULL,
     'Maria Elena Santos',
     '+63 905 777 8899',
@@ -848,7 +848,7 @@ INSERT INTO inquiries (
     1,
     'Velemont Residences',
     'Sarah Jenkins',
-    'sarah.j@example.com',
+    'sarah.j@gmail.com',
     '+63 917 111 2233',
     'Good day! I would like to schedule an in-person viewing this coming Saturday afternoon.',
     'Under Review'
@@ -861,7 +861,7 @@ INSERT INTO inquiries (
     1,
     'Horizon Heights',
     'Mark Anthony Cruz',
-    'mark.cruz@example.com',
+    'mark.cruz@gmail.com',
     '+63 928 444 5566',
     'Inquiring about payment terms and bank financing requirements for the 1-bedroom unit.',
     'Approved'
@@ -874,7 +874,7 @@ INSERT INTO inquiries (
     1,
     'Liora Homes Executive Townhouse',
     'Maria Elena Santos',
-    'maria.santos@example.com',
+    'maria.santos@gmail.com',
     '+63 905 777 8899',
     'Interested in the reservation fee and expected turnover date for the townhouse.',
     'Completed'
@@ -897,7 +897,7 @@ INSERT INTO inquiry_documents (inquiry_id, document_type, file_name, file_url, f
 INSERT INTO appointments (client_id, agent_id, property_id, client_name, client_email, client_phone, appointment_date, appointment_time, title, description, status) VALUES
 (
     3, 1, 1,
-    'Sarah Jenkins', 'sarah.j@example.com', '+63 917 111 2233',
+    'Sarah Jenkins', 'sarah.j@gmail.com', '+63 917 111 2233',
     '2026-10-09', '10:00 AM',
     'Client viewing · Velemont Residences',
     'Scheduled in-person property walkthrough with buyer and family.',
@@ -905,7 +905,7 @@ INSERT INTO appointments (client_id, agent_id, property_id, client_name, client_
 ),
 (
     5, 1, 4,
-    'Maria Elena Santos', 'maria.santos@example.com', '+63 905 777 8899',
+    'Maria Elena Santos', 'maria.santos@gmail.com', '+63 905 777 8899',
     '2026-10-15', '2:00 PM',
     'Client viewing · Liora Homes',
     'Model unit tour, sample computation presentation, and site reservation.',
@@ -913,7 +913,7 @@ INSERT INTO appointments (client_id, agent_id, property_id, client_name, client_
 ),
 (
     4, 1, 1,
-    'Mark Anthony Cruz', 'mark.cruz@example.com', '+63 928 444 5566',
+    'Mark Anthony Cruz', 'mark.cruz@gmail.com', '+63 928 444 5566',
     '2026-10-22', '9:30 AM',
     'Client viewing · Victoria Park Residences',
     'Orientation and Pag-IBIG housing loan requirements submission.',

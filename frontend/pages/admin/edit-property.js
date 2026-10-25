@@ -308,16 +308,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    // Sidebar & navigation controls
-    function toggleSidebar(open) {
-        if (!sidebar || !sidebarBackdrop) return;
-        sidebar.classList.toggle("open", open);
-        sidebarBackdrop.classList.toggle("active", open);
-    }
-
-    if (sidebarToggle) sidebarToggle.addEventListener("click", () => toggleSidebar(true));
-    if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", () => toggleSidebar(false));
-    if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", () => toggleSidebar(false));
+    // Sidebar and navigation controls are handled by admin-shell.js
 
     // Initialize
     if (verifyAdmin()) {

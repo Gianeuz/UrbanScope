@@ -16,33 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (_) {}
 
-    // 3. UI Toggles
-    const sidebar = document.getElementById('adminSidebar');
-    const backdrop = document.getElementById('sidebarBackdrop');
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-    const profileBtn = document.getElementById('profileButton');
-    const profileDropdown = document.getElementById('profileDropdown');
-
-    const toggleSidebar = () => {
-        sidebar.classList.toggle('open');
-        backdrop.classList.toggle('active');
-    };
-    if (sidebarToggle) sidebarToggle.addEventListener('click', toggleSidebar);
-    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', toggleSidebar);
-    if (backdrop) backdrop.addEventListener('click', toggleSidebar);
-
-    if (profileBtn && profileDropdown) {
-        profileBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('show');
-        });
-        document.addEventListener('click', (e) => {
-            if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
-                profileDropdown.classList.remove('show');
-            }
-        });
-    }
+    // UI Toggles (sidebar & profile dropdown) handled by admin-shell.js
 
     // Sign out handler
     document.querySelectorAll('.profile-signout, .logout-link').forEach(el => {
@@ -69,36 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadUsers() {
         try {
             let data = (typeof apiGetUsers === 'function') ? await apiGetUsers() : null;
-            if (!data || !Array.isArray(data) || data.length === 0) {
-                // Fallback default users if table is empty
-                data = [
-                    {
-                        id: 1,
-                        name: 'Juan Dela Cruz',
-                        email: 'client@example.com',
-                        phone: '+63 917 123 4567',
-                        role: 'client',
-                        created_at: new Date(Date.now() - 86400000 * 5).toISOString()
-                    },
-                    {
-                        id: 2,
-                        name: 'Maria Santos',
-                        email: 'maria.santos@gmail.com',
-                        phone: '+63 928 987 6543',
-                        role: 'client',
-                        created_at: new Date(Date.now() - 86400000 * 12).toISOString()
-                    },
-                    {
-                        id: 99,
-                        name: 'Miriam Lobren',
-                        email: 'urbanscope.cvsu@gmail.com',
-                        phone: '+63 917 555 8888',
-                        role: 'admin',
-                        created_at: new Date(Date.now() - 86400000 * 60).toISOString()
-                    }
-                ];
-            }
-            users = data;
+            users = Array.isArray(data) ? data : [];
             updateStats();
             renderUsers();
         } catch (err) {
@@ -140,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="5" style="text-align: center; padding: 48px; color: var(--text-muted);">
-                        No user accounts found matching "${escapeHtml(searchQuery)}".
+                        ${searchQuery ? `No user accounts found matching "${escapeHtml(searchQuery)}".` : 'No registered user accounts found.'}
                     </td>
                 </tr>
             `;

@@ -1,85 +1,4 @@
-/* ADMIN PROFILE DROPDOWN */
-
-const profileButton = document.getElementById("profileButton");
-const profileDropdown = document.getElementById("profileDropdown");
-const profileAction = profileDropdown?.querySelector("[data-profile-action]");
-
-function closeProfileDropdown() {
-    if (!profileButton || !profileDropdown) return;
-
-    profileDropdown.hidden = true;
-    profileDropdown.classList.remove("show", "active");
-    profileButton.setAttribute("aria-expanded", "false");
-}
-
-if (profileButton && profileDropdown) {
-    profileDropdown.hidden = true;
-    profileButton.setAttribute("aria-expanded", "false");
-
-    profileButton.addEventListener("click", event => {
-        event.stopPropagation();
-
-        const opening = profileDropdown.hidden;
-        profileDropdown.hidden = !opening;
-        profileDropdown.classList.toggle("show", opening);
-        profileButton.setAttribute("aria-expanded", String(opening));
-    });
-
-    profileDropdown.addEventListener("click", event => {
-        event.stopPropagation();
-
-        const action = event.target.closest("[data-profile-action]");
-        if (action) {
-            event.preventDefault();
-            closeProfileDropdown();
-            alert("Profile settings are not available yet.");
-        }
-    });
-
-    document.addEventListener("click", event => {
-        if (!profileDropdown.contains(event.target) && !profileButton.contains(event.target)) {
-            closeProfileDropdown();
-        }
-    });
-
-    document.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeProfileDropdown();
-    });
-}
-
-/* SIDEBAR */
-
-const sidebar = document.getElementById("adminSidebar");
-const backdrop = document.getElementById("sidebarBackdrop");
-const toggleBtn = document.getElementById("sidebarToggle");
-const closeBtn = document.getElementById("closeSidebarBtn");
-
-function toggleSidebar(open) {
-    if (!sidebar || !backdrop) return;
-
-    sidebar.classList.toggle("open", open);
-    backdrop.classList.toggle("active", open);
-
-    document.body.classList.toggle("sidebar-open", open);
-}
-
-if (toggleBtn) {
-    toggleBtn.addEventListener("click", () => toggleSidebar(true));
-}
-
-if (closeBtn) {
-    closeBtn.addEventListener("click", () => toggleSidebar(false));
-}
-
-if (backdrop) {
-    backdrop.addEventListener("click", () => toggleSidebar(false));
-}
-
-document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
-        toggleSidebar(false);
-    }
-});
+/* PROFILE DROPDOWN & SIDEBAR ARE HANDLED BY ADMIN-SHELL.JS */
 
 /* EXPANDABLE INQUIRIES MENU */
 
@@ -330,10 +249,66 @@ function getStatusClass(status) {
     return "gray";
 }
 
+/* INQUIRY STATUS DONUT & NOTIFICATIONS */
+
+function updateInquiryDonut(inquiries) {
+    if (!Array.isArray(inquiries)) return;
+
+    let submitted = 0;
+    let reqSubmitted = 0;
+    let underReview = 0;
+    let approved = 0;
+    let completed = 0;
+
+    inquiries.forEach(i => {
+        const s = (i.status || '').toLowerCase();
+        if (s.includes('require')) reqSubmitted++;
+        else if (s.includes('submit')) submitted++;
+        else if (s.includes('review') || s.includes('pending')) underReview++;
+        else if (s.includes('approv')) approved++;
+        else if (s.includes('complete')) completed++;
+        else underReview++;
+    });
+
+    const total = inquiries.length;
+    const totalEl = document.getElementById('donutTotalInquiries');
+    if (totalEl) totalEl.textContent = total;
+
+    const lSub = document.getElementById('legendSubmittedCount');
+    if (lSub) lSub.textContent = submitted;
+    const lReq = document.getElementById('legendReqCount');
+    if (lReq) lReq.textContent = reqSubmitted;
+    const lRev = document.getElementById('legendReviewCount');
+    if (lRev) lRev.textContent = underReview;
+    const lApp = document.getElementById('legendApprovedCount');
+    if (lApp) lApp.textContent = approved;
+    const lComp = document.getElementById('legendCompletedCount');
+    if (lComp) lComp.textContent = completed;
+
+    const C = 377; // 2 * PI * 60
+    const safeTotal = total > 0 ? total : 1;
+
+    let offset = 0;
+    const setSlice = (id, count) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const len = (count / safeTotal) * C;
+        el.setAttribute('stroke-dasharray', `${len} ${C}`);
+        el.setAttribute('stroke-dashoffset', `-${offset}`);
+        offset += len;
+    };
+
+    setSlice('donutSubmitted', submitted);
+    setSlice('donutReqSubmitted', reqSubmitted);
+    setSlice('donutUnderReview', underReview);
+    setSlice('donutApproved', approved);
+    setSlice('donutCompleted', completed);
+}
+
 /* INQUIRY TABLE */
 
 function renderInquiryRows(inquiries) {
-    const tbody = document.getElementById("recentInquiriesBody");
+    const tbody = document.getElementById("recentInquiriesBody") || document.getElementById("recentInquiryRows");
 
     if (!tbody) return;
 
@@ -524,6 +499,10 @@ async function loadDashboardData() {
                 }
 
                 renderInquiryRows(inquiries);
+                updateInquiryDonut(inquiries);
+                if (typeof window.loadAdminNotifications === "function") {
+                    window.loadAdminNotifications();
+                }
             }
         }
 

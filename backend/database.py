@@ -148,12 +148,10 @@ def init_db():
 
     admin_pass = hash_password("realestate2026")
     superadmin_pass = hash_password("urbanscope2026")
-    client_pass = hash_password("client123")
 
     accounts_to_sync = [
         ("admin.realestate@gmail.com", admin_pass, "Miriam Lobren (Admin)", "+63 900 000 0000", "admin"),
-        ("urbanscope.cvsu@gmail.com", superadmin_pass, "UrbanScope Superadmin (CvSU)", "+63 900 000 0000", "superadmin"),
-        ("client@example.com", client_pass, "Sample Client", "+63 912 345 6789", "user")
+        ("urbanscope.cvsu@gmail.com", superadmin_pass, "UrbanScope Superadmin (CvSU)", "+63 900 000 0000", "superadmin")
     ]
 
     for email, pwd_hash, full_name, phone, role in accounts_to_sync:
@@ -294,43 +292,7 @@ def init_db():
         conn.commit()
         print("✓ Database seeded with 5 initial featured properties")
 
-    # Seed Initial Inquiries
-    cursor.execute("SELECT COUNT(*) FROM inquiries")
-    inq_count = cursor.fetchone()[0]
-    if inq_count == 0:
-        inquiries_seed = [
-            (
-                "Velemont Residences",
-                "Sarah Jenkins",
-                "sarah.j@example.com",
-                "+63 917 111 2233",
-                "Good day! I would like to schedule an in-person viewing this coming Saturday afternoon.",
-                "Under Review"
-            ),
-            (
-                "Horizon Heights",
-                "Mark Anthony Cruz",
-                "mark.cruz@example.com",
-                "+63 928 444 5566",
-                "Inquiring about payment terms and bank financing requirements for the 1-bedroom unit.",
-                "Approved"
-            ),
-            (
-                "Liora Homes Executive Townhouse",
-                "Maria Elena Santos",
-                "maria.santos@example.com",
-                "+63 905 777 8899",
-                "Interested in the reservation fee and expected turnover date for the townhouse.",
-                "Completed"
-            )
-        ]
-
-        cursor.executemany("""
-            INSERT INTO inquiries (property_title, client_name, client_email, client_phone, message, status)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, inquiries_seed)
-        conn.commit()
-        print("✓ Database seeded with sample client inquiries")
+    # Inquiries table is ready for client submissions
 
     conn.close()
 

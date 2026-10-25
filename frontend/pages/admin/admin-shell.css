@@ -206,6 +206,158 @@ input:focus-visible {
     font-weight: 800;
 }
 
+/* NOTIFICATION DROPDOWN */
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 60px;
+    z-index: 1000;
+    display: none;
+    width: 350px;
+    max-width: calc(100vw - 24px);
+    padding: 16px 18px;
+    border: 1px solid #e7eee8;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 18px 50px rgba(20, 48, 31, 0.18);
+}
+
+.notif-dropdown.show,
+.notif-dropdown.active {
+    display: block !important;
+}
+
+.notif-dropdown[hidden] {
+    display: none !important;
+}
+
+.notif-dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f5f1;
+}
+
+.notif-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notif-header-title svg {
+    color: var(--dark-green, #17321e);
+    flex-shrink: 0;
+}
+
+.notif-header-title h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-dark, #1b2e21);
+}
+
+.view-all-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--green, #1e3e2b);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+    color: var(--dark-green, #13281c);
+}
+
+/* NOTIFICATIONS LIST (Reusable in Topbar Dropdown & Dashboard Card) */
+.notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f0f5f1;
+    cursor: pointer;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item:hover {
+    background: #f4f8f5;
+}
+
+.notif-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.notif-avatar.user,
+.notif-avatar.reg {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+.notif-avatar.check {
+    background: #16a34a;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.notif-avatar svg {
+    width: 17px;
+    height: 17px;
+}
+
+.notif-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif-text strong {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-dark, #1b2e21);
+    line-height: 1.35;
+    margin-bottom: 2px;
+}
+
+.notif-text small {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted, #64748b);
+    line-height: 1.3;
+}
+
+.notif-empty {
+    text-align: center;
+    padding: 24px 10px;
+    color: var(--text-muted, #64748b);
+    font-size: 12.5px;
+}
+
 /* Profile button */
 .admin-profile-badge {
     position: relative;
@@ -249,6 +401,7 @@ input:focus-visible {
     top: calc(100% + 12px);
     right: 0;
     z-index: 1000;
+    display: none;
     width: 280px;
     max-width: calc(100vw - 24px);
     padding: 16px;
@@ -256,6 +409,11 @@ input:focus-visible {
     border-radius: 18px;
     background: #ffffff;
     box-shadow: 0 18px 50px rgba(20, 48, 31, 0.18);
+}
+
+.profile-dropdown.show,
+.profile-dropdown.active {
+    display: block !important;
 }
 
 .profile-dropdown[hidden] {
@@ -339,6 +497,7 @@ input:focus-visible {
     background: rgba(8, 20, 11, 0.48);
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
     transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
@@ -346,6 +505,7 @@ input:focus-visible {
 .sidebar-backdrop.show {
     opacity: 1 !important;
     visibility: visible !important;
+    pointer-events: auto !important;
     display: block !important;
 }
 

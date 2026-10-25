@@ -45,7 +45,6 @@ python3 run.py
 | Sign-In | http://127.0.0.1:8000/pages/auth/login.html |
 | API Docs | http://127.0.0.1:8000/docs |
 
-**Demo client login:** `client@example.com` / `client123`
 
 **Environment variables (optional):**
 

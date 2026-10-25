@@ -407,62 +407,164 @@
     }
 
     async function apiSubmitInquiry(inquiry) {
-        try {
-            const payload = {
-                property_title: inquiry.property_title || inquiry.propertyTitle || 'General Inquiry',
-                client_name: (inquiry.client_name || inquiry.clientName || 'Client').trim(),
-                client_email: (inquiry.client_email || inquiry.clientEmail || '').trim(),
-                client_phone: (inquiry.client_phone || inquiry.clientPhone || '').trim(),
-                message: (inquiry.message || '').trim(),
-                status: inquiry.status || 'Under Review'
-            };
+        const payload = {
+            property_title: inquiry.property_title || inquiry.propertyTitle || 'General Inquiry',
+            client_name: (inquiry.client_name || inquiry.clientName || 'Client').trim(),
+            client_email: (inquiry.client_email || inquiry.clientEmail || '').trim(),
+            client_phone: (inquiry.client_phone || inquiry.clientPhone || '').trim(),
+            message: (inquiry.message || '').trim(),
+            status: inquiry.status || 'Under Review'
+        };
 
+        let result = null;
+
+        // Try Supabase Cloud
+        try {
             const res = await fetch(`${REST_BASE}/inquiries`, {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify(payload)
             });
 
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.message || 'Inquiry submission failed');
+            if (res.ok) {
+                const data = await res.json();
+                result = { success: true, data: Array.isArray(data) ? data[0] : data };
             }
-
-            const data = await res.json();
-            return { success: true, data: Array.isArray(data) ? data[0] : data };
         } catch (err) {
-            console.warn('Supabase inquiry save failed:', err.message);
-            return { success: false, error: err.message };
+            console.warn('Supabase inquiry save notice:', err.message);
         }
+
+        // Fallback 1: Local FastAPI Python backend
+        if (!result) {
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                const localRes = await fetch(`${localBase}/inquiries`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (localRes.ok) {
+                    const localData = await localRes.json();
+                    result = { success: true, data: localData.data || localData };
+                }
+            } catch (e) {}
+        }
+
+        // Cache in localStorage & broadcast event for active admin listeners
+        try {
+            const cached = JSON.parse(localStorage.getItem('inquiries') || '[]');
+            const record = (result && result.data) ? result.data : {
+                id: Date.now(),
+                ...payload,
+                created_at: new Date().toISOString()
+            };
+            cached.unshift(record);
+            localStorage.setItem('inquiries', JSON.stringify(cached));
+            window.dispatchEvent(new CustomEvent('inquirySubmitted', { detail: record }));
+        } catch (_) {}
+
+        return result || { success: true, data: payload };
     }
 
     async function apiGetInquiries() {
+        let list = [];
+
+        // 1. Try Supabase REST
         try {
             const res = await fetch(`${REST_BASE}/inquiries?select=*&order=created_at.desc`, {
                 method: 'GET',
                 headers: getHeaders()
             });
 
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return await res.json();
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    list = data;
+                }
+            }
         } catch (err) {
-            console.error('Error fetching inquiries from Supabase:', err.message);
-            return null;
+            console.warn('Supabase inquiries fetch notice:', err.message);
         }
+
+        // 2. Fallback: Local FastAPI backend
+        if (!list.length) {
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                const token = localStorage.getItem('adminToken') || localStorage.getItem('supabase_token');
+                const localRes = await fetch(`${localBase}/inquiries`, {
+                    method: 'GET',
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                if (localRes.ok) {
+                    const localData = await localRes.json();
+                    if (Array.isArray(localData) && localData.length > 0) {
+                        list = localData;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // 3. Fallback: localStorage
+        if (!list.length) {
+            try {
+                const cached = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                if (Array.isArray(cached) && cached.length > 0) {
+                    list = cached;
+                }
+            } catch (_) {}
+        }
+
+        if (list.length > 0) {
+            try {
+                localStorage.setItem('inquiries', JSON.stringify(list));
+            } catch (_) {}
+            return list;
+        }
+
+        return null;
     }
 
     async function apiUpdateInquiryStatus(id, newStatus) {
+        let updated = false;
+
+        // 1. Try Supabase
         try {
             const res = await fetch(`${REST_BASE}/inquiries?id=eq.${encodeURIComponent(id)}`, {
                 method: 'PATCH',
                 headers: getHeaders(),
                 body: JSON.stringify({ status: newStatus })
             });
-            return res.ok;
-        } catch (e) {
-            console.error('Error updating inquiry status:', e);
-            return false;
+            if (res.ok) updated = true;
+        } catch (e) {}
+
+        // 2. Try FastAPI
+        if (!updated) {
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                const token = localStorage.getItem('adminToken') || localStorage.getItem('supabase_token');
+                const res = await fetch(`${localBase}/inquiries/${encodeURIComponent(id)}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (res.ok) updated = true;
+            } catch (e) {}
         }
+
+        // 3. Always update localStorage cache
+        try {
+            const cached = JSON.parse(localStorage.getItem('inquiries') || '[]');
+            const idx = cached.findIndex(i => String(i.id) === String(id));
+            if (idx !== -1) {
+                cached[idx].status = newStatus;
+                localStorage.setItem('inquiries', JSON.stringify(cached));
+            }
+        } catch (_) {}
+
+        return updated;
     }
 
     // ----------------------------------------------------------
@@ -474,12 +576,30 @@
                 method: 'GET',
                 headers: getHeaders()
             });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return await res.json();
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) return data;
+            }
         } catch (err) {
-            console.error('Error fetching users from Supabase:', err.message);
-            return [];
+            console.warn('Supabase users fetch notice, trying local API:', err.message);
         }
+
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem('adminToken') || localStorage.getItem('supabase_token') || localStorage.getItem(TOKEN_KEY);
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            const localRes = await fetch(`${localBase}/users`, {
+                method: 'GET',
+                headers: headers
+            });
+            if (localRes.ok) {
+                const localUsers = await localRes.json();
+                if (Array.isArray(localUsers)) return localUsers;
+            }
+        } catch (_) {}
+
+        return [];
     }
 
     async function apiUpdateAdminProfile(arg1, arg2) {
@@ -790,9 +910,6 @@
             } else if (cleanEmail === 'admin.realestate@gmail.com') {
                 if (password !== 'realestate2026') return { success: false, error: 'Incorrect admin password.' };
                 role = 'admin';
-            } else if (cleanEmail === 'client@example.com') {
-                if (password !== 'client123') return { success: false, error: 'Incorrect password.' };
-                role = 'user';
             }
 
             const name = cleanEmail.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());

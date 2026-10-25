@@ -8,7 +8,6 @@ and seeds the authorized admin and superadmin accounts.
 Accounts seeded:
 - urbanscope.cvsu@gmail.com -> role: superadmin (password: urbanscope2026)
 - admin.realestate@gmail.com -> role: admin (password: realestate2026)
-- client@example.com -> role: user (password: client123)
 """
 
 import sys
@@ -52,8 +51,6 @@ def run_rbac_migration():
             test_pass = "realestate2026"
         elif email == "urbanscope.cvsu@gmail.com":
             test_pass = "urbanscope2026"
-        elif email == "client@example.com":
-            test_pass = "client123"
 
         is_valid = verify_password(test_pass, pwd_hash) if test_pass else "N/A"
         print(f"   [{role.upper():10}] ID: {u_id:2} | Email: {email:30} | Name: {full_name:30} | Pass valid: {is_valid}")

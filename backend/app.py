@@ -769,6 +769,20 @@ def list_inquiries(admin_user: dict = Depends(require_admin)):
     return inquiries
 
 
+@app.patch("/api/inquiries/{inquiry_id}", tags=["Inquiries"])
+def update_inquiry_status(inquiry_id: int, payload: dict, admin_user: dict = Depends(require_admin)):
+    """Updates status of an inquiry (admin only)."""
+    status = payload.get("status")
+    if not status:
+        raise HTTPException(status_code=400, detail="Status is required")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE inquiries SET status = ? WHERE id = ?", (status, inquiry_id))
+    conn.commit()
+    conn.close()
+    return {"success": True, "id": inquiry_id, "status": status}
+
+
 # ==========================================================
 # SUPERADMIN EXECUTIVE ENDPOINTS
 # ==========================================================
@@ -840,6 +854,17 @@ def get_superadmin_overview(current_superadmin: dict = Depends(require_superadmi
             "trigger_active": trigger_exists
         }
     }
+
+
+@app.get("/api/users", tags=["Users"])
+def get_user_directory(current_user: dict = Depends(require_admin)):
+    """Retrieves all registered user accounts for the admin user directory."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, email, full_name, phone, role, created_at FROM users ORDER BY created_at DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    return [row_to_dict(r) for r in rows]
 
 
 @app.get("/api/superadmin/users", tags=["Superadmin"])

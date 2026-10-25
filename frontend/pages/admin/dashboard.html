@@ -271,6 +271,58 @@
 
         </section>
 
+        <!-- ANALYTICS ROW (INQUIRY STATUS & RECENT NOTIFICATIONS) -->
+        <section class="analytics-row" id="dashboardAnalyticsRow">
+            <!-- DONUT CHART (INQUIRY STATUS) -->
+            <div class="analytics-card donut-card">
+                <div class="card-header">
+                    <div>
+                        <h3>Inquiry Status</h3>
+                        <p>Current status of all inquiries</p>
+                    </div>
+                </div>
+
+                <div class="donut-chart-container">
+                    <svg viewBox="0 0 160 160" width="140" height="140" id="inquiryDonutSvg">
+                        <circle r="60" cx="80" cy="80" fill="none" stroke="#e0e8e2" stroke-width="24" />
+                        <circle id="donutSubmitted" r="60" cx="80" cy="80" fill="none" stroke="#3b82f6" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
+                        <circle id="donutReqSubmitted" r="60" cx="80" cy="80" fill="none" stroke="#a855f7" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
+                        <circle id="donutUnderReview" r="60" cx="80" cy="80" fill="none" stroke="#f59e0b" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
+                        <circle id="donutApproved" r="60" cx="80" cy="80" fill="none" stroke="#22c55e" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
+                        <circle id="donutCompleted" r="60" cx="80" cy="80" fill="none" stroke="#15803d" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
+                        <text x="80" y="75" text-anchor="middle" font-size="20" font-weight="bold" fill="#1b2e21" id="donutTotalInquiries">0</text>
+                        <text x="80" y="93" text-anchor="middle" font-size="9.5" fill="#6d8373">Total Inquiries</text>
+                    </svg>
+
+                    <div class="donut-legend">
+                        <div class="legend-item"><span class="dot blue"></span> Submitted (<span id="legendSubmittedCount">0</span>)</div>
+                        <div class="legend-item"><span class="dot purple"></span> Requirements Submitted (<span id="legendReqCount">0</span>)</div>
+                        <div class="legend-item"><span class="dot orange"></span> Under Review (<span id="legendReviewCount">0</span>)</div>
+                        <div class="legend-item"><span class="dot green"></span> Approved (<span id="legendApprovedCount">0</span>)</div>
+                        <div class="legend-item"><span class="dot dark-green"></span> Completed (<span id="legendCompletedCount">0</span>)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT NOTIFICATIONS CARD -->
+            <div class="analytics-card notif-card">
+                <div class="card-header">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <h3 style="margin: 0;">Recent Notifications</h3>
+                    </div>
+                    <a href="clients.html?view=inquiries" class="view-all-link">View All</a>
+                </div>
+
+                <div class="notif-list" id="dashboardNotifList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
         <!-- PROPERTY OVERVIEW AND QUICK ACTIONS -->
         <section class="dashboard-feature-grid">
 
@@ -504,7 +556,7 @@
                     <h2>Recent Inquiries</h2>
                     <p>Keep track of your latest client requests</p>
                 </div>
-                <button class="text-button" type="button" onclick="location.href='clients.html'">
+                <button class="text-button" type="button" onclick="location.href='clients.html?view=inquiries'">
                     View All Inquiries &rarr;
                 </button>
             </div>

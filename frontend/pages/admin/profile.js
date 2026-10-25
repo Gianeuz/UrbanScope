@@ -8,33 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 2. UI Toggles
-    const sidebar = document.getElementById('adminSidebar');
-    const backdrop = document.getElementById('sidebarBackdrop');
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-    const profileBtn = document.getElementById('profileButton');
-    const profileDropdown = document.getElementById('profileDropdown');
-
-    const toggleSidebar = () => {
-        sidebar.classList.toggle('open');
-        backdrop.classList.toggle('active');
-    };
-    if (sidebarToggle) sidebarToggle.addEventListener('click', toggleSidebar);
-    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', toggleSidebar);
-    if (backdrop) backdrop.addEventListener('click', toggleSidebar);
-
-    if (profileBtn && profileDropdown) {
-        profileBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('show');
-        });
-        document.addEventListener('click', (e) => {
-            if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
-                profileDropdown.classList.remove('show');
-            }
-        });
-    }
+    // UI Toggles (sidebar & profile dropdown) handled by admin-shell.js
 
     // Sign out handler
     document.querySelectorAll('.profile-signout, .logout-link').forEach(el => {

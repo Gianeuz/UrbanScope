@@ -38,7 +38,6 @@ python run.py            # serves site + API on http://127.0.0.1:8000
 Demo logins:
 - Superadmin: `urbanscope.cvsu@gmail.com` / `urbanscope2026`
 - Admin: `admin.realestate@gmail.com` / `realestate2026`
-- Client: `client@example.com` / `client123`
 
 There is **no test suite, linter, or build step**. Verify changes by running the server
 and exercising the page / `/docs` endpoint you touched.
