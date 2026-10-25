@@ -52,7 +52,7 @@ run.py                 Starts FastAPI + static site (uvicorn backend.app:app)
 backend/               app.py (routes + static mounts + RBAC guard), database.py, models.py, auth.py, seed_rbac.py, migration_rbac.sql
 frontend/              Everything the browser loads (served at /)
   index.html/.css/.js  Home page
-  pages/properties/    Catalog, property-detail (?id=N), Liora.html & Airmen.html showcases
+  pages/properties/    property-detail (?id=N), Liora.html & Airmen.html showcases (properties.html catalog was removed)
   pages/inquiry/       Inquiry form (requires login: <html data-require-auth>)
   pages/auth/          Unified login (auto-routes by role) & register
   pages/admin/         Dashboard, propertylist.html, add-property, edit-property, clients, users, profile, legacy login redirect
@@ -135,7 +135,8 @@ path when rendering from a page.
 - **Locale:** prices in Philippine Pesos (₱), phone numbers in PH format (`+63…` / `09…`),
   place names keep their diacritics (Las Piñas, Dasmariñas).
 - Preserve existing comments and docstrings unrelated to your change.
-- Keep `README.md` (structure, endpoints, pages) and `DATABASE.md` in sync with your changes.
+- `README.md` is the **public** overview — keep it short (features, stack, setup, top-level structure) and never
+  list admin/superadmin credentials there. Detailed internals belong in `AGENTS.md` / `DATABASE.md`; keep those in sync.
 
 ---
 

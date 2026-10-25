@@ -100,7 +100,7 @@ Client and admin accounts.
 
 ### 3.2 `properties`
 
-Listing catalog shown on the home page, catalog, detail pages, and chatbot.
+Listing catalog shown on the home page, property detail pages, admin pages, and chatbot.
 
 | Column | Type | Default | Notes |
 | :--- | :--- | :--- | :--- |
