@@ -299,6 +299,7 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
         # Public files in portal directories (legacy login URL and static assets)
         is_public_portal_file = (
             file_name == "login.html" or
+            file_name.endswith(".js") or
             file_name.endswith(".css") or
             file_name.endswith(".js.map") or
             file_name.endswith(".png") or

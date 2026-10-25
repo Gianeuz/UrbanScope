@@ -1,0 +1,536 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   URBANSCOPE ADMIN SHELL — Unified Topbar, Sidebar & Global Frame
+   Guarantees 100% visual and interactive consistency across all admin pages.
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --green: #2d5c39;
+    --dark-green: #1a3b23;
+    --light-green: #eef5ef;
+    --accent-green: #347c47;
+    --text-dark: #1b2e21;
+    --text-muted: #6b7f70;
+    --border-color: #cbd9ce;
+    --bg-main: #f4f8f5;
+    --white: #ffffff;
+    --shadow: 0 8px 26px rgba(27, 46, 33, 0.055);
+}
+
+/* Master Zoom: 1.25x (matches Home dashboard exactly) */
+html {
+    zoom: 1.25;
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 3px solid #a4cbaa;
+    outline-offset: 3px;
+}
+
+/* ==========================================================================
+   TOPBAR
+   ========================================================================== */
+
+.admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 80px;
+    padding: 12px 3.5%;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.045);
+}
+
+.topbar-left,
+.topbar-right,
+.brand-badge {
+    display: flex;
+    align-items: center;
+}
+
+.topbar-left {
+    gap: 18px;
+    flex-shrink: 0;
+}
+
+.hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--green);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.hamburger-btn:hover {
+    background: var(--light-green);
+}
+
+.brand-badge {
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.brand-text h1 {
+    color: var(--dark-green);
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.brand-text h2 {
+    color: var(--accent-green);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Topbar search bar */
+.topbar-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 520px;
+}
+
+.topbar-search svg {
+    position: absolute;
+    left: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.topbar-search input {
+    width: 100%;
+    height: 44px;
+    padding: 0 16px 0 42px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: #fbfdfb;
+    color: var(--text-dark);
+    font-size: 12.5px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.topbar-search input:focus {
+    border-color: var(--accent-green);
+    background: #ffffff;
+}
+
+.topbar-right {
+    position: relative;
+    gap: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.notif-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.notif-btn:hover {
+    background: var(--light-green);
+}
+
+.notif-badge {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: #e11d48;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+/* Profile button */
+.admin-profile-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 !important;
+    margin: 0;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none;
+    cursor: pointer;
+}
+
+.admin-profile-badge .avatar-circle {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50% !important;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.profile-chevron {
+    flex-shrink: 0;
+    color: #698173;
+    transition: transform 0.2s ease;
+}
+
+.admin-profile-badge[aria-expanded="true"] .profile-chevron {
+    transform: rotate(180deg);
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 1000;
+    width: 280px;
+    max-width: calc(100vw - 24px);
+    padding: 16px;
+    border: 1px solid #e7eee8;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 18px 50px rgba(20, 48, 31, 0.18);
+}
+
+.profile-dropdown[hidden] {
+    display: none !important;
+}
+
+.profile-dropdown-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 4px 14px;
+}
+
+.profile-dropdown-info .avatar-circle {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-dropdown-name {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.profile-dropdown-name strong {
+    color: #173d2b;
+    font-size: 14.5px;
+    font-weight: 700;
+}
+
+.profile-dropdown-name small {
+    color: #7b8b80;
+    font-size: 12px;
+}
+
+.profile-dropdown-divider {
+    height: 1px;
+    margin: 0 0 10px;
+    background: #e9eeea;
+}
+
+.profile-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #24372c;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.profile-dropdown a:hover {
+    background: #f2f7f3;
+    color: var(--dark-green);
+}
+
+.profile-dropdown a.profile-signout {
+    color: #b83d4a;
+}
+
+.profile-dropdown a.profile-signout:hover {
+    background: #fff1f2;
+}
+
+/* ==========================================================================
+   SIDEBAR & BACKDROP — EXACT HOME (DASHBOARD) DESIGN (Photo 2)
+   ========================================================================== */
+
+.sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 140;
+    background: rgba(8, 20, 11, 0.48);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.sidebar-backdrop.active,
+.sidebar-backdrop.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+.admin-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    max-width: 88vw;
+    padding: 24px;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #17321e, #0d2113);
+    color: #ffffff;
+    box-shadow: 6px 0 25px rgba(0, 0, 0, 0.2);
+    transform: translateX(-105%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-sidebar.open {
+    transform: translateX(0) !important;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.sidebar-header .brand-badge {
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.sidebar-header .brand-badge .logo-icon {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+}
+
+.sidebar-header .brand-text h1 {
+    color: #ffffff !important;
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+}
+
+.close-sidebar-btn {
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    font-size: 27px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.close-sidebar-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.nav-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 13px !important;
+    width: 100% !important;
+    padding: 12px 14px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease, color 0.2s ease !important;
+    box-sizing: border-box !important;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+/* Active Nav Item — Beautiful highlight matching Photo 2 */
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+.nav-item svg {
+    width: 20px !important;
+    height: 20px !important;
+    flex-shrink: 0 !important;
+}
+
+.sidebar-footer {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.logout-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fca5a5 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease;
+}
+
+.logout-link:hover {
+    color: #fecaca !important;
+}
+
+.logout-link svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   RESPONSIVE OVERRIDES
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    html {
+        zoom: 1; /* Reset zoom on mobile/tablet to avoid overflow */
+    }
+
+    .admin-topbar {
+        min-height: 68px;
+        padding: 10px 14px;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .topbar-left {
+        gap: 10px;
+    }
+
+    .logo-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .brand-text h1 {
+        font-size: 16px;
+    }
+
+    .brand-text h2 {
+        font-size: 10px;
+    }
+
+    .topbar-search {
+        order: 3;
+        flex: 1 0 100%;
+        width: 100%;
+        max-width: none;
+        margin-top: 4px;
+    }
+
+    .admin-sidebar {
+        width: 280px;
+    }
+}

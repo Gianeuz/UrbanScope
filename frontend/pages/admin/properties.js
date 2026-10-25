@@ -343,7 +343,7 @@ sidebarToggle.addEventListener(
 
         sidebar.classList.add("open");
 
-        sidebarBackdrop.classList.add("show");
+        sidebarBackdrop.classList.add("active", "show");
 
     }
 );
@@ -356,7 +356,7 @@ closeSidebarBtn.addEventListener(
 
         sidebar.classList.remove("open");
 
-        sidebarBackdrop.classList.remove("show");
+        sidebarBackdrop.classList.remove("active", "show");
 
     }
 );
@@ -369,7 +369,7 @@ sidebarBackdrop.addEventListener(
 
         sidebar.classList.remove("open");
 
-        sidebarBackdrop.classList.remove("show");
+        sidebarBackdrop.classList.remove("active", "show");
 
     }
 );
