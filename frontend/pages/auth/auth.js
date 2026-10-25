@@ -1,111 +1,136 @@
 // ==========================================
-// 1. CAROUSEL & SLIDING ANIMATION LOGIC
+// 1. CAROUSEL, SLIDING & SWIPE/TAP LOGIC
 // ==========================================
 
-const slides = [
-    {
-        image: "../../assets/images/auth-slide1.jpg",
-        title: "Your Next Home is<br>Just a Click away",
-        desc: "Access property details, submit inquiries, upload your requirements, and track your journey."
-    },
-    {
-        image: "../../assets/images/auth-slide2.jpg",
-        title: "Modern Living,<br>Elevated Comfort",
-        desc: "Discover curated properties built with precision and timeless elegance."
-    },
-    {
-        image: "../../assets/images/auth-slide3.jpg",
-        title: "Prime Neighborhoods,<br>Serene Living",
-        desc: "Master-planned communities located near top schools, commercial hubs, and transport."
-    },
-    {
-        image: "../../assets/images/auth-slide4.jpg",
-        title: "Seamless Real Estate<br>Experience",
-        desc: "Dedicated realty support from consultation to your key turnover."
-    }
-];
-
-let currentSlide = 0;
+const totalRealSlides = 3;
+let trackIndex = 1; // 0 = clone 3, 1 = slide 1, 2 = slide 2, 3 = slide 3, 4 = clone 1
+let currentDot = 0; // 0, 1, 2
 let isAnimating = false;
 let slideTimer = null;
 
-function setSlide(index, direction = null) {
-    if (index === currentSlide && document.querySelector(".slides-track .slide-item.active")) return;
-    if (isAnimating) return;
-    if (index < 0 || index >= slides.length) return;
-
-    isAnimating = true;
-    const oldIndex = currentSlide;
-    currentSlide = index;
-
-    const isNext = direction !== null ? direction === 'next' : index > oldIndex;
-    const slideItems = document.querySelectorAll(".slides-track .slide-item");
+function updateDots(dotIdx) {
+    currentDot = dotIdx;
+    try {
+        sessionStorage.setItem("auth_slide_index", String(dotIdx));
+    } catch(err) {}
     const dots = document.querySelectorAll(".dots-container .dot");
-    const titleEl = document.getElementById("slideTitle");
-    const descEl = document.getElementById("slideDesc");
-    const captionEl = document.querySelector(".showcase-caption");
-
-    // 1. Sliding Track Animation
-    if (slideItems.length > 0) {
-        slideItems.forEach((item, idx) => {
-            if (idx === oldIndex) {
-                item.className = isNext ? "slide-item slide-out-left" : "slide-item slide-out-right";
-            } else if (idx === currentSlide) {
-                item.className = isNext ? "slide-item slide-in-right" : "slide-item slide-in-left";
-                void item.offsetWidth; // Force CSS reflow for smooth animation
-                item.className = "slide-item active";
-            } else {
-                item.className = "slide-item";
-            }
-        });
-    } else {
-        const imgEl = document.getElementById("slideImage");
-        if (imgEl && slides[currentSlide]) {
-            imgEl.style.opacity = "0.3";
-            setTimeout(() => {
-                imgEl.src = slides[currentSlide].image;
-                imgEl.style.opacity = "1";
-            }, 180);
-        }
-    }
-
-    // 2. Caption Fade
-    if (captionEl) {
-        captionEl.style.opacity = "0.3";
-        setTimeout(() => {
-            if (titleEl && slides[currentSlide]) titleEl.innerHTML = slides[currentSlide].title;
-            if (descEl && slides[currentSlide]) descEl.textContent = slides[currentSlide].desc;
-            captionEl.style.opacity = "1";
-        }, 220);
-    } else {
-        if (titleEl && slides[currentSlide]) titleEl.innerHTML = slides[currentSlide].title;
-        if (descEl && slides[currentSlide]) descEl.textContent = slides[currentSlide].desc;
-    }
-
-    // 3. Update Dots
     dots.forEach((dot, idx) => {
-        if (idx === currentSlide) {
+        if (idx === dotIdx) {
             dot.classList.add("active");
         } else {
             dot.classList.remove("active");
         }
     });
+}
+
+function nextSlide() {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const trackEl = document.getElementById("slidesTrack");
+    if (!trackEl) {
+        isAnimating = false;
+        return;
+    }
+
+    trackIndex++;
+
+    // Calculate dot:
+    // When trackIndex = 2 -> dot 1
+    // When trackIndex = 3 -> dot 2
+    // When trackIndex = 4 (clone of slide 1) -> dot 0!
+    let nextDot = (trackIndex - 1) % totalRealSlides;
+    if (nextDot < 0) nextDot = totalRealSlides - 1;
+    updateDots(nextDot);
+
+    trackEl.style.transition = "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+    trackEl.style.transform = `translateX(-${trackIndex * 20}%)`;
 
     setTimeout(() => {
+        // Silently loop when reaching clone of slide 1
+        if (trackIndex === 4) {
+            trackEl.style.transition = "none";
+            trackIndex = 1;
+            trackEl.style.transform = `translateX(-${trackIndex * 20}%)`;
+            void trackEl.offsetHeight; // force DOM reflow
+            trackEl.style.transition = "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+        }
         isAnimating = false;
-    }, 850);
+    }, 660);
 
     resetAutoSlide();
 }
 
-function nextSlide() {
-    let next = (currentSlide + 1) % slides.length;
-    setSlide(next, 'next');
+function prevSlide() {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const trackEl = document.getElementById("slidesTrack");
+    if (!trackEl) {
+        isAnimating = false;
+        return;
+    }
+
+    trackIndex--;
+
+    // Calculate dot:
+    // When trackIndex = 0 (clone of slide 3) -> dot 2!
+    // When trackIndex = 1 -> dot 0
+    // When trackIndex = 2 -> dot 1
+    let prevDot = (trackIndex - 1) % totalRealSlides;
+    if (prevDot < 0) prevDot = totalRealSlides - 1;
+    updateDots(prevDot);
+
+    trackEl.style.transition = "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+    trackEl.style.transform = `translateX(-${trackIndex * 20}%)`;
+
+    setTimeout(() => {
+        // Silently loop when reaching clone of slide 3
+        if (trackIndex === 0) {
+            trackEl.style.transition = "none";
+            trackIndex = 3;
+            trackEl.style.transform = `translateX(-${trackIndex * 20}%)`;
+            void trackEl.offsetHeight; // force DOM reflow
+            trackEl.style.transition = "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+        }
+        isAnimating = false;
+    }, 660);
+
+    resetAutoSlide();
 }
 
-function prevSlide() {
-    let prev = (currentSlide - 1 + slides.length) % slides.length;
-    setSlide(prev, 'prev');
+function setSlide(targetDotIndex, e = null) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (isAnimating) return;
+    if (targetDotIndex < 0 || targetDotIndex >= totalRealSlides) return;
+    if (targetDotIndex === currentDot) return;
+
+    // Seamless forward loop when clicking dot 0 from last slide
+    if (currentDot === totalRealSlides - 1 && targetDotIndex === 0) {
+        nextSlide();
+        return;
+    }
+    // Seamless backward loop when clicking last dot from first slide
+    if (currentDot === 0 && targetDotIndex === totalRealSlides - 1) {
+        prevSlide();
+        return;
+    }
+
+    isAnimating = true;
+    trackIndex = targetDotIndex + 1;
+    updateDots(targetDotIndex);
+
+    const trackEl = document.getElementById("slidesTrack");
+    if (trackEl) {
+        trackEl.style.transition = "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+        trackEl.style.transform = `translateX(-${trackIndex * 20}%)`;
+    }
+
+    setTimeout(() => {
+        isAnimating = false;
+    }, 660);
+
+    resetAutoSlide();
 }
 
 function resetAutoSlide() {
@@ -113,7 +138,118 @@ function resetAutoSlide() {
     slideTimer = setInterval(nextSlide, 5000);
 }
 
-resetAutoSlide();
+// Tap to swipe & Phone Touch Swipe implementation
+function initSwipeAndTap() {
+    const showcasePanel = document.querySelector(".showcase-panel");
+    if (!showcasePanel) return;
+
+    let startX = 0;
+    let startY = 0;
+    let startTime = 0;
+    let isTouchSwiping = false;
+    let lastTouchTime = 0;
+
+    // Mobile / Phone touch events: swipe left/right & tap
+    showcasePanel.addEventListener("touchstart", (e) => {
+        if (e.target.closest(".dots-container") || e.target.closest("a") || e.target.closest("button")) return;
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        startTime = Date.now();
+        isTouchSwiping = true;
+    }, { passive: true });
+
+    showcasePanel.addEventListener("touchend", (e) => {
+        if (!isTouchSwiping) return;
+        isTouchSwiping = false;
+        lastTouchTime = Date.now();
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+        const deltaTime = Date.now() - startTime;
+
+        // Check if horizontal swipe on mobile phone
+        if (Math.abs(deltaX) > 30 && Math.abs(deltaX) > Math.abs(deltaY) * 0.7) {
+            if (deltaX < 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        } else if (Math.abs(deltaX) < 15 && Math.abs(deltaY) < 15 && deltaTime < 450) {
+            // Clean tap on phone screen: tap to advance!
+            nextSlide();
+        }
+    }, { passive: true });
+
+    // Desktop mouse drag & click / tap to swipe
+    let mouseStartX = 0;
+    let mouseStartY = 0;
+    let mouseStartTime = 0;
+    let isMouseDown = false;
+
+    showcasePanel.addEventListener("mousedown", (e) => {
+        if (Date.now() - lastTouchTime < 600) return;
+        if (e.target.closest(".dots-container") || e.target.closest("a") || e.target.closest("button")) return;
+        isMouseDown = true;
+        mouseStartX = e.clientX;
+        mouseStartY = e.clientY;
+        mouseStartTime = Date.now();
+    });
+
+    window.addEventListener("mouseup", (e) => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        if (Date.now() - lastTouchTime < 600) return;
+        const deltaX = e.clientX - mouseStartX;
+        const deltaY = e.clientY - mouseStartY;
+        const deltaTime = Date.now() - mouseStartTime;
+
+        if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 0.7) {
+            if (deltaX < 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        } else if (Math.abs(deltaX) < 12 && Math.abs(deltaY) < 12 && deltaTime < 500) {
+            nextSlide();
+        }
+    });
+}
+
+// Initialize on DOM ready
+function initCarousel() {
+    let savedIndex = 0;
+    try {
+        const stored = sessionStorage.getItem("auth_slide_index");
+        if (stored !== null && !isNaN(parseInt(stored, 10))) {
+            const parsed = parseInt(stored, 10);
+            if (parsed >= 0 && parsed < totalRealSlides) {
+                savedIndex = parsed;
+            }
+        }
+    } catch(err) {}
+
+    trackIndex = savedIndex + 1;
+    currentDot = savedIndex;
+
+    const trackEl = document.getElementById("slidesTrack");
+    if (trackEl) {
+        trackEl.style.transition = "none";
+        trackEl.style.transform = `translateX(-${trackIndex * 20}%)`;
+        void trackEl.offsetHeight; // force reflow
+        trackEl.style.transition = "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+    }
+
+    updateDots(savedIndex);
+    resetAutoSlide();
+    initSwipeAndTap();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCarousel);
+} else {
+    initCarousel();
+}
 
 
 // ==========================================

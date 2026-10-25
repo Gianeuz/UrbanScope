@@ -19,11 +19,29 @@
         <div class="showcase-panel">
          
             <div class="slides-track" id="slidesTrack">
+                <div class="slide-item clone"><img src="../../assets/images/auth-slide3.jpg" alt="Miriam Lobren Properties 3"></div>
                 <div class="slide-item active"><img src="../../assets/images/auth-slide1.jpg" alt="Miriam Lobren Properties 1"></div>
                 <div class="slide-item"><img src="../../assets/images/auth-slide2.jpg" alt="Miriam Lobren Properties 2"></div>
                 <div class="slide-item"><img src="../../assets/images/auth-slide3.jpg" alt="Miriam Lobren Properties 3"></div>
-                <div class="slide-item"><img src="../../assets/images/auth-slide4.jpg" alt="Miriam Lobren Properties 4"></div>
+                <div class="slide-item clone"><img src="../../assets/images/auth-slide1.jpg" alt="Miriam Lobren Properties 1"></div>
             </div>
+            <script>
+                (function() {
+                    try {
+                        var s = sessionStorage.getItem('auth_slide_index');
+                        if (s !== null) {
+                            var idx = parseInt(s, 10);
+                            if (idx >= 0 && idx <= 2) {
+                                var t = document.getElementById('slidesTrack');
+                                if (t) {
+                                    t.style.transition = 'none';
+                                    t.style.transform = 'translateX(-' + ((idx + 1) * 20) + '%)';
+                                }
+                            }
+                        }
+                    } catch(e) {}
+                })();
+            </script>
             <div class="overlay"></div>
 
             <div class="showcase-header">
@@ -37,11 +55,17 @@
                 Better Homes,<br>Brighter Futures
             </div>
 
-            <div class="dots-container" id="dotsContainer">
-                <button class="dot active" type="button" onclick="setSlide(0)" aria-label="Slide 1"></button>
-                <button class="dot" type="button" onclick="setSlide(1)" aria-label="Slide 2"></button>
-                <button class="dot" type="button" onclick="setSlide(2)" aria-label="Slide 3"></button>
-                <button class="dot" type="button" onclick="setSlide(3)" aria-label="Slide 4"></button>
+            <div class="showcase-bottom">
+                <div class="showcase-caption">
+                    <h3 class="showcase-caption-title">Your Next Home is<br>Just a Click away</h3>
+                    <p class="showcase-caption-desc">Access property details, submit inquiries, upload your requirements, and track your journey.</p>
+                </div>
+
+                <div class="dots-container" id="dotsContainer">
+                    <button class="dot active" type="button" onclick="setSlide(0, event)" aria-label="Slide 1"></button>
+                    <button class="dot" type="button" onclick="setSlide(1, event)" aria-label="Slide 2"></button>
+                    <button class="dot" type="button" onclick="setSlide(2, event)" aria-label="Slide 3"></button>
+                </div>
             </div>
         </div>
 
