@@ -33,9 +33,12 @@ python run.py            # serves site + API on http://127.0.0.1:8000
 - `run.py` uses `uvicorn --reload`, so Python edits hot-reload.
 - Env vars: `HOST`, `PORT`, `URBANSCOPE_SECRET_KEY`.
 - Frontend also works from VS Code Live Server (`:5500/frontend/`); it calls the API at `http://127.0.0.1:8000/api`.
-- **Reset data:** delete `backend/urbanscope.db` and restart.
+- **Reset data:** delete `backend/urbanscope.db` and restart (or run `python backend/seed_rbac.py`).
 
-Demo logins: admin `urbanscope.cvsu@gmail.com` / `urbanscope2026` (or `admin@cdmiranda.com` / `admin123`) · client `client@example.com` / `client123`.
+Demo logins:
+- Superadmin: `urbanscope.cvsu@gmail.com` / `urbanscope2026`
+- Admin: `admin.realestate@gmail.com` / `realestate2026`
+- Client: `client@example.com` / `client123`
 
 There is **no test suite, linter, or build step**. Verify changes by running the server
 and exercising the page / `/docs` endpoint you touched.
@@ -46,13 +49,14 @@ and exercising the page / `/docs` endpoint you touched.
 
 ```text
 run.py                 Starts FastAPI + static site (uvicorn backend.app:app)
-backend/               app.py (routes + static mounts), database.py, models.py, auth.py
+backend/               app.py (routes + static mounts + RBAC guard), database.py, models.py, auth.py, seed_rbac.py, migration_rbac.sql
 frontend/              Everything the browser loads (served at /)
   index.html/.css/.js  Home page
   pages/properties/    Catalog, property-detail (?id=N), Liora.html & Airmen.html showcases
   pages/inquiry/       Inquiry form (requires login: <html data-require-auth>)
-  pages/auth/          Client login & register
-  pages/admin/         Admin login, dashboard, properties table, add-property form
+  pages/auth/          Unified login (auto-routes by role) & register
+  pages/admin/         Dashboard, propertylist.html, add-property, edit-property, clients, users, profile, legacy login redirect
+  pages/superadmin/    Master overview, system diagnostics & RBAC user role management
   shared/css/          common.css (design tokens, navbar, footer), session, splash, chatbot
   shared/js/           supabase.js (API gateway), session.js, splash.js, chatbot.js, api.js
   assets/images/       Photos, logos, icons
@@ -99,7 +103,7 @@ Login `?redirect=` values are relative to the frontend root (e.g. `pages/inquiry
 Property `image_url` values are **root-relative** (`assets/images/…`); prefix with the base
 path when rendering from a page.
 
-### Backend
+### Backend & Authorization
 
 - All routes live in `backend/app.py`. Raw SQL with `?` placeholders — **never** f-string user
   input into SQL. (The `UPDATE` builder interpolates column names only from Pydantic field names.)
@@ -107,6 +111,13 @@ path when rendering from a page.
   used for accent-insensitive search.
 - Request/response shapes live in `backend/models.py` (Pydantic v2; use `model_dump`, not `dict`).
 - Schema changes: follow the checklist in [DATABASE.md §5](DATABASE.md#5-migrations).
+- **Server-Side RBAC Guard:** `backend/app.py` enforces `rbac_admin_guard_middleware` on all requests
+  to `/admin`, `/pages/admin/*`, `/superadmin`, and `/pages/superadmin/*`. Unauthenticated users
+  are redirected to `/pages/auth/login.html?redirect=...`.
+- **API Protection:** Endpoints creating/modifying listings (`POST/PUT/DELETE /api/properties`),
+  accessing client inquiries (`GET /api/inquiries`), and reading metrics (`GET /api/stats`) are
+  protected by the `require_admin` dependency. Superadmin endpoints (`/api/superadmin/*`) are
+  protected by `require_superadmin`.
 
 ---
 
@@ -128,22 +139,22 @@ path when rendering from a page.
 
 ---
 
-## Known Issues (read before "fixing" things)
+## Known Issues & Notes (read before "fixing" things)
 
-These are real gaps in the codebase. Don't silently work around them; mention them or fix them
-deliberately if they're in scope.
-
-1. **Admin property pages are disconnected from the API.** `pages/admin/properties.js` reads
-   `localStorage["properties"]`; `pages/admin/add-property.js` writes `localStorage["urbanScopeProperties"]`
-   (different key, different field names like `propertyName`/`lotArea`). Neither loads `supabase.js`.
-2. **No server-side authorization.** Property create/update/delete and `GET /api/inquiries` accept
-   unauthenticated requests. The admin gate is client-side only.
-3. **`/api/stats`** returns 3 counts; the dashboard shows 5 KPI cards.
-4. **`init_db()` runs twice** on startup (module import + lifespan). Harmless because it's idempotent.
-5. **README drift:** says 5 seed properties (there are 6).
-6. CORS is `allow_origins=["*"]` with credentials, and there's a hard-coded fallback JWT secret — dev only.
-7. **Dead admin links:** `pages/admin/add-property.html` links to `manage-properties.html`, and
-   `pages/admin/properties.js` navigates to `property-details.html` / `edit-property.html` — none exist.
+1. **Admin property pages connected to API:** `propertylist.html` and `add-property.html` load
+   `supabase.js`, perform live REST calls, and keep `localStorage` caches (`properties`,
+   `urbanScopeProperties`, `cached_live_properties`) synchronized for offline resilience.
+2. **Server-side authorization active:** Administrative routes and endpoints are strictly guarded
+   by `require_admin`, `require_superadmin`, and `rbac_admin_guard_middleware`.
+3. **`/api/stats` count:** Returns 3 aggregate counts (`total_properties`, `total_inquiries`,
+   `pending_inquiries`); the admin dashboard computes the other 2 cards dynamically from the inquiry list.
+4. **`init_db()` runs twice on startup:** (module import + lifespan). Harmless because it's idempotent.
+5. **CORS & JWT secrets:** CORS is `allow_origins=["*"]` with credentials, and there's a hard-coded fallback JWT secret — dev only.
+6. **Unified Sign-In:** `/pages/admin/login.html` 302-redirects to `/pages/auth/login.html`, which handles
+   role detection and redirects clients to home/redirect target, admins to `/pages/admin/dashboard.html`,
+   and superadmins to `/pages/superadmin/dashboard.html`.
+7. **Admin route aliases:** `/pages/admin/properties.html` and `manage-properties.html` permanently redirect
+   to `/pages/admin/propertylist.html`. Full listing editing is handled by `edit-property.html`.
 
 ---
 

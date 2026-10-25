@@ -31,6 +31,7 @@ there's a single source of truth. Database details are in **DATABASE.md**.
 ```powershell
 pip install -r backend/requirements.txt   # install deps
 python run.py                             # run site + API on :8000
+python backend/seed_rbac.py               # verify & seed RBAC accounts & triggers
 Remove-Item backend\urbanscope.db         # reset DB (re-seeds on next start)
 ```
 

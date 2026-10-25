@@ -37,23 +37,26 @@
   - Session chat history persistence across page navigation with subtle sound feedback.
 
 ### 🔐 Authentication Suite (`frontend/pages/auth/`)
-- **Client Login:** Secure split-screen layout with branding slideshow carousel, password visibility toggle, remember-me checkbox, and Google sign-in option.
+- **Unified Sign-In:** Secure split-screen layout with branding slideshow carousel, password visibility toggle, remember-me checkbox, and Google sign-in option. Role-based redirection automatically routes Superadmins to `/pages/superadmin/dashboard.html`, Admins to `/pages/admin/dashboard.html`, and Clients to their requested page or Home.
 - **Client Registration:** Name, email, Philippine phone number validation (`+639...` / `09...`), dynamic 4-stage password strength meter, real-time password matching hint, and terms checkbox.
-- **Discreet Admin Access:** Direct route linking authorized staff to the restricted admin portal.
+- **Discreet Admin Access:** Role-gated backend middleware protecting administrative consoles with automatic redirects to the unified sign-in page.
 
 ### 🛡️ Administrator Suite (`frontend/pages/admin/`)
-- **Admin Login:** Dedicated, restricted login page with security auditing notice and password visibility toggle.
-- **Analytics Dashboard:**
+- **Analytics Dashboard (`dashboard.html`):**
   - **5 Metric KPI Cards:** Total Properties, Total Clients, Total Inquiries, Pending Review, and Completed Inquiries.
   - **Inquiries Overview Chart:** Monthly SVG bar chart with time period filter.
   - **Inquiry Status Donut Chart:** Visual breakdown with status legend (*Submitted, Requirements Submitted, Under Review, Approved, Completed*).
   - **Live Notifications Feed:** Recent platform alerts with relative timestamps.
   - **Recent Inquiries Data Table:** Client name, property, submission timestamp, color-coded status pills, and view actions.
   - **Slide-out Navigation Sidebar:** Accessible via hamburger menu, featuring expandable inquiry sub-categories and quick navigation links.
-- **Property Management:**
-  - Searchable and status-filterable property table.
-  - Live **"+ Add Property"** modal dialog to create new property listings on the fly.
-  - Row actions for viewing, editing, and deleting records.
+- **Property Management (`propertylist.html`):**
+  - Searchable and status-filterable property table connected directly to the database API.
+  - Quick actions for viewing property details, editing listings, toggling status (*Available* / *Sold*), and deleting properties.
+- **Property Creation (`add-property.html`):** Full-page form for publishing new properties with specifications, amenities, and image upload.
+- **Property Editor (`edit-property.html`):** Dedicated editor to update existing listing specifications and pricing.
+- **Client Inquiries (`clients.html`):** Dedicated table to manage client leads, view submitted contact details, and update inquiry review status.
+- **User Management (`users.html`):** Overview of registered client accounts.
+- **Admin Profile (`profile.html`):** Profile details and security settings for logged-in administrators.
 
 ---
 
@@ -69,10 +72,12 @@ Mariam-Lobren-Real-Estate/
 ├── .gitignore                   # Git ignore patterns (.history, temporary files, pycache, .db)
 │
 ├── backend/                     # 🐍 Python FastAPI & SQLite Backend
-│   ├── app.py                   # FastAPI REST API routes, static hosting & CORS
-│   ├── database.py              # SQLite connection, tables schema & seed data
+│   ├── app.py                   # FastAPI REST API routes, static hosting, RBAC guard & CORS
+│   ├── database.py              # SQLite connection, tables schema, triggers & seed data
 │   ├── models.py                # Pydantic data schemas & request validation
-│   ├── auth.py                  # PBKDF2 password hashing & PyJWT token auth
+│   ├── auth.py                  # PBKDF2 password hashing, JWT auth & RBAC route dependencies
+│   ├── seed_rbac.py             # RBAC migration & admin account verification script
+│   ├── migration_rbac.sql       # SQLite triggers & role migration SQL
 │   ├── requirements.txt         # Python dependencies (fastapi, uvicorn, pydantic, pyjwt)
 │   └── supabase_schema.sql      # Optional PostgreSQL / Supabase mirror (drops tables!)
 │
@@ -98,25 +103,36 @@ Mariam-Lobren-Real-Estate/
 │   │   │   └── inquiry.js               # Form submission handling & validation
 │   │   │
 │   │   ├── auth/                # Client Authentication Feature Module
-│   │   │   ├── login.html               # Client sign-in page
-│   │   │   ├── login.js                 # Client login authentication logic & redirect
+│   │   │   ├── login.html               # Unified sign-in page (auto-routes by RBAC role)
+│   │   │   ├── login.js                 # Sign-in authentication logic & role router
 │   │   │   ├── register.html            # Client registration page
 │   │   │   ├── register.js              # Registration form validation & account creation
 │   │   │   ├── auth.css                 # Authentication split-screen layout & input styling
 │   │   │   └── auth.js                  # Hero carousel, password visibility toggle & strength meter
 │   │   │
 │   │   ├── admin/               # Administrator Portal Feature Module
-│   │   │   ├── login.html               # Admin login portal
-│   │   │   ├── login.js                 # Admin authentication handler
+│   │   │   ├── login.html               # Legacy portal login (redirects to /pages/auth/login.html)
 │   │   │   ├── dashboard.html           # Admin dashboard analytics & KPI charts
 │   │   │   ├── dashboard.css            # Dashboard layout, KPI cards & slide-out sidebar styles
 │   │   │   ├── dashboard.js             # Dashboard metrics, chart interactions & sidebar toggle
-│   │   │   ├── properties.html          # Property management table & modal dialog
+│   │   │   ├── propertylist.html        # Property management table & live actions
 │   │   │   ├── properties.css           # Admin data table, filter pills & modal styles
-│   │   │   ├── properties.js            # Admin property CRUD operations & modal controls
+│   │   │   ├── properties.js            # Admin property CRUD operations, status toggles & delete modal
 │   │   │   ├── add-property.html        # Full-page add-property form
 │   │   │   ├── add-property.css         # Add-property form styles
-│   │   │   └── add-property.js          # Add-property form logic (writes localStorage)
+│   │   │   ├── add-property.js          # Add-property API submission & cache sync
+│   │   │   ├── edit-property.html       # Edit property listing form
+│   │   │   ├── edit-property.css        # Edit property form styles
+│   │   │   ├── edit-property.js         # Edit property fetch & PUT update handler
+│   │   │   ├── clients.html             # Client inquiries & leads management table
+│   │   │   ├── clients.css              # Client inquiries styling
+│   │   │   ├── clients.js               # Inquiries list, filter & status updater
+│   │   │   ├── users.html               # Registered accounts management
+│   │   │   ├── users.css                # Users list styles
+│   │   │   ├── users.js                 # Users table loader
+│   │   │   ├── profile.html             # Admin profile and credentials view
+│   │   │   ├── profile.css              # Admin profile styles
+│   │   │   └── profile.js               # Admin profile data binder
 │   │   │
 │   │   └── superadmin/          # Executive Superadmin Console Feature Module
 │   │       ├── dashboard.html           # Master overview, system diagnostics & RBAC
@@ -180,30 +196,32 @@ The backend is organized under the [`backend/`](backend/) directory and provides
 | Category | Method | Endpoint | Description |
 | :--- | :--- | :--- | :--- |
 | **System** | `GET` | `/api/health` | Service health status |
-| **Dashboard**| `GET` | `/api/stats` | Aggregate counts for KPI metric cards |
+| **Dashboard**| `GET` | `/api/stats` | Aggregate counts for KPI metric cards *(Admin only)* |
 | **Auth** | `POST` | `/api/auth/register` | Register new client account |
-| **Auth** | `POST` | `/api/auth/login` | Authenticate client or admin |
+| **Auth** | `POST` | `/api/auth/login` | Authenticate client, admin, or superadmin |
 | **Auth** | `POST` | `/api/auth/logout` | Revoke session / sign out |
 | **Auth** | `GET` | `/api/auth/me` | Fetch authenticated user profile |
 | **Properties** | `GET` | `/api/properties` | Search & filter property catalog |
 | **Properties** | `GET` | `/api/properties/{id}` | Retrieve individual property detail |
-| **Properties** | `POST` | `/api/properties` | Add new property listing (Admin) |
-| **Properties** | `PUT` | `/api/properties/{id}` | Update listing information |
-| **Properties** | `DELETE` | `/api/properties/{id}` | Remove listing from database |
+| **Properties** | `POST` | `/api/properties` | Add new property listing *(Admin only)* |
+| **Properties** | `PUT` | `/api/properties/{id}` | Update listing information *(Admin only)* |
+| **Properties** | `DELETE` | `/api/properties/{id}` | Remove listing from database *(Admin only)* |
 | **Inquiries** | `POST` | `/api/inquiries` | Submit client inquiry message |
-| **Inquiries** | `GET` | `/api/inquiries` | Retrieve all inquiries (Admin) |
+| **Inquiries** | `GET` | `/api/inquiries` | Retrieve all inquiries *(Admin only)* |
 | **Superadmin** | `GET` | `/api/superadmin/overview` | Master counts, database metrics & trigger status |
 | **Superadmin** | `GET` | `/api/superadmin/users` | List all accounts with RBAC roles |
 | **Superadmin** | `PUT` | `/api/superadmin/users/{id}/role` | Promote/demote account roles |
 | **Superadmin** | `POST` | `/api/superadmin/users` | Create user/admin from console |
 | **Superadmin** | `DELETE` | `/api/superadmin/users/{id}` | Delete account with safety guards |
+| **Superadmin** | `GET` | `/api/superadmin/integrity` | Database integrity, foreign keys & trigger checks |
 
 ### 2. Default Seed Accounts & Data
 
 When first launched, the SQLite database is automatically generated and populated:
-- **Admin Staff:** `urbanscope.cvsu@gmail.com` / `urbanscope2026` (or `admin@cdmiranda.com` / `admin123`)
-- **Demo Client:** `client@example.com` / `client123`
-- **Properties:** 5 showcase listings (Velemont Residences, Green Valley, Horizon Heights, Liora Homes, Airmen Triplex)
+- **Superadmin:** `urbanscope.cvsu@gmail.com` / `urbanscope2026` (role: `superadmin`)
+- **Admin Staff:** `admin.realestate@gmail.com` / `realestate2026` (role: `admin`)
+- **Demo Client:** `client@example.com` / `client123` (role: `user`)
+- **Properties:** 6 showcase listings (Velemont Residences, Green Valley Villa, Horizon Heights, Liora Homes Executive Townhouse, Airmen Triplex Modern Residence, Sunset Heights Executive Townhouse)
 - **Inquiries:** Sample client leads pre-loaded for dashboard KPI display.
 
 ---
@@ -221,12 +239,12 @@ python3 run.py
 The terminal will launch the server and display all accessible endpoints:
 - **Web Application:** `http://localhost:8000/`
 - **Properties Catalog:** `http://localhost:8000/pages/properties/properties.html`
-- **Admin Portal:** `http://localhost:8000/pages/admin/login.html` (Superadmin: `urbanscope.cvsu@gmail.com` / `urbanscope2026`, Admin: `admin.realestate@gmail.com` / `realestate2026`)
+- **Sign-In Portal:** `http://localhost:8000/pages/auth/login.html` (auto-routes by role: Superadmin, Admin, Client)
 - **Swagger Interactive API Docs:** `http://localhost:8000/docs`
 - **ReDoc Documentation:** `http://localhost:8000/redoc`
 
-> Old URLs from before the folder reorganization (e.g. `/properties/properties.html`) are
-> permanently redirected to their new `/pages/...` location.
+> Legacy pre-reorganization URLs (e.g. `/properties/properties.html`, `/pages/admin/properties.html`)
+> are permanently redirected to their active `/pages/...` locations.
 
 ### Option 2: Live Server or Direct Browser Open
 
@@ -244,12 +262,17 @@ You can also run the frontend via VS Code Live Server (`http://127.0.0.1:5500/fr
 | **Featured: Liora Homes** | [`frontend/pages/properties/Liora.html`](frontend/pages/properties/Liora.html) | Dedicated showcase for Liora Homes Executive Townhouse |
 | **Featured: Airmen Triplex** | [`frontend/pages/properties/Airmen.html`](frontend/pages/properties/Airmen.html) | Dedicated showcase for Airmen Triplex Modern Residence |
 | **Submit Inquiry** | [`frontend/pages/inquiry/inquiry.html`](frontend/pages/inquiry/inquiry.html) | Client inquiry form with pre-filled account details |
-| **Client Login** | [`frontend/pages/auth/login.html`](frontend/pages/auth/login.html) | Client sign-in with split-screen branding |
+| **Unified Sign-In** | [`frontend/pages/auth/login.html`](frontend/pages/auth/login.html) | Sign-in with split-screen branding & role router |
 | **Client Register** | [`frontend/pages/auth/register.html`](frontend/pages/auth/register.html) | Account registration with password strength meter |
-| **Admin Login** | [`frontend/pages/admin/login.html`](frontend/pages/admin/login.html) | Restricted access portal for administrative staff |
+| **Admin Login (Legacy)** | [`frontend/pages/admin/login.html`](frontend/pages/admin/login.html) | Redirects to unified sign-in (`pages/auth/login.html`) |
 | **Admin Dashboard** | [`frontend/pages/admin/dashboard.html`](frontend/pages/admin/dashboard.html) | Analytics charts, KPI cards, notifications, slide-out sidebar |
-| **Admin Properties** | [`frontend/pages/admin/properties.html`](frontend/pages/admin/properties.html) | Manage listings table with "+ Add Property" modal |
-| **Admin Add Property** | [`frontend/pages/admin/add-property.html`](frontend/pages/admin/add-property.html) | Full-page form for creating a listing |
+| **Admin Property List** | [`frontend/pages/admin/propertylist.html`](frontend/pages/admin/propertylist.html) | Manage listings table with status toggles (*Available*/*Sold*) & delete modal |
+| **Admin Add Property** | [`frontend/pages/admin/add-property.html`](frontend/pages/admin/add-property.html) | Full-page form for publishing a listing to database |
+| **Admin Edit Property** | [`frontend/pages/admin/edit-property.html`](frontend/pages/admin/edit-property.html) | Dedicated editor to update listing specifications & pricing |
+| **Admin Client Inquiries**| [`frontend/pages/admin/clients.html`](frontend/pages/admin/clients.html) | Review client leads, messages, and update status |
+| **Admin User Accounts** | [`frontend/pages/admin/users.html`](frontend/pages/admin/users.html) | Overview of registered client accounts & role badges |
+| **Admin Profile** | [`frontend/pages/admin/profile.html`](frontend/pages/admin/profile.html) | Administrator personal details & security credentials |
+| **Superadmin Console** | [`frontend/pages/superadmin/dashboard.html`](frontend/pages/superadmin/dashboard.html) | Executive diagnostics, database integrity & RBAC management |
 
 When served by `run.py`, each file's URL is its path with `frontend/` removed
 (e.g. `frontend/pages/auth/login.html` → `http://localhost:8000/pages/auth/login.html`).

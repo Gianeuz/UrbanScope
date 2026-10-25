@@ -263,13 +263,28 @@ Remove-Item backend\urbanscope.db
 python run.py
 ```
 
+**Verify & re-seed RBAC accounts & triggers**:
+
+```powershell
+python backend/seed_rbac.py
+```
+
+**Run RBAC migration manually on existing database**:
+
+```powershell
+sqlite3 backend/urbanscope.db ".read backend/migration_rbac.sql"
+```
+
 **Inspect data** (read-only queries that don't use `NORMALIZE`):
 
 ```powershell
 python -c "import sqlite3; c=sqlite3.connect('backend/urbanscope.db'); print(c.execute('SELECT id,title,price FROM properties').fetchall())"
 ```
 
-**Browse via API:** `http://127.0.0.1:8000/docs` (Swagger UI).
+**Run Database Integrity Checks:**
+
+- Via API: `GET /api/superadmin/integrity` (Requires Superadmin Bearer token)
+- Via Swagger UI: `http://127.0.0.1:8000/docs`
 
 ---
 
