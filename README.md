@@ -1,9 +1,9 @@
-# UrbanScope — CD Miranda Realty
+# UrbanScope — Miriam Lobren Real Estate Agent
 
 > **Better Homes, Brighter Futures**
 > A responsive real estate website for property discovery, client inquiries, and admin management.
 
-Built for **CD Miranda Realty** and agent **Miriam Lobren** (Las Piñas & Cavite, Philippines).
+Built for **Miriam Lobren Real Estate Agent** (Las Piñas & Cavite, Philippines).
 
 ---
 
@@ -62,6 +62,32 @@ To reset the data, delete `backend/urbanscope.db` and restart the server.
 
 ---
 
+## 📖 User & Administrator Manual
+
+### 1. Client / Homebuyer Guide
+- **Browsing Properties:** Visit the home page to view showcased listings, filter by property type (Houses, Townhouses, Lots, Commercial), or use search keywords. Click any property card to view high-resolution photos, pricing, lot/floor area, amenities, and location details.
+- **Client Registration & Login:** Click **Sign In** in the top navigation bar. New users can create an account with a name, email, Philippine mobile number (`+63` / `09...`), and password. The system automatically signs you in and secures your session.
+- **Submitting Inquiries:** On any property page, logged-in clients can click **Inquire Now** to submit questions, schedule site viewings, or request price computations directly to Miriam Lobren.
+- **Mira AI Assistant:** Use the floating chatbot bubble in the bottom-right corner for 24/7 assistance: search listings by budget, explore Cavite and Las Piñas locations, or ask about Pag-IBIG and bank financing requirements.
+
+### 2. Administrator Guide (Miriam Lobren & Team)
+- **Unified Sign-In:** Log in via `/pages/auth/login.html`. Authorized administrative accounts are automatically routed to the Admin Dashboard.
+- **Dashboard Overview:** Monitor business health with key metrics: Total Properties, Total Inquiries, Pending Follow-ups, and recent activity streams.
+- **Managing Properties (CRUD):**
+  - **View Listings:** Access `propertylist.html` to browse active catalog listings with status indicators.
+  - **Add Property:** Click **Add New Property** (`add-property.html`) to input property name, category, price (₱), location, bedrooms, bathrooms, dimensions, amenities, and upload images.
+  - **Edit Property:** Select **Edit** on any listing card (`edit-property.html`) to update pricing, specifications, or replace photos.
+  - **Delete Property:** Remove unlisted or sold properties with immediate database and cache synchronization.
+- **Client Inquiries & CRM:** Review client inquiries under `clients.html`, inspect contact information, track message details, and update inquiry follow-up statuses (e.g., *Pending*, *Contacted*, *Scheduled*, *Closed*).
+- **Profile & Account Settings:** Visit `profile.html` to update agent profile contact details and change administrator passwords.
+
+### 3. Superadministrator Guide
+- **Master Overview:** Access `/pages/superadmin/dashboard.html` for elevated system diagnostics.
+- **RBAC Role Management:** Manage registered system users, elevate or adjust role permissions (`user`, `admin`, `superadmin`), and audit platform accounts.
+- **System Health:** Run diagnostics on the SQLite database and monitor API connectivity.
+
+---
+
 ## 📂 Project Structure
 
 ```text
@@ -72,15 +98,15 @@ To reset the data, delete `backend/urbanscope.db` and restart the server.
 │   ├── pages/          # One folder per feature (auth, properties, inquiry, admin, superadmin)
 │   ├── shared/         # Shared CSS & JS (navbar, session, chatbot, API client)
 │   └── assets/images/  # Photos, logos, icons
-└── DATABASE.md         # Database schema & seed data
+├── DATABASE.md         # Database schema & seed data
+└── AGENTS.md           # Developer & agent guidelines
 ```
 
 ---
 
 ## 📄 Credits
 
-- **Realty:** CD Miranda Realty
-- **Agent:** Miriam Lobren
+- **Agent:** Miriam Lobren (Real Estate Agent)
 - **Platform:** UrbanScope
 
 &copy; 2026 UrbanScope. All rights reserved.
