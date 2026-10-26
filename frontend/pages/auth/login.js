@@ -16,9 +16,25 @@ if (params.get('logout') === '1') {
         localStorage.removeItem('urbanscope_user');
         localStorage.removeItem('adminUser');
     }
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
     params.delete('logout');
     const rest = params.toString();
     history.replaceState(null, '', window.location.pathname + (rest ? '?' + rest : ''));
+} else {
+    // If an administrator or superadmin is already authenticated, redirect directly to their console
+    try {
+        const rawUser = localStorage.getItem('adminUser') || localStorage.getItem('urbanscope_user');
+        if (rawUser) {
+            const u = JSON.parse(rawUser);
+            const r = (u.role || '').toLowerCase();
+            const em = (u.email || '').toLowerCase().trim();
+            if (r === 'superadmin' || em === 'urbanscope.cvsu@gmail.com') {
+                window.location.replace('../superadmin/dashboard.html');
+            } else if (r === 'admin' || em === 'admin.realestate@gmail.com') {
+                window.location.replace('../admin/dashboard.html');
+            }
+        }
+    } catch (e) {}
 }
 const rawNext = params.get('redirect') || '';
 // Allow valid redirect paths relative to the frontend root (e.g. index.html, pages/properties/properties.html, pages/inquiry/inquiry.html)

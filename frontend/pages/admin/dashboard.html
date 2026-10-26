@@ -52,7 +52,7 @@
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
 
-                <span class="notif-badge">3</span>
+                <span class="notif-badge" style="display: none;">0</span>
             </button>
 
             <button class="admin-profile-badge" id="profileButton" type="button" aria-haspopup="true"
@@ -121,7 +121,7 @@
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
-                <span>Home</span>
+                <span>Dashboard</span>
             </a>
 
             <a href="propertylist.html" class="nav-item">
@@ -211,7 +211,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Properties</span>
-                    <strong class="kpi-value" id="kpiTotalProperties">124</strong>
+                    <strong class="kpi-value" id="kpiTotalProperties">—</strong>
                 </div>
             </article>
 
@@ -226,7 +226,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Clients</span>
-                    <strong class="kpi-value" id="kpiTotalClients">87</strong>
+                    <strong class="kpi-value" id="kpiTotalClients">—</strong>
                 </div>
             </article>
 
@@ -239,7 +239,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Total Inquiries</span>
-                    <strong class="kpi-value" id="kpiTotalInquiries">42</strong>
+                    <strong class="kpi-value" id="kpiTotalInquiries">—</strong>
                 </div>
             </article>
 
@@ -252,7 +252,7 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Pending Review</span>
-                    <strong class="kpi-value" id="kpiPendingInquiries">5</strong>
+                    <strong class="kpi-value" id="kpiPendingInquiries">—</strong>
                 </div>
             </article>
 
@@ -265,11 +265,40 @@
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Completed Inquiries</span>
-                    <strong class="kpi-value" id="kpiCompletedInquiries">12</strong>
+                    <strong class="kpi-value" id="kpiCompletedInquiries">—</strong>
                 </div>
             </article>
 
         </section>
+        <script>
+            (function () {
+                try {
+                    const cached = JSON.parse(localStorage.getItem('urbanscope_dashboard_kpis') || 'null');
+                    if (cached) {
+                        if (cached.totalProperties != null) {
+                            var el = document.getElementById('kpiTotalProperties');
+                            if (el) el.textContent = cached.totalProperties;
+                        }
+                        if (cached.totalClients != null) {
+                            var el = document.getElementById('kpiTotalClients');
+                            if (el) el.textContent = cached.totalClients;
+                        }
+                        if (cached.totalInquiries != null) {
+                            var el = document.getElementById('kpiTotalInquiries');
+                            if (el) el.textContent = cached.totalInquiries;
+                        }
+                        if (cached.pendingInquiries != null) {
+                            var el = document.getElementById('kpiPendingInquiries');
+                            if (el) el.textContent = cached.pendingInquiries;
+                        }
+                        if (cached.completedInquiries != null) {
+                            var el = document.getElementById('kpiCompletedInquiries');
+                            if (el) el.textContent = cached.completedInquiries;
+                        }
+                    }
+                } catch (_) {}
+            })();
+        </script>
 
         <!-- ANALYTICS ROW (INQUIRY STATUS & RECENT NOTIFICATIONS) -->
         <section class="analytics-row" id="dashboardAnalyticsRow">
@@ -283,23 +312,43 @@
                 </div>
 
                 <div class="donut-chart-container">
-                    <svg viewBox="0 0 160 160" width="140" height="140" id="inquiryDonutSvg">
+                    <svg viewBox="0 0 160 160" width="220" height="220" id="inquiryDonutSvg">
                         <circle r="60" cx="80" cy="80" fill="none" stroke="#e0e8e2" stroke-width="24" />
                         <circle id="donutSubmitted" r="60" cx="80" cy="80" fill="none" stroke="#3b82f6" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
                         <circle id="donutReqSubmitted" r="60" cx="80" cy="80" fill="none" stroke="#a855f7" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
                         <circle id="donutUnderReview" r="60" cx="80" cy="80" fill="none" stroke="#f59e0b" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
                         <circle id="donutApproved" r="60" cx="80" cy="80" fill="none" stroke="#22c55e" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
                         <circle id="donutCompleted" r="60" cx="80" cy="80" fill="none" stroke="#15803d" stroke-width="24" stroke-dasharray="0 377" stroke-dashoffset="0" />
-                        <text x="80" y="75" text-anchor="middle" font-size="20" font-weight="bold" fill="#1b2e21" id="donutTotalInquiries">0</text>
-                        <text x="80" y="93" text-anchor="middle" font-size="9.5" fill="#6d8373">Total Inquiries</text>
+                        <text x="80" y="76" text-anchor="middle" font-size="25" font-weight="800" fill="#1b2e21" id="donutTotalInquiries">0</text>
+                        <text x="80" y="93" text-anchor="middle" font-size="9.5" font-weight="600" fill="#64748b" letter-spacing="0.3">Total Inquiries</text>
                     </svg>
 
                     <div class="donut-legend">
-                        <div class="legend-item"><span class="dot blue"></span> Submitted (<span id="legendSubmittedCount">0</span>)</div>
-                        <div class="legend-item"><span class="dot purple"></span> Requirements Submitted (<span id="legendReqCount">0</span>)</div>
-                        <div class="legend-item"><span class="dot orange"></span> Under Review (<span id="legendReviewCount">0</span>)</div>
-                        <div class="legend-item"><span class="dot green"></span> Approved (<span id="legendApprovedCount">0</span>)</div>
-                        <div class="legend-item"><span class="dot dark-green"></span> Completed (<span id="legendCompletedCount">0</span>)</div>
+                        <div class="legend-item">
+                            <span class="dot blue"></span>
+                            <span class="legend-label">Submitted</span>
+                            <span class="legend-count">(<span id="legendSubmittedCount">0</span>)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot purple"></span>
+                            <span class="legend-label">Requirements Submitted</span>
+                            <span class="legend-count">(<span id="legendReqCount">0</span>)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot orange"></span>
+                            <span class="legend-label">Under Review</span>
+                            <span class="legend-count">(<span id="legendReviewCount">0</span>)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot green"></span>
+                            <span class="legend-label">Approved</span>
+                            <span class="legend-count">(<span id="legendApprovedCount">0</span>)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot dark-green"></span>
+                            <span class="legend-label">Completed</span>
+                            <span class="legend-count">(<span id="legendCompletedCount">0</span>)</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -357,7 +406,16 @@
                                 All Available Properties
                             </span>
 
-                            <strong id="overviewPropertyCount">3</strong>
+                            <strong id="overviewPropertyCount">—</strong>
+                            <script>
+                                try {
+                                    const cached = JSON.parse(localStorage.getItem('urbanscope_dashboard_kpis') || 'null');
+                                    if (cached && cached.totalProperties != null) {
+                                        var ov = document.getElementById('overviewPropertyCount');
+                                        if (ov) ov.textContent = cached.totalProperties;
+                                    }
+                                } catch (_) {}
+                            </script>
 
 
                         </div>

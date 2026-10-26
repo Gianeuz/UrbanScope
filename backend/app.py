@@ -261,11 +261,43 @@ FORBIDDEN_SUPERADMIN_HTML = """<!DOCTYPE html>
         <p>Access to the UrbanScope Superadmin Console is strictly restricted to the primary superadministrator (<code>urbanscope.cvsu@gmail.com</code>). Regular administrator and client accounts are forbidden from accessing this console.</p>
         <div class="btn-group">
             <a href="/pages/admin/dashboard.html" class="btn-admin">Go to Admin Portal</a>
-            <a href="/" class="btn-home">Return to Home</a>
         </div>
     </div>
 </body>
 </html>"""
+
+
+def extract_token_from_request(request: Request) -> Optional[str]:
+    """Extracts JWT bearer token from Authorization header, access_token cookie, or query param."""
+    auth_header = request.headers.get("authorization")
+    if auth_header and auth_header.lower().startswith("bearer "):
+        return auth_header.split(" ", 1)[1].strip()
+    if "access_token" in request.cookies:
+        return request.cookies.get("access_token")
+    if "token" in request.query_params:
+        return request.query_params.get("token")
+    return None
+
+
+def get_authenticated_user_role(token: str) -> Optional[tuple[str, str]]:
+    """Returns (email, role) if token is valid and user exists in database, else None."""
+    payload = decode_access_token(token)
+    if not payload:
+        return None
+    user_id = payload.get("sub") or payload.get("id")
+    user_role = payload.get("role")
+    user_email = (payload.get("email") or "").lower().strip()
+    if user_role and user_email:
+        return user_email, user_role
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT email, role FROM users WHERE id = ?", (user_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        return row["email"].lower().strip(), row["role"]
+    return None
 
 
 @app.middleware("http")
@@ -274,6 +306,7 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
     Strict server-side route guard:
     - Superadmin portal (/superadmin, /pages/superadmin/*): ONLY urbanscope.cvsu@gmail.com with role == 'superadmin'.
     - Admin portal (/admin, /pages/admin/*): ONLY authorized admins/superadmins (admin.realestate@gmail.com / urbanscope.cvsu@gmail.com).
+    - Public home/catalog pages: Admins/superadmins are forbidden from viewing public pages (home page, catalog, inquiry). They are redirected directly to their admin dashboard.
     """
     path = request.url.path
 
@@ -311,40 +344,22 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
         )
 
         if not is_public_portal_file:
-            # Extract token from authorization header or cookie
-            token = None
-            auth_header = request.headers.get("authorization")
-            if auth_header and auth_header.lower().startswith("bearer "):
-                token = auth_header.split(" ", 1)[1].strip()
-            elif "access_token" in request.cookies:
-                token = request.cookies.get("access_token")
+            token = extract_token_from_request(request)
 
             # 1. Unauthenticated visitors: redirect to the shared login page
             if not token:
                 login_redirect = f"/pages/auth/login.html?redirect={request.url.path.lstrip('/')}"
                 return RedirectResponse(url=login_redirect, status_code=status.HTTP_302_FOUND)
 
-            payload = decode_access_token(token)
-            if not payload:
+            user_info = get_authenticated_user_role(token)
+            if not user_info:
                 login_redirect = "/pages/auth/login.html?reason=expired"
                 return RedirectResponse(url=login_redirect, status_code=status.HTTP_302_FOUND)
 
-            user_id = payload.get("sub") or payload.get("id")
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, email, role FROM users WHERE id = ?", (user_id,))
-            user_row = cursor.fetchone()
-            conn.close()
-
-            if not user_row:
-                return RedirectResponse(url="/pages/auth/login.html", status_code=status.HTTP_302_FOUND)
-
-            user_email = user_row["email"].lower().strip()
-            user_role = user_row["role"]
+            user_email, user_role = user_info
 
             # 2. Strict Role Checks:
             if is_superadmin_path:
-                # ONLY urbanscope.cvsu@gmail.com with role == 'superadmin'
                 is_authorized_superadmin = (
                     user_email in AUTHORIZED_SUPERADMIN_EMAILS and
                     user_role == "superadmin"
@@ -353,13 +368,36 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
                     return HTMLResponse(content=FORBIDDEN_SUPERADMIN_HTML, status_code=status.HTTP_403_FORBIDDEN)
 
             elif is_admin_path:
-                # Authorized admin or superadmin
                 is_authorized_admin = (
                     user_email in AUTHORIZED_ADMIN_EMAILS and
                     user_role in AUTHORIZED_ADMIN_ROLES
                 )
                 if not is_authorized_admin:
                     return HTMLResponse(content=FORBIDDEN_HTML, status_code=status.HTTP_403_FORBIDDEN)
+
+    else:
+        # Check if request targets public/client HTML pages (home page, catalog, inquiry)
+        # Administrators and superadmin are restricted strictly to the admin portal and cannot access the home page.
+        is_home_path = (path == "/" or path == "/index.html")
+        is_public_catalog = (
+            path.startswith("/pages/properties/") or
+            path.startswith("/pages/inquiry/") or
+            path.startswith("/properties/") or
+            path.startswith("/inquiry/")
+        )
+        file_name = path.split("/")[-1].lower()
+        is_html_request = is_home_path or file_name.endswith(".html") or ("." not in file_name and not path.startswith("/api/"))
+
+        if (is_home_path or is_public_catalog) and is_html_request:
+            token = extract_token_from_request(request)
+            if token:
+                user_info = get_authenticated_user_role(token)
+                if user_info:
+                    user_email, user_role = user_info
+                    if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
+                        return RedirectResponse(url="/pages/superadmin/dashboard.html", status_code=status.HTTP_302_FOUND)
+                    elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+                        return RedirectResponse(url="/pages/admin/dashboard.html", status_code=status.HTTP_302_FOUND)
 
     response = await call_next(request)
     return response
@@ -390,13 +428,28 @@ def get_dashboard_stats(admin_user: dict = Depends(require_admin)):
     cursor.execute("SELECT COUNT(*) FROM inquiries WHERE LOWER(status) LIKE '%review%' OR LOWER(status) LIKE '%pending%'")
     pending_inquiries = cursor.fetchone()[0]
 
+    cursor.execute("SELECT COUNT(*) FROM inquiries WHERE LOWER(status) LIKE '%completed%'")
+    completed_inquiries = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM users WHERE LOWER(role) IN ('client', 'user') OR role IS NULL")
+    total_clients = cursor.fetchone()[0]
+
     conn.close()
 
     return {
         "total_properties": total_properties,
         "total_inquiries": total_inquiries,
-        "pending_inquiries": pending_inquiries
+        "pending_inquiries": pending_inquiries,
+        "completed_inquiries": completed_inquiries,
+        "total_clients": total_clients
     }
+
+
+@app.get("/api/view_dashboard_kpis", tags=["Dashboard"])
+def get_view_dashboard_kpis(admin_user: dict = Depends(require_admin)):
+    """KPI summary view for dashboard services."""
+    stats = get_dashboard_stats(admin_user=admin_user)
+    return [stats]
 
 
 # ==========================================================
@@ -543,9 +596,11 @@ def login_user(payload: UserLogin, response: Response):
 
 @app.post("/api/auth/logout", tags=["Auth"])
 @app.get("/api/auth/logout", tags=["Auth"])
-def logout_user(response: Response):
+def logout_user(response: Response, redirect: Optional[str] = None):
     """Sign out endpoint that invalidates the session cookie."""
     response.delete_cookie(key="access_token", path="/")
+    if redirect:
+        return RedirectResponse(url=redirect, status_code=status.HTTP_302_FOUND)
     return {"success": True, "message": "Sign out successful"}
 
 
@@ -1072,13 +1127,32 @@ for section in ["properties", "inquiry", "auth", "admin"]:
 
 
 @app.get("/", include_in_schema=False)
-def serve_home():
-    """Serves root landing page index.html."""
+def serve_home(request: Request):
+    """Serves root landing page index.html, redirecting administrators to admin portal."""
+    token = extract_token_from_request(request)
+    if token:
+        user_info = get_authenticated_user_role(token)
+        if user_info:
+            user_email, user_role = user_info
+            if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
+                return RedirectResponse(url="/pages/superadmin/dashboard.html", status_code=status.HTTP_302_FOUND)
+            elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+                return RedirectResponse(url="/pages/admin/dashboard.html", status_code=status.HTTP_302_FOUND)
     return FileResponse(str(FRONTEND_DIR / "index.html"))
 
 
 @app.get("/index.html", include_in_schema=False)
-def serve_index():
+def serve_index(request: Request):
+    """Serves index.html, redirecting administrators to admin portal."""
+    token = extract_token_from_request(request)
+    if token:
+        user_info = get_authenticated_user_role(token)
+        if user_info:
+            user_email, user_role = user_info
+            if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
+                return RedirectResponse(url="/pages/superadmin/dashboard.html", status_code=status.HTTP_302_FOUND)
+            elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+                return RedirectResponse(url="/pages/admin/dashboard.html", status_code=status.HTTP_302_FOUND)
     return FileResponse(str(FRONTEND_DIR / "index.html"))
 
 

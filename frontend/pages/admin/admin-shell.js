@@ -373,7 +373,7 @@
             const href = (item.getAttribute("href") || "").toLowerCase();
 
             let match = false;
-            if (activeSection === "home" && (label === "home" || href.includes("dashboard.html"))) {
+            if ((activeSection === "home" || activeSection === "dashboard") && (label === "home" || label === "dashboard" || href.includes("dashboard.html"))) {
                 match = true;
             } else if (activeSection === "properties" && (label === "properties" || href.includes("propertylist.html"))) {
                 match = true;

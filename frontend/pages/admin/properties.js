@@ -68,39 +68,37 @@ function addPropertyRow(property) {
     row.innerHTML = `
         <td>
             <div class="property-name" style="display:flex; align-items:center; gap:12px;">
-                <div class="property-image" style="width:48px;height:48px;overflow:hidden;border-radius:6px;flex-shrink:0;">
+                <div class="property-image" style="width:48px;height:48px;overflow:hidden;border-radius:8px;flex-shrink:0;">
                     <img src="${imgSrc}" alt="${title}" style="width:100%;height:100%;object-fit:cover;${isSold ? 'filter:grayscale(1); opacity:0.8;' : ''}" onerror="this.src='../../assets/images/property1.jpg'">
                 </div>
                 <div>
-                    <strong style="${isSold ? 'color:#64748b;' : 'color:#1b2e21;'} font-size:0.92rem;">${title}</strong>
-                    <br><small style="color:#6b7f70;">ID #${property.id}</small>
+                    <strong style="${isSold ? 'color:#64748b;' : 'color:#1b2e21;'} font-size:0.92rem; display:block; line-height:1.3;">${title}</strong>
+                    <small style="color:#6b7f70; font-size:0.78rem;">ID #${property.id}</small>
                 </div>
             </div>
         </td>
-        <td style="color:#2d3748; font-size:0.9rem;">${loc}</td>
-        <td><span style="padding:4px 9px; border-radius:4px; background:#eef5ef; color:#1a3b23; font-size:0.8rem; font-weight:600;">${type}</span></td>
-        <td style="font-weight:700; color:#1b2e21;">${priceStr}</td>
+        <td style="color:#2d3748; font-size:0.88rem; font-weight:500;">${loc}</td>
+        <td><span style="padding:4px 9px; border-radius:6px; background:#eef5ef; color:#1a3b23; font-size:0.78rem; font-weight:600; display:inline-block;">${type}</span></td>
+        <td style="font-weight:700; color:#1b2e21; font-size:0.9rem;">${priceStr}</td>
         <td>
             <span class="status-badge-table ${isSold ? 'status-badge-sold' : 'status-badge-available'}" 
-                style="${isSold ? 'background:#fee2e2; color:#b91c1c; border:1px solid #fecaca;' : 'background:#dcfce7; color:#15803d; border:1px solid #bbf7d0;'} padding:4px 10px; border-radius:12px; font-weight:600; font-size:0.8rem; display:inline-flex; align-items:center; gap:5px;">
+                style="${isSold ? 'background:#fee2e2; color:#b91c1c; border:1px solid #fecaca;' : 'background:#dcfce7; color:#15803d; border:1px solid #bbf7d0;'} padding:4px 10px; border-radius:12px; font-weight:600; font-size:0.78rem; display:inline-flex; align-items:center; gap:5px;">
                 <span style="width:6px; height:6px; border-radius:50%; background:${isSold ? '#ef4444' : '#22c55e'}; display:inline-block;"></span>
                 ${displayStatus}
             </span>
         </td>
         <td>
-            <div class="actions" style="display:flex; gap:8px; align-items:center;">
-                <button type="button" class="view-btn" data-id="${property.id}" style="padding:6px 12px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer;">View</button>
-                <button type="button" class="edit-btn" data-id="${property.id}" style="padding:6px 12px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer;">Edit</button>
+            <div class="actions">
+                <button type="button" class="view-btn" data-id="${property.id}">View</button>
+                <button type="button" class="edit-btn" data-id="${property.id}">Edit</button>
                 <button type="button" class="status-toggle-btn ${isSold ? 'btn-make-available' : 'btn-make-sold'}" 
                     data-id="${property.id}" 
-                    data-status="${displayStatus}"
-                    style="${isSold ? 'background:#dcfce7; color:#15803d; border:1px solid #86efac;' : 'background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;'} padding:6px 13px; border-radius:6px; font-weight:600; font-size:0.82rem; cursor:pointer; transition:all 0.2s;">
+                    data-status="${displayStatus}">
                     ${isSold ? 'Mark Available' : 'Mark as Sold'}
                 </button>
                 <button type="button" class="delete-btn" 
                     data-id="${property.id}"
-                    data-title="${String(title).replace(/"/g, '&quot;')}"
-                    style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:6px 13px; border-radius:6px; font-weight:600; font-size:0.82rem; cursor:pointer; transition:all 0.2s;">
+                    data-title="${String(title).replace(/"/g, '&quot;')}">
                     Delete
                 </button>
             </div>
@@ -193,7 +191,7 @@ document.addEventListener(
         if (event.target.classList.contains("view-btn")) {
             const propertyId = event.target.dataset.id;
             window.location.href =
-                "../properties/property-detail.html?id=" +
+                "edit-property.html?id=" +
                 encodeURIComponent(propertyId);
             return;
         }

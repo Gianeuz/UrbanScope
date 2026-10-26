@@ -47,66 +47,95 @@
 .analytics-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
     margin-bottom: 28px;
 }
 
 .analytics-card {
     background: #ffffff;
     border-radius: 16px;
-    padding: 22px 24px;
+    padding: 24px 28px;
     box-shadow: 0 5px 17px rgba(0, 0, 0, 0.035);
     border: 1px solid #e5ede7;
     display: flex;
     flex-direction: column;
+    min-height: 310px;
 }
 
 .analytics-card .card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .analytics-card .card-header h3 {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     color: var(--text-dark, #1b2e21);
     margin: 0;
 }
 
 .analytics-card .card-header p {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-muted, #64748b);
-    margin: 3px 0 0;
+    margin: 4px 0 0;
 }
 
 /* DONUT CHART */
 .donut-chart-container {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 36px;
     flex: 1;
-    justify-content: space-around;
+    justify-content: center;
+    padding: 10px 12px;
+}
+
+#inquiryDonutSvg {
+    width: clamp(190px, 16vw, 225px);
+    height: clamp(190px, 16vw, 225px);
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.04));
+    transition: transform 0.25s ease;
+}
+
+#inquiryDonutSvg:hover {
+    transform: scale(1.02);
 }
 
 .donut-legend {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    font-size: 12px;
-    color: #4b6151;
+    gap: 12px;
+    font-size: 13.5px;
+    color: #334155;
+    min-width: 210px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.legend-label {
+    flex: 1;
+    color: #334155;
+    letter-spacing: -0.1px;
+}
+
+.legend-count {
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 13px;
+    margin-left: 6px;
 }
 
 .dot {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
 }
@@ -120,6 +149,17 @@
 @media (max-width: 992px) {
     .analytics-row {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .donut-chart-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    #inquiryDonutSvg {
+        width: 190px;
+        height: 190px;
     }
 }
 

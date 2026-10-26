@@ -458,84 +458,126 @@ if (dashboardSearch) {
 
 /* SUPABASE DASHBOARD DATA */
 
+function hydrateDashboardKPIs() {
+    try {
+        const cached = JSON.parse(localStorage.getItem("urbanscope_dashboard_kpis") || "null");
+        if (cached) {
+            if (cached.totalProperties != null) {
+                const el = document.getElementById("kpiTotalProperties");
+                if (el) el.textContent = cached.totalProperties;
+                const ov = document.getElementById("overviewPropertyCount");
+                if (ov) ov.textContent = cached.totalProperties;
+            }
+            if (cached.totalClients != null) {
+                const el = document.getElementById("kpiTotalClients");
+                if (el) el.textContent = cached.totalClients;
+            }
+            if (cached.totalInquiries != null) {
+                const el = document.getElementById("kpiTotalInquiries");
+                if (el) el.textContent = cached.totalInquiries;
+            }
+            if (cached.pendingInquiries != null) {
+                const el = document.getElementById("kpiPendingInquiries");
+                if (el) el.textContent = cached.pendingInquiries;
+            }
+            if (cached.completedInquiries != null) {
+                const el = document.getElementById("kpiCompletedInquiries");
+                if (el) el.textContent = cached.completedInquiries;
+            }
+        }
+    } catch (_) {}
+}
+
 async function loadDashboardData() {
     try {
-        if (typeof apiGetInquiries === "function") {
-            const inquiries = await apiGetInquiries();
+        hydrateDashboardKPIs();
 
-            if (Array.isArray(inquiries)) {
-                const totalInquiriesEl =
-                    document.getElementById("kpiTotalInquiries");
+        const [inquiriesRes, propertiesRes, kpisRes, usersRes] = await Promise.allSettled([
+            (typeof apiGetInquiries === "function") ? apiGetInquiries() : Promise.resolve(null),
+            (typeof apiGetProperties === "function") ? apiGetProperties() : Promise.resolve(null),
+            (typeof apiGetDashboardKPIs === "function") ? apiGetDashboardKPIs() : Promise.resolve(null),
+            (typeof apiGetUsers === "function") ? apiGetUsers() : Promise.resolve(null)
+        ]);
 
-                const pendingEl =
-                    document.getElementById("kpiPendingInquiries");
-
-                const completedEl =
-                    document.getElementById("kpiCompletedInquiries");
-
-                if (totalInquiriesEl) {
-                    totalInquiriesEl.textContent = inquiries.length;
-                }
-
-                const pendingCount = inquiries.filter(inquiry => {
-                    const status = String(inquiry.status || "").toLowerCase();
-
-                    return status.includes("pending") ||
-                        status.includes("review");
-                }).length;
-
-                const completedCount = inquiries.filter(inquiry => {
-                    return String(inquiry.status || "")
-                        .toLowerCase()
-                        .includes("completed");
-                }).length;
-
-                if (pendingEl) {
-                    pendingEl.textContent = pendingCount;
-                }
-
-                if (completedEl) {
-                    completedEl.textContent = completedCount;
-                }
-
-                renderInquiryRows(inquiries);
-                updateInquiryDonut(inquiries);
-                if (typeof window.loadAdminNotifications === "function") {
-                    window.loadAdminNotifications();
-                }
-            }
+        let inquiries = [];
+        if (inquiriesRes.status === "fulfilled" && Array.isArray(inquiriesRes.value)) {
+            inquiries = inquiriesRes.value;
+        } else {
+            inquiries = JSON.parse(localStorage.getItem("inquiries") || "[]");
         }
 
-        if (typeof apiGetProperties === "function") {
-            const properties = await apiGetProperties();
-
-            if (Array.isArray(properties)) {
-                const propertyCountEl =
-                    document.getElementById("kpiTotalProperties");
-
-                const overviewCountEl =
-                    document.getElementById("overviewPropertyCount");
-
-                if (propertyCountEl) {
-                    propertyCountEl.textContent = properties.length;
-                }
-
-                if (overviewCountEl) {
-                    overviewCountEl.textContent = properties.length;
-                }
-
-                renderDashboardProperties(properties);
-            }
+        let properties = [];
+        if (propertiesRes.status === "fulfilled" && Array.isArray(propertiesRes.value)) {
+            properties = propertiesRes.value;
+        } else {
+            properties = JSON.parse(localStorage.getItem("properties") || localStorage.getItem("cached_live_properties") || "[]");
         }
 
-        if (typeof apiGetDashboardKPIs === "function") {
-            const kpis = await apiGetDashboardKPIs();
-            if (kpis && kpis.total_clients !== undefined) {
-                const totalClientsEl = document.getElementById("kpiTotalClients");
-                if (totalClientsEl) {
-                    totalClientsEl.textContent = kpis.total_clients;
-                }
-            }
+        let kpis = null;
+        if (kpisRes.status === "fulfilled" && kpisRes.value) {
+            kpis = kpisRes.value;
+        }
+
+        let users = [];
+        if (usersRes.status === "fulfilled" && Array.isArray(usersRes.value)) {
+            users = usersRes.value;
+        }
+
+        // Metrics computation
+        const totalInquiriesCount = inquiries.length;
+        const pendingCount = inquiries.filter(inquiry => {
+            const status = String(inquiry.status || "").toLowerCase();
+            return status.includes("pending") || status.includes("review");
+        }).length;
+
+        const completedCount = inquiries.filter(inquiry => {
+            return String(inquiry.status || "").toLowerCase().includes("completed");
+        }).length;
+
+        const totalPropertiesCount = properties.length;
+
+        let totalClientsCount = 0;
+        if (kpis && kpis.total_clients != null) {
+            totalClientsCount = kpis.total_clients;
+        } else if (users && users.length > 0) {
+            totalClientsCount = users.filter(u => {
+                const r = String(u.role || "client").toLowerCase();
+                return r === "client" || r === "user";
+            }).length;
+        }
+
+        // Update DOM elements
+        const totalInquiriesEl = document.getElementById("kpiTotalInquiries");
+        const pendingEl = document.getElementById("kpiPendingInquiries");
+        const completedEl = document.getElementById("kpiCompletedInquiries");
+        const propertyCountEl = document.getElementById("kpiTotalProperties");
+        const overviewCountEl = document.getElementById("overviewPropertyCount");
+        const totalClientsEl = document.getElementById("kpiTotalClients");
+
+        if (totalInquiriesEl) totalInquiriesEl.textContent = totalInquiriesCount;
+        if (pendingEl) pendingEl.textContent = pendingCount;
+        if (completedEl) completedEl.textContent = completedCount;
+        if (propertyCountEl) propertyCountEl.textContent = totalPropertiesCount;
+        if (overviewCountEl) overviewCountEl.textContent = totalPropertiesCount;
+        if (totalClientsEl) totalClientsEl.textContent = totalClientsCount;
+
+        // Persist fresh numbers to cache to guarantee 0-flick on all subsequent visits
+        try {
+            localStorage.setItem("urbanscope_dashboard_kpis", JSON.stringify({
+                totalProperties: totalPropertiesCount,
+                totalClients: totalClientsCount,
+                totalInquiries: totalInquiriesCount,
+                pendingInquiries: pendingCount,
+                completedInquiries: completedCount
+            }));
+        } catch (_) {}
+
+        renderInquiryRows(inquiries);
+        updateInquiryDonut(inquiries);
+        renderDashboardProperties(properties);
+
+        if (typeof window.loadAdminNotifications === "function") {
+            window.loadAdminNotifications();
         }
 
         if (typeof apiGetAppointments === "function") {

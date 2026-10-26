@@ -1002,6 +1002,22 @@
         } catch (e) {
             console.warn('Dashboard KPIs view query error:', e);
         }
+
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem('adminToken') || localStorage.getItem('supabase_token') || localStorage.getItem(TOKEN_KEY);
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            const localRes = await fetch(`${localBase}/view_dashboard_kpis`, {
+                method: 'GET',
+                headers: headers
+            });
+            if (localRes.ok) {
+                const localData = await localRes.json();
+                return localData && localData.length > 0 ? localData[0] : null;
+            }
+        } catch (_) {}
+
         return null;
     }
 
