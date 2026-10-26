@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span style="color: var(--text-muted); font-size: 0.85rem;">${dateStr}</span>
                     </td>
                     <td>
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="status-cell-wrapper">
                             <span class="status-badge ${badgeClass}" id="badge-${id}">${normStatus}</span>
                             <select class="status-select-inline" data-id="${id}" onchange="window.handleStatusChange(event, '${id}')">
                                 <option value="Under Review" ${normStatus === 'Under Review' ? 'selected' : ''}>Under Review</option>
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </select>
                         </div>
                     </td>
-                    <td style="text-align: right;">
+                    <td>
                         <button class="action-btn view" onclick="window.viewInquiryDetails('${id}')">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
