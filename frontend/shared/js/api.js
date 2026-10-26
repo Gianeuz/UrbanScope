@@ -103,7 +103,7 @@
                         liveProperties = localData;
                     }
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         // Fallback 2: Cached properties in localStorage
@@ -113,7 +113,7 @@
                 if (Array.isArray(cached) && cached.length > 0) {
                     liveProperties = cached;
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         // Always merge any locally created properties that are not yet in liveProperties
@@ -131,12 +131,12 @@
                     }
                 });
             }
-        } catch (e) {}
+        } catch (e) { }
 
         if (liveProperties.length > 0) {
             try {
                 localStorage.setItem('cached_live_properties', JSON.stringify(liveProperties));
-            } catch (e) {}
+            } catch (e) { }
             return liveProperties;
         }
 
@@ -160,7 +160,7 @@
             const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
             const localRes = await fetch(`${localBase}/properties/${encodeURIComponent(id)}`);
             if (localRes.ok) return await localRes.json();
-        } catch (e) {}
+        } catch (e) { }
 
         // Fallback 2: Cache / local storage
         try {
@@ -169,7 +169,7 @@
                 .concat(JSON.parse(localStorage.getItem('properties') || '[]'));
             const found = all.find(p => String(p.id) === String(id));
             if (found) return found;
-        } catch (e) {}
+        } catch (e) { }
 
         return null;
     }
@@ -263,13 +263,13 @@
             const cached = JSON.parse(localStorage.getItem('cached_live_properties') || '[]');
             cached.unshift(created);
             localStorage.setItem('cached_live_properties', JSON.stringify(cached));
-        } catch (e) {}
+        } catch (e) { }
 
         try {
             const urbanProps = JSON.parse(localStorage.getItem('urbanScopeProperties') || '[]');
             urbanProps.unshift(created);
             localStorage.setItem('urbanScopeProperties', JSON.stringify(urbanProps));
-        } catch (e) {}
+        } catch (e) { }
 
         try {
             const adminProps = JSON.parse(localStorage.getItem('properties') || '[]');
@@ -285,7 +285,7 @@
                 image_url: created.image_url
             });
             localStorage.setItem('properties', JSON.stringify(adminProps));
-        } catch (e) {}
+        } catch (e) { }
 
         return created;
     }
@@ -348,7 +348,7 @@
                     }
                 }
             });
-        } catch (e) {}
+        } catch (e) { }
 
         return updated;
     }
@@ -401,7 +401,7 @@
             });
             // If offline, still treat as deleted locally
             if (!deleted) deleted = true;
-        } catch (e) {}
+        } catch (e) { }
 
         return deleted;
     }
@@ -447,7 +447,7 @@
                     const localData = await localRes.json();
                     result = { success: true, data: localData.data || localData };
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         // Cache in localStorage & broadcast event for active admin listeners
@@ -461,7 +461,7 @@
             cached.unshift(record);
             localStorage.setItem('inquiries', JSON.stringify(cached));
             window.dispatchEvent(new CustomEvent('inquirySubmitted', { detail: record }));
-        } catch (_) {}
+        } catch (_) { }
 
         return result || { success: true, data: payload };
     }
@@ -501,7 +501,7 @@
                         list = localData;
                     }
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         // 3. Fallback: localStorage
@@ -511,13 +511,13 @@
                 if (Array.isArray(cached) && cached.length > 0) {
                     list = cached;
                 }
-            } catch (_) {}
+            } catch (_) { }
         }
 
         if (list.length > 0) {
             try {
                 localStorage.setItem('inquiries', JSON.stringify(list));
-            } catch (_) {}
+            } catch (_) { }
             return list;
         }
 
@@ -535,7 +535,7 @@
                 body: JSON.stringify({ status: newStatus })
             });
             if (res.ok) updated = true;
-        } catch (e) {}
+        } catch (e) { }
 
         // 2. Try FastAPI
         if (!updated) {
@@ -551,7 +551,7 @@
                     body: JSON.stringify({ status: newStatus })
                 });
                 if (res.ok) updated = true;
-            } catch (e) {}
+            } catch (e) { }
         }
 
         // 3. Always update localStorage cache
@@ -562,7 +562,7 @@
                 cached[idx].status = newStatus;
                 localStorage.setItem('inquiries', JSON.stringify(cached));
             }
-        } catch (_) {}
+        } catch (_) { }
 
         return updated;
     }
@@ -597,7 +597,7 @@
                 const localUsers = await localRes.json();
                 if (Array.isArray(localUsers)) return localUsers;
             }
-        } catch (_) {}
+        } catch (_) { }
 
         return [];
     }
@@ -667,7 +667,7 @@
                 const merged = { ...storedAdmin, ...(arg1 || {}) };
                 localStorage.setItem('adminUser', JSON.stringify(merged));
                 return { success: true, user: merged };
-            } catch (e) {}
+            } catch (e) { }
             return { success: false, error: err.message };
         }
     }
@@ -730,7 +730,7 @@
                     method: 'PATCH',
                     headers: getHeaders(),
                     body: JSON.stringify({ password_hash: newPassword })
-                }).catch(() => {});
+                }).catch(() => { });
             }
 
             // Store updated password locally for immediate sign-in verification
@@ -744,21 +744,6 @@
     }
 
     async function apiSignUp(email, password, fullName, phone) {
-        try {
-            const cleanEmail = email.trim().toLowerCase();
-            const cleanName = fullName.trim();
-            const cleanPhone = (phone || '').trim();
-
-            const checkRes = await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(cleanEmail)}&select=id`, {
-                method: 'GET',
-                headers: getHeaders()
-            });
-            const existing = await checkRes.json().catch(() => []);
-            if (existing && existing.length > 0) {
-                return { success: false, error: 'An account with this email already exists.' };
-            }
-
-            async function apiSignUp(email, password, fullName, phone) {
         try {
             const cleanEmail = email.trim().toLowerCase();
             const cleanName = fullName.trim();
@@ -986,6 +971,9 @@
         }
     }
 
+    // ----------------------------------------------------------
+    // 5. DASHBOARD & APPOINTMENTS SERVICES
+    // ----------------------------------------------------------
     async function apiGetDashboardKPIs() {
         try {
             const res = await fetch(`${REST_BASE}/view_dashboard_kpis?select=*`, {
@@ -1031,6 +1019,9 @@
         return [];
     }
 
+    // ----------------------------------------------------------
+    // 6. EXPOSE TO GLOBAL SCOPE
+    // ----------------------------------------------------------
     window.SUPABASE_URL = SUPABASE_URL;
     window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
     window.supabaseClient = supabaseClient;
@@ -1054,4 +1045,6 @@
     window.apiGetAppointments = apiGetAppointments;
     window.isSupabaseConfigured = isBackendConfigured;
     window.isBackendConfigured = isBackendConfigured;
+
+    console.log('✓ UrbanScope Live Supabase Cloud Client Connected:', SUPABASE_URL);
 })(window);
