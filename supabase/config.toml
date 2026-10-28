@@ -1,0 +1,16 @@
+# Supabase CLI configuration for UrbanScope.
+# Only the settings we care about are listed; everything else uses CLI defaults.
+# Full reference: https://supabase.com/docs/guides/local-development/cli/config
+
+project_id = "UrbanScope"
+
+[db]
+# Local Postgres port used by `supabase start`.
+port = 54322
+# Keep in sync with the remote project (Dashboard -> Settings -> Infrastructure).
+major_version = 17
+
+[db.seed]
+# `supabase db reset` runs these files after all migrations.
+enabled = true
+sql_paths = ["./seed.sql"]

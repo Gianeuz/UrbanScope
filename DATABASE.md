@@ -17,7 +17,7 @@ schema, seed data, how migrations work, and how the frontend reaches it.
 | Access layer | Raw parameterised SQL in [`backend/app.py`](backend/app.py) — no ORM |
 | Connection helper | `get_db_connection()` — `row_factory = sqlite3.Row`, `check_same_thread=False` |
 | Schema bootstrap | `init_db()` — runs on import of `backend.app` **and** in the FastAPI lifespan hook |
-| Optional cloud mirror | [`backend/supabase_schema.sql`](backend/supabase_schema.sql) (PostgreSQL / Supabase) |
+| Optional cloud mirror | [`supabase/migrations/`](supabase/migrations) + [`supabase/seed.sql`](supabase/seed.sql) (Supabase CLI), or the one-shot [`backend/supabase_schema.sql`](backend/supabase_schema.sql) |
 
 ```mermaid
 flowchart LR
@@ -199,7 +199,10 @@ There is no migration framework. `init_db()` is **idempotent** and non-destructi
    (`*Create`, `*Update`, `*Response`).
 4. Update any explicit column lists in `INSERT` statements in [`backend/app.py`](backend/app.py)
    and the seed block in `init_db()`.
-5. Mirror the change in [`backend/supabase_schema.sql`](backend/supabase_schema.sql).
+5. Mirror the change in Supabase: add a **new** migration with `supabase migration new <name>`
+   (never edit an already-applied file in `supabase/migrations/`), update
+   [`supabase/seed.sql`](supabase/seed.sql) if seed rows need the column, and keep
+   [`backend/supabase_schema.sql`](backend/supabase_schema.sql) in sync.
 6. Update this document.
 
 > [!WARNING]
@@ -342,6 +345,33 @@ erDiagram
 ---
 
 ## 10. Migration & Supabase Setup Checklist
+
+### 10.1 Supabase CLI migrations (recommended)
+
+```text
+supabase/
+  config.toml                                Supabase CLI project config
+  migrations/20261028000000_initial_schema.sql   Tables, triggers, indexes, views, RLS (no DROPs)
+  seed.sql                                   Demo data (users, 6 properties, inquiries, ...)
+```
+
+```bash
+supabase start              # local Postgres + Studio (needs Docker)
+supabase db reset           # local: re-run all migrations, then seed.sql
+supabase link --project-ref <ref>
+supabase db push            # remote: apply pending migrations (does NOT run seed.sql)
+supabase migration new add_some_column   # create the next migration file
+```
+
+> [!NOTE]
+> `seed.sql` drops one row from the original script: a second `users` row (id 11) that
+> reused `urbanscope.cvsu@gmail.com` with a plaintext password. It broke `UNIQUE(email)`,
+> so the whole seed failed.
+
+### 10.2 One-shot SQL Editor script (legacy)
+
+> [!CAUTION]
+> `backend/supabase_schema.sql` begins with `DROP TABLE … CASCADE` and wipes existing data.
 
 1. In Supabase Dashboard, go to **SQL Editor** -> **+ New query**.
 2. Paste the entire contents of [`backend/supabase_schema.sql`](backend/supabase_schema.sql) and press **RUN**.

@@ -59,6 +59,7 @@ frontend/              Everything the browser loads (served at /)
   shared/css/          common.css (design tokens, navbar, footer), session, splash, chatbot
   shared/js/           supabase.js (API gateway), session.js, splash.js, chatbot.js, api.js
   assets/images/       Photos, logos, icons
+supabase/              Supabase CLI project: config.toml, migrations/ (timestamped .sql), seed.sql — see DATABASE.md §10
 next-app/              Unfinished Next.js + Prisma rewrite — NOT wired up; ignore unless asked
 ```
 
@@ -163,6 +164,8 @@ path when rendering from a page.
 - Do **not** commit `backend/urbanscope.db`, `.env`, or virtualenvs (already in `.gitignore`).
 - Do **not** run `backend/supabase_schema.sql` against a real project without confirmation —
   it starts with `DROP TABLE … CASCADE`.
+- Never edit a file in `supabase/migrations/` once it has been applied; add a new
+  timestamped migration instead. Don't run `supabase db push` / `db reset --linked` without confirmation.
 - Don't change seed credentials or the JWT secret handling without telling the user.
 - Ask before deleting files, renaming `supabase.js`, or restructuring folders — many pages
   hard-code these paths.

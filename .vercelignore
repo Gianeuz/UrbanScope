@@ -1,6 +1,7 @@
 # Ignore unfinished Next.js prototype and python backend during Vercel static deployment
 next-app/
 backend/
+supabase/
 __pycache__/
 *.py
 *.db
