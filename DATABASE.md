@@ -353,6 +353,7 @@ supabase/
   config.toml                                Supabase CLI project config
   migrations/20261028000000_initial_schema.sql   Tables, triggers, indexes, views, RLS (no DROPs)
   seed.sql                                   Demo data (users, 6 properties, inquiries, ...)
+  scripts/                                   One-off data fixes to paste into the SQL Editor (never auto-run)
 ```
 
 ```bash

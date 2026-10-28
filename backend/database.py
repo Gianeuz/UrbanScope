@@ -178,6 +178,15 @@ def init_db():
     conn.commit()
     print("✓ RBAC credentials & database triggers verified (Superadmin: urbanscope.cvsu@gmail.com, Admin: admin.realestate@gmail.com)")
 
+    # Purge legacy @example.com demo rows left behind by databases seeded before they were removed
+    cursor.execute("DELETE FROM inquiries WHERE LOWER(client_email) LIKE '%@example.com'")
+    purged_inquiries = cursor.rowcount
+    cursor.execute("DELETE FROM users WHERE LOWER(email) LIKE '%@example.com'")
+    purged_users = cursor.rowcount
+    conn.commit()
+    if purged_users or purged_inquiries:
+        print(f"✓ Purged legacy demo data: {purged_users} @example.com user(s), {purged_inquiries} inquiry(ies)")
+
     # Seed Initial Properties
     cursor.execute("SELECT COUNT(*) FROM properties")
     prop_count = cursor.fetchone()[0]

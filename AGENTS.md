@@ -59,7 +59,7 @@ frontend/              Everything the browser loads (served at /)
   shared/css/          common.css (design tokens, navbar, footer), session, splash, chatbot
   shared/js/           supabase.js (API gateway), session.js, splash.js, chatbot.js, api.js
   assets/images/       Photos, logos, icons
-supabase/              Supabase CLI project: config.toml, migrations/ (timestamped .sql), seed.sql — see DATABASE.md §10
+supabase/              Supabase CLI project: config.toml, migrations/ (timestamped .sql), seed.sql, scripts/ (one-off SQL Editor fixes) — see DATABASE.md §10
 next-app/              Unfinished Next.js + Prisma rewrite — NOT wired up; ignore unless asked
 ```
 
