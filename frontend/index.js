@@ -456,4 +456,46 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 9. Consultation Intent Modal Controller
+    initConsultationIntentModal();
 });
+
+function initConsultationIntentModal() {
+    const modal = document.getElementById('consultationIntentModal');
+    const closeBtn = document.getElementById('closeIntentModalBtn');
+    if (!modal) return;
+
+    function openModal(e) {
+        if (e) e.preventDefault();
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    // Attach to CTA button and consultation links
+    const consultTriggers = document.querySelectorAll('#ctaConsultBtn, .cta-consult-btn, .faqs-contact-link');
+    consultTriggers.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) {
+            closeModal();
+        }
+    });
+}

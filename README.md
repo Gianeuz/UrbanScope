@@ -11,7 +11,7 @@ Built for **Miriam Lobren Real Estate Agent** (Las Piñas & Cavite, Philippines)
 
 - **Property Showcase** — featured listings with category tabs, detail pages with photo galleries, specs, and maps.
 - **Client Accounts** — registration with PH phone validation and password strength meter; unified sign-in that routes users by role.
-- **Inquiries** — logged-in clients can send inquiries about a property directly to the agent.
+- **Consultations & Inquiries** — interactive consultation intent flow allowing clients to book general consultations (free site tripping, loan pre-approval, property advice) or inquire about specific accredited listings.
 - **Mira Chatbot** — on-site assistant for navigation, property search by location/budget/type, and financing guidance.
 - **Admin Dashboard** — KPI cards, inquiry charts, property CRUD, client inquiry tracking, and user overview.
 - **Superadmin Console** — role management (RBAC) and database health checks.

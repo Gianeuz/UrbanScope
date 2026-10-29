@@ -55,23 +55,84 @@
     <main class="inquiry-page-container">
         <h1 class="page-heading">Submit Inquiry</h1>
 
-        <form class="inquiry-form-card" id="inquiryForm" onsubmit="event.preventDefault(); submitInquiry();">
-            <!-- PROPERTY INFORMATION CARD -->
-            <div class="form-section">
-                <h3 class="section-title">Property Information</h3>
+        <!-- INQUIRY MODE SELECTOR TABS -->
+        <div class="inquiry-mode-selector" role="tablist" aria-label="Inquiry Type">
+            <button type="button" class="mode-tab active" id="tabGeneral" role="tab" aria-selected="true" onclick="switchInquiryMode('general')">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>General Consultation / Question</span>
+            </button>
+            <button type="button" class="mode-tab" id="tabProperty" role="tab" aria-selected="false" onclick="switchInquiryMode('property')">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Specific Property Inquiry</span>
+            </button>
+        </div>
 
-                <div class="property-summary-box">
-                    <img src="../../assets/images/property1.jpg" alt="Residential Lot" class="summary-thumb">
+        <form class="inquiry-form-card" id="inquiryForm" onsubmit="event.preventDefault(); submitInquiry();">
+            <!-- CONSULTATION FOCUS SECTION (VISIBLE IN GENERAL MODE) -->
+            <div class="form-section" id="consultationSection">
+                <h3 class="section-title">Consultation Focus &amp; Preferred Schedule</h3>
+
+                <div class="consultation-fields-grid">
+                    <div class="input-field">
+                        <label for="consultationTopic">Consultation Topic / Focus*</label>
+                        <select id="consultationTopic" class="form-select">
+                            <option value="Schedule a Free Site Tripping / Viewing">Schedule a Free Site Tripping / Viewing</option>
+                            <option value="Bank or Pag-IBIG Loan Pre-Approval">Bank or Pag-IBIG Loan Pre-Approval Assistance</option>
+                            <option value="Property Investment & Buying Advice">Property Investment &amp; Buying Advice</option>
+                            <option value="Property Selling / Appraisal Assistance">Property Selling / Appraisal Assistance</option>
+                            <option value="General Real Estate Inquiries">General Real Estate Inquiries / Specific Question</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="preferredDate">Preferred Date <span class="optional-tag">(Optional)</span></label>
+                        <input type="date" id="preferredDate" class="form-input">
+                    </div>
+
+                    <div class="input-field">
+                        <label for="preferredTime">Preferred Time / Slot <span class="optional-tag">(Optional)</span></label>
+                        <select id="preferredTime" class="form-select">
+                            <option value="Flexible / Any Time">Flexible / Any Time</option>
+                            <option value="Morning (9:00 AM - 12:00 PM)">Morning (9:00 AM - 12:00 PM)</option>
+                            <option value="Afternoon (1:00 PM - 5:00 PM)">Afternoon (1:00 PM - 5:00 PM)</option>
+                            <option value="Weekend Tripping">Weekend Tripping</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROPERTY INFORMATION SECTION (VISIBLE IN PROPERTY MODE) -->
+            <div class="form-section" id="propertySection" style="display: none;">
+                <div class="section-title-row">
+                    <h3 class="section-title" style="margin-bottom: 0;">Selected Property</h3>
+                    <div class="property-select-group">
+                        <label for="propertySelect">Select Listing:</label>
+                        <select id="propertySelect" class="form-select" onchange="onPropertySelectionChange()">
+                            <option value="">Loading accredited properties...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="property-summary-box" id="propertySummaryBox">
+                    <img src="../../assets/images/property1.jpg" alt="Property Thumbnail" class="summary-thumb" id="propSummaryThumb">
                     <div class="summary-details">
-                        <h2>Residential Lot</h2>
-                        <p class="summary-loc">
+                        <h2 id="propSummaryTitle">Residential Lot</h2>
+                        <p class="summary-loc" id="propSummaryLoc">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            Manuyo, Las Piñas City
+                            <span id="propSummaryLocText">Manuyo, Las Piñas City</span>
                         </p>
-                        <div class="summary-specs">
-                            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> 200 sqm <small>Lot Area</small></span>
-                            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Residential Lot <small>Property Type</small></span>
-                            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Dasmariñas <small>Location</small></span>
+                        <div class="summary-specs" id="propSummarySpecs">
+                            <span id="propSpecLot"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> <b id="propLotVal">200 sqm</b> <small>Lot Area</small></span>
+                            <span id="propSpecType"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> <b id="propTypeVal">Residential Lot</b> <small>Type</small></span>
+                            <span id="propSpecPrice"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> <b id="propPriceVal">₱3,500,000</b> <small>Price</small></span>
                         </div>
                     </div>
                 </div>
@@ -101,14 +162,14 @@
             <div class="form-section">
                 <h3 class="section-title">Inquiry Details</h3>
                 <div class="textarea-field">
-                    <label for="inquiryMessage">Message*</label>
-                    <textarea id="inquiryMessage" rows="5" required>I'm interested and would like to know more about this property. Are there any available units and what are the payment terms?</textarea>
+                    <label for="inquiryMessage" id="inquiryMessageLabel">What would you like to discuss or ask Miriam Lobren?*</label>
+                    <textarea id="inquiryMessage" rows="5" required placeholder="Tell us what you'd like to ask or discuss, any questions about financing or locations, or your preferred site viewing schedule..."></textarea>
                 </div>
             </div>
 
             <!-- ACTION BUTTONS -->
             <div class="form-actions-row">
-                <button type="button" class="cancel-btn" onclick="location.href='../properties/properties.html'">cancel</button>
+                <button type="button" class="cancel-btn" onclick="location.href='../../index.html'">Cancel</button>
                 <button type="submit" class="submit-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     <span>Submit Inquiry</span>

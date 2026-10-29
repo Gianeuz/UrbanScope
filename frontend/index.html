@@ -496,7 +496,7 @@
                 <p>Partner with Miriam Lobren &amp; CD Miranda Realty for accredited listings, smooth bank and Pag-IBIG loan approvals, and expert guidance in Las Piñas &amp; Cavite.</p>
                 <p class="cta-subtext">Schedule a free site viewing or one-on-one consultation today.</p>
 
-                <a href="pages/inquiry/inquiry.html" class="cta-consult-btn">Book a Free Consultation</a>
+                <a href="pages/inquiry/inquiry.html" class="cta-consult-btn" id="ctaConsultBtn">Book a Free Consultation</a>
             </div>
         </section>
     </main>
@@ -582,6 +582,68 @@
             </div>
         </div>
     </footer>
+
+    <!-- CONSULTATION INTENT MODAL -->
+    <div class="modal-overlay intent-modal-overlay" id="consultationIntentModal" role="dialog" aria-modal="true" aria-labelledby="intentModalTitle">
+        <div class="modal-box intent-modal-box">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-header-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 id="intentModalTitle">How Can We Help You?</h3>
+                        <p class="modal-subtitle">Choose your consultation focus to get started</p>
+                    </div>
+                </div>
+                <button type="button" class="modal-close" id="closeIntentModalBtn" aria-label="Close dialog">&times;</button>
+            </div>
+
+            <div class="intent-cards-container">
+                <!-- Option A: General Consultation / Specific Question -->
+                <a href="pages/inquiry/inquiry.html?type=general" class="intent-card">
+                    <div class="intent-card-badge">Flexible</div>
+                    <div class="intent-icon-wrap icon-general">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="intent-info">
+                        <h4>General Consultation / Question</h4>
+                        <p>Ask specific questions about site viewing, bank or Pag-IBIG loan pre-approval, or real estate advice without choosing a specific property.</p>
+                        <span class="intent-link-text">
+                            <span>Proceed to Consultation</span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Option B: Property Specific Inquiry -->
+                <a href="pages/inquiry/inquiry.html?type=property" class="intent-card">
+                    <div class="intent-card-badge featured">Accredited Listings</div>
+                    <div class="intent-icon-wrap icon-property">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </div>
+                    <div class="intent-info">
+                        <h4>Inquire About a Specific Property</h4>
+                        <p>Looking for a specific house &amp; lot, townhouse, or subdivision in Cavite &amp; Las Piñas? Choose from our verified property listings.</p>
+                        <span class="intent-link-text">
+                            <span>Select Property &amp; Inquire</span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <script src="index.js"></script>
 </body>

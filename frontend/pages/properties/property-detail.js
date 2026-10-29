@@ -187,6 +187,12 @@ async function loadPropertyFromDb() {
             }
         }
     }
+
+    // Update submit inquiry button to target this specific property
+    const inquiryBtn = document.querySelector('.submit-inquiry-btn');
+    if (inquiryBtn && property && property.id) {
+        inquiryBtn.href = `../inquiry/inquiry.html?type=property&id=${property.id}`;
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {

@@ -177,6 +177,17 @@ path when rendering from a page.
     The file input strictly enforces a client-side limit of 5MB (`file.size <= 5 * 1024 * 1024`), validates image MIME types, optimizes the
     avatar data URL via canvas, updates all topbar/dropdown avatar circles immediately via `syncAdminProfileDisplay()`, and allows
     reverting back to the default photo with a "Reset Photo" button. The backend SQLite database supports non-destructive `avatar_url` migration.
+12. **Consultation Intent Flow & Dual-Mode Inquiry System:**
+    - On the homepage (`index.html`), clicking "Book a Free Consultation" (`.cta-consult-btn` / `#ctaConsultBtn`) or consultation triggers presents an interactive modal (`#consultationIntentModal`) asking the user for their consultation focus instead of immediately forcing an unwanted pre-selected property.
+    - The modal offers two clear cards:
+      1) *General Consultation / Question* (`pages/inquiry/inquiry.html?type=general`): For site viewing, loan pre-approval, and general real estate questions without selecting a specific property.
+      2) *Inquire About a Specific Property* (`pages/inquiry/inquiry.html?type=property`): For inquiring on verified accredited listings.
+    - On `frontend/pages/inquiry/inquiry.html`:
+      - Features top segmented tabs (`[ General Consultation / Question ]` / `[ Specific Property Inquiry ]`) allowing clients to toggle anytime.
+      - In General Consultation mode, the property summary card is replaced by a Consultation Topic selector and optional date/time schedule picker.
+      - In Property Inquiry mode, properties are loaded dynamically via `apiGetProperties()` into `<select id="propertySelect">`, updating thumbnail, title, location, specs, and price in real-time.
+      - Property detail and showcase pages (`property-detail.html`, `Liora.html`, `Airmen.html`) pass `?type=property&id=...` or `?title=...` to ensure property-specific inquiries pre-select the correct listing.
+      - Cancel button navigates cleanly back to `../../index.html`.
 
 ---
 
