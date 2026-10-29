@@ -467,7 +467,11 @@ function initConsultationIntentModal() {
     if (!modal) return;
 
     function openModal(e) {
-        if (e) e.preventDefault();
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        }
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
     }
@@ -477,11 +481,13 @@ function initConsultationIntentModal() {
         document.body.style.overflow = '';
     }
 
-    // Attach to CTA button and consultation links
-    const consultTriggers = document.querySelectorAll('#ctaConsultBtn, .cta-consult-btn, .faqs-contact-link');
-    consultTriggers.forEach(btn => {
-        btn.addEventListener('click', openModal);
-    });
+    // Capture clicks on all consultation triggers (CTA button, FAQs link, footer consultation)
+    document.addEventListener('click', (e) => {
+        const trigger = e.target.closest('#ctaConsultBtn, .cta-consult-btn, .faqs-contact-link, a[href="pages/inquiry/inquiry.html"]');
+        if (trigger && !trigger.closest('#consultationIntentModal')) {
+            openModal(e);
+        }
+    }, true);
 
     if (closeBtn) {
         closeBtn.addEventListener('click', closeModal);

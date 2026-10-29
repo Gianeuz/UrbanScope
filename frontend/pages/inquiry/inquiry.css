@@ -55,13 +55,38 @@ body {
     gap: 16px;
 }
 
-.menu-toggle-btn {
-    background: none;
-    border: none;
-    color: var(--green);
-    cursor: pointer;
-    display: flex;
+.go-back-btn {
+    display: inline-flex;
     align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    background-color: #f0f7f2;
+    border: 1px solid #cbe0d1;
+    border-radius: 999px;
+    color: var(--green);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+    line-height: 1;
+}
+
+.go-back-btn:hover {
+    background-color: #e2ede5;
+    color: var(--dark-green);
+    border-color: #a8ceb2;
+    transform: translateX(-2px);
+    box-shadow: 0 2px 8px rgba(45, 92, 57, 0.12);
+}
+
+.go-back-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.go-back-btn:hover svg {
+    transform: translateX(-2px);
 }
 
 .app-brand {
@@ -127,54 +152,7 @@ body {
 .topbar-right {
     display: flex;
     align-items: center;
-    gap: 20px;
-}
-
-.notif-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 6px;
-    border-radius: 50%;
-    transition: all 0.2s;
-}
-
-.notif-btn:hover {
-    background-color: var(--light-green);
-    color: var(--green);
-}
-
-.user-profile-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.avatar-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background-color: #bde0fe;
-    color: #1e3a8a;
-    font-size: 14px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-meta strong {
-    display: block;
-    font-size: 13.5px;
-    line-height: 1.1;
-}
-
-.user-meta small {
-    font-size: 11.5px;
-    color: var(--text-muted);
+    gap: 16px;
 }
 
 /* CONTAINER */
@@ -522,6 +500,12 @@ body {
         gap: 10px;
     }
 
+    .go-back-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        gap: 5px;
+    }
+
     .brand-logo {
         width: 38px;
         height: 34px;
@@ -533,10 +517,6 @@ body {
 
     .app-brand small {
         font-size: 8.5px;
-    }
-
-    .user-meta {
-        display: none;
     }
 
     .inquiry-page-container {

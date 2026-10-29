@@ -187,6 +187,8 @@ path when rendering from a page.
       - In General Consultation mode, the property summary card is replaced by a Consultation Topic selector and optional date/time schedule picker.
       - In Property Inquiry mode, properties are loaded dynamically via `apiGetProperties()` into `<select id="propertySelect">`, updating thumbnail, title, location, specs, and price in real-time.
       - Property detail and showcase pages (`property-detail.html`, `Liora.html`, `Airmen.html`) pass `?type=property&id=...` or `?title=...` to ensure property-specific inquiries pre-select the correct listing.
+      - Topbar navigation: The legacy placeholder hamburger menu icon on `pages/inquiry/inquiry.html` was removed and replaced with a dedicated pill "Go Back" button (`.go-back-btn`), which triggers `history.back()` with a fallback to `../../index.html`.
+      - Unified profile chip: The legacy two-line client badge and placeholder notification bell on `pages/inquiry/inquiry.html` was replaced with the exact unified profile chip (`.profile-chip` / `.profile-menu`) from the homepage, rendering the dark green circle avatar initials, user first name, chevron dropdown toggle, and dropdown menu (containing Home, Submit an Inquiry, and Sign Out).
       - Cancel button navigates cleanly back to `../../index.html`.
 
 ---

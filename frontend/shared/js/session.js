@@ -142,19 +142,27 @@
                     '<div><strong>' + esc(user.name) + '</strong><small>' + esc(user.email) + '</small></div>' +
                 '</div>' +
                 '<a href="' + base + 'index.html" role="menuitem">Home</a>' +
-                '<a href="' + base + 'pages/properties/properties.html" role="menuitem">Browse Properties</a>' +
                 '<a href="' + base + 'pages/inquiry/inquiry.html" role="menuitem">Submit an Inquiry</a>' +
                 '<button type="button" class="signout-item" role="menuitem" data-action="signout">Sign Out</button>' +
             '</div>';
     }
 
     function renderNavProfile(user) {
-        var acts = document.querySelector('.nav-acts');
+        var acts = document.querySelector('.nav-acts') || document.querySelector('.topbar-right');
         if (acts) {
             ['loginBtn', 'signupBtn'].forEach(function (id) {
                 var b = document.getElementById(id);
                 if (b) b.remove();
             });
+            var oldMenu = acts.querySelector('#profileMenu');
+            if (oldMenu) oldMenu.remove();
+
+            var oldNotif = acts.querySelector('.notif-btn');
+            if (oldNotif) oldNotif.remove();
+
+            var oldBadge = acts.querySelector('.user-profile-badge');
+            if (oldBadge) oldBadge.remove();
+
             var wrap = document.createElement('div');
             wrap.className = 'profile-menu';
             wrap.id = 'profileMenu';
@@ -169,21 +177,6 @@
                 e.stopPropagation();
                 var open = wrap.classList.toggle('open');
                 this.setAttribute('aria-expanded', open);
-            });
-        }
-
-        // Inquiry page top bar badge
-        var badge = document.querySelector('.user-profile-badge');
-        if (badge) {
-            var av = badge.querySelector('.avatar-circle');
-            var nm = badge.querySelector('.user-meta strong');
-            if (av) av.textContent = initials(user.name);
-            if (nm) nm.textContent = user.name;
-            badge.insertAdjacentHTML('beforeend', dropdownHtml(user));
-            badge.addEventListener('click', function (e) {
-                if (e.target.closest('.profile-dropdown')) return;
-                e.stopPropagation();
-                badge.classList.toggle('open');
             });
         }
     }
@@ -357,8 +350,19 @@
         // Inquiry gate: contacting / inquiring needs an account
         var link = e.target.closest('a[href]');
         if (!link) return;
+        if (e.defaultPrevented) return;
+
+        // If on homepage with consultation intent modal, let modal triggers open the modal first
+        if (document.getElementById('consultationIntentModal') && !link.closest('#consultationIntentModal')) {
+            var rawHref = link.getAttribute('href') || '';
+            if (link.matches('#ctaConsultBtn, .cta-consult-btn, .faqs-contact-link') ||
+                rawHref === 'pages/inquiry/inquiry.html') {
+                return;
+            }
+        }
+
         var href = link.getAttribute('href');
-        if (!/(^|\/)inquiry(\.html|\/)?(\?|#|$)/.test(href)) return;
+        if (!href || !/(^|\/)inquiry(\.html|\/)?(\?|#|$)/.test(href)) return;
         if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
 
         e.preventDefault();
