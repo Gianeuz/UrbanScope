@@ -449,12 +449,11 @@
     z-index: 5;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
+    padding: 6px 14px;
     border-radius: 999px;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
     backdrop-filter: blur(6px);
@@ -463,10 +462,7 @@
 }
 
 .property-status-badge .badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    display: inline-block;
+    display: none !important;
 }
 
 .property-status-badge.badge-available {
@@ -475,20 +471,10 @@
     border: 1px solid rgba(187, 247, 208, 0.4);
 }
 
-.property-status-badge.badge-available .badge-dot {
-    background: #4ade80;
-    box-shadow: 0 0 6px #4ade80;
-}
-
 .property-status-badge.badge-sold {
     background: rgba(185, 28, 28, 0.92);
     color: #ffffff;
     border: 1px solid rgba(254, 202, 202, 0.45);
-}
-
-.property-status-badge.badge-sold .badge-dot {
-    background: #fca5a5;
-    box-shadow: 0 0 6px #fca5a5;
 }
 
 .listing-card.card-sold {

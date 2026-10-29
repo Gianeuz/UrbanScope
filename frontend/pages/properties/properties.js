@@ -130,7 +130,6 @@ function renderProperties(list) {
         <article class="listing-card ${isSold ? 'card-sold' : ''}" onclick="location.href='property-detail.html?id=${item.id}'">
             <div class="listing-image" style="position: relative;">
                 <span class="property-status-badge ${isSold ? 'badge-sold' : 'badge-available'}">
-                    <span class="badge-dot"></span>
                     ${statusLabel}
                 </span>
                 <img src="${imgSrc}" alt="${item.title}" onerror="this.src='../../assets/images/property1.jpg'">

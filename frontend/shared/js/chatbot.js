@@ -34,8 +34,8 @@
         agency: "CD Miranda Realty (UrbanScope)",
         tagline: "Better Homes, Brighter Futures",
         phone: "+63 900 000 0000",
-        email: "name@sample.com",
-        office: "123 Market Street, Suite 500",
+        email: "admin.realestate@gmail.com",
+        office: "Las Piñas City & Cavite, Philippines",
         serviceAreas: "Las Piñas City, Cavite (Dasmariñas, Bacoor, Imus, Naic)"
     };
 
@@ -552,7 +552,7 @@
                 <ul>
                     <li><strong>Service Areas:</strong> Las Piñas City, Cavite (Dasmariñas, Bacoor, Imus, Naic)</li>
                     <li><strong>Specialties:</strong> Subdivision homes, modern townhouses &amp; luxury villas</li>
-                    <li><strong>Office:</strong> 123 Market Street, Suite 500</li>
+                    <li><strong>Office:</strong> Las Piñas City &amp; Cavite, Philippines</li>
                 </ul>
                 <div class="chatbot-btn-group">
                     <a href="${URLS.home}#about" class="chatbot-action-chip">📖 Read Agent Bio</a>
@@ -566,8 +566,8 @@
                 <p>Here are the direct contact details for <strong>Miriam Lobren Realty</strong>:</p>
                 <ul>
                     <li>📞 <strong>Phone:</strong> <a href="tel:+639000000000" style="color:var(--chat-green)">+63 900 000 0000</a></li>
-                    <li>✉️ <strong>Email:</strong> <a href="mailto:name@sample.com" style="color:var(--chat-green)">name@sample.com</a></li>
-                    <li>📍 <strong>Location:</strong> 123 Market Street, Suite 500</li>
+                    <li>✉️ <strong>Email:</strong> <a href="mailto:admin.realestate@gmail.com" style="color:var(--chat-green)">admin.realestate@gmail.com</a></li>
+                    <li>📍 <strong>Location:</strong> Las Piñas City &amp; Cavite, Philippines</li>
                 </ul>
                 <div class="chatbot-btn-group">
                     <a href="${URLS.inquiry}" class="chatbot-action-chip gold">📝 Send Direct Message</a>

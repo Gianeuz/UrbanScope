@@ -101,20 +101,10 @@ function renderFeaturedGrid(list) {
         <article class="property-card ${isSold ? 'card-sold' : ''}" onclick="location.href='${detailUrl}'">
             <div class="property-image">
                 <span class="property-status-badge ${isSold ? 'badge-sold' : 'badge-available'}">
-                    <span class="badge-dot"></span>
                     ${statusLabel}
                 </span>
                 <img src="${imgSrc}" alt="${item.title}" onerror="this.src='assets/images/property1.jpg'">
                 <div class="card-actions">
-                    <button class="card-icon-btn fav-btn" type="button" aria-label="Add to favorites"
-                        onclick="event.stopPropagation(); this.classList.toggle('active')">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                            </path>
-                        </svg>
-                    </button>
                     <button class="card-icon-btn share-btn" type="button" aria-label="Share property"
                         onclick="event.stopPropagation(); copyPropertyLink('${item.id}')">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -428,6 +418,41 @@ document.addEventListener('DOMContentLoaded', () => {
             if (section) {
                 section.scrollIntoView({ behavior: 'smooth' });
                 history.pushState(null, null, '#properties');
+            }
+        });
+    });
+
+    // 7. FAQs Accordion Interactive Toggle
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const questionBtn = item.querySelector('.faq-question');
+        if (questionBtn) {
+            questionBtn.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+
+                // Close other items for a clean, focused accordion experience
+                faqItems.forEach(other => {
+                    other.classList.remove('active');
+                    const otherBtn = other.querySelector('.faq-question');
+                    if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+                });
+
+                if (!isActive) {
+                    item.classList.add('active');
+                    questionBtn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        }
+    });
+
+    // 8. Smooth scroll for FAQs anchor
+    document.querySelectorAll('a[href="#faqs"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = document.getElementById('faqs');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+                history.pushState(null, null, '#faqs');
             }
         });
     });
