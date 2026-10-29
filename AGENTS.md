@@ -54,8 +54,8 @@ frontend/              Everything the browser loads (served at /)
   pages/properties/    property-detail (?id=N), Liora.html & Airmen.html showcases (properties.html catalog was removed)
   pages/inquiry/       Inquiry form (requires login: <html data-require-auth>)
   pages/auth/          Unified login (auto-routes by role) & register
-  pages/admin/         Dashboard, propertylist.html, add-property, edit-property, clients, users, profile, legacy login redirect
-  pages/superadmin/    Master overview, system diagnostics & RBAC user role management
+  pages/admin/         Dashboard, propertylist.html, add-property, edit-property, clients, profile, legacy login redirect (users.html redirects)
+  pages/superadmin/    Master overview, system diagnostics, user account modification & RBAC management
   shared/css/          common.css (design tokens, navbar, footer), session, splash, chatbot
   shared/js/           supabase.js (API gateway), session.js, splash.js, chatbot.js, api.js
   assets/images/       Photos, logos, icons
@@ -137,6 +137,9 @@ path when rendering from a page.
 - Preserve existing comments and docstrings unrelated to your change.
 - `README.md` is the **public** overview — keep it short (features, stack, setup, top-level structure) and never
   list admin/superadmin credentials there. Detailed internals belong in `AGENTS.md` / `DATABASE.md`; keep those in sync.
+- **Always update documentation (.md) when chatting/completing tasks:** Every change, new route, UI adjustment,
+  schema update, or architectural decision MUST immediately be recorded in `AGENTS.md`, `README.md`, and
+  `DATABASE.md` as appropriate. Never finish a turn without ensuring markdown documentation reflects the current state.
 
 ---
 
@@ -156,6 +159,11 @@ path when rendering from a page.
    and superadmins to `/pages/superadmin/dashboard.html`.
 7. **Admin route aliases:** `/pages/admin/properties.html` and `manage-properties.html` permanently redirect
    to `/pages/admin/propertylist.html`. Full listing editing is handled by `edit-property.html`.
+8. **User account management centralized in Superadmin:** The read-only `users.html` link was removed from the
+   Admin sidebar navigation. Visiting `/pages/admin/users.html` automatically redirects admins to `dashboard.html`
+   and superadmins to `/pages/superadmin/dashboard.html#users`. Superadmins can edit full names, emails, contact phones,
+   roles (`user`, `admin`, `superadmin`), and reset passwords via `PUT /api/superadmin/users/{user_id}` and the
+   modal in `/pages/superadmin/dashboard.html`. Root account `urbanscope.cvsu@gmail.com` cannot be demoted or renamed.
 
 ---
 

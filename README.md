@@ -79,12 +79,12 @@ To reset the data, delete `backend/urbanscope.db` and restart the server.
   - **Edit Property:** Select **Edit** on any listing card (`edit-property.html`) to update pricing, specifications, or replace photos.
   - **Delete Property:** Remove unlisted or sold properties with immediate database and cache synchronization.
 - **Client Inquiries & CRM:** Review client inquiries under `clients.html`, inspect contact information, track message details, and update inquiry follow-up statuses (e.g., *Pending*, *Contacted*, *Scheduled*, *Closed*).
-- **Profile & Account Settings:** Visit `profile.html` to update agent profile contact details and change administrator passwords.
+- **Profile & Account Settings:** Visit `profile.html` to update agent profile contact details and change administrator passwords. User account directory and role management are reserved for the Superadmin.
 
 ### 3. Superadministrator Guide
-- **Master Overview:** Access `/pages/superadmin/dashboard.html` for elevated system diagnostics.
-- **RBAC Role Management:** Manage registered system users, elevate or adjust role permissions (`user`, `admin`, `superadmin`), and audit platform accounts.
-- **System Health:** Run diagnostics on the SQLite database and monitor API connectivity.
+- **Master Overview:** Access `/pages/superadmin/dashboard.html` for elevated system diagnostics and security governance.
+- **RBAC Role & Account Management:** Full user account modification (edit full name, email, contact phone, account role `user`/`admin`/`superadmin`, and password resets) with protected root superadmin credentials.
+- **System Health:** Run diagnostics on the SQLite database, triggers, and monitor API connectivity.
 
 ---
 

@@ -794,6 +794,51 @@
     </div>
 
     <!-- ============================================================== -->
+    <!-- MODAL: EDIT / MODIFY USER ACCOUNT -->
+    <!-- ============================================================== -->
+    <div class="sa-modal-backdrop" id="editUserModal" hidden>
+        <div class="sa-modal" role="dialog" aria-labelledby="editModalTitle">
+            <div class="sa-modal-header">
+                <h3 id="editModalTitle">Modify User Account</h3>
+                <button type="button" class="sa-modal-close" id="btnCloseEditUserModal">&times;</button>
+            </div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="sa-modal-body">
+                    <div class="sa-form-group">
+                        <label for="editFullName">Full Legal Name *</label>
+                        <input type="text" id="editFullName" required placeholder="Full Name">
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="editEmail">Email Address *</label>
+                        <input type="email" id="editEmail" required placeholder="name@email.com">
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="editPhone">Contact Phone</label>
+                        <input type="text" id="editPhone" placeholder="+63 912 345 6789">
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="editRole">Account Role *</label>
+                        <select id="editRole" class="sa-select">
+                            <option value="user">User (Client Account)</option>
+                            <option value="admin">Admin (Realty Administrator)</option>
+                            <option value="superadmin">Superadmin (Governance)</option>
+                        </select>
+                    </div>
+                    <div class="sa-form-group">
+                        <label for="editPassword">Reset Password <small style="color:var(--text-muted);font-weight:normal;">(Leave blank to keep current)</small></label>
+                        <input type="password" id="editPassword" minlength="6" placeholder="Enter new password (optional)">
+                    </div>
+                </div>
+                <div class="sa-modal-footer">
+                    <button type="button" class="sa-btn-outline" id="btnCancelEditUser">Cancel</button>
+                    <button type="submit" class="primary-action-btn sa-btn-gold" id="btnSubmitEditUser">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
     <!-- MODAL: CONFIRM ROLE CHANGE -->
     <!-- ============================================================== -->
     <div class="sa-modal-backdrop" id="roleChangeModal" hidden>

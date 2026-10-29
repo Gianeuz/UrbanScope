@@ -362,8 +362,6 @@
             } else {
                 activeSection = "clients";
             }
-        } else if (path.includes("users.html")) {
-            activeSection = "users";
         } else if (path.includes("profile.html")) {
             activeSection = "settings";
         }
@@ -380,8 +378,6 @@
             } else if (activeSection === "clients" && label === "clients" && !href.includes("view=inquiries")) {
                 match = true;
             } else if (activeSection === "inquiries" && (label === "inquiries" || href.includes("view=inquiries"))) {
-                match = true;
-            } else if (activeSection === "users" && (label === "users" || href.includes("users.html"))) {
                 match = true;
             } else if (activeSection === "settings" && (label === "settings" || href.includes("profile.html"))) {
                 match = true;

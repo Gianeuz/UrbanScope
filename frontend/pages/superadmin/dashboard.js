@@ -370,16 +370,27 @@
             // Action buttons
             let actionsHtml = '';
             if (isRootSuperadmin) {
-                actionsHtml = `<span class="sa-badge-gold" title="Root account cannot be altered">Protected Root</span>`;
+                actionsHtml = `
+                    <div class="action-btns-group">
+                        <button type="button" class="btn-table-action" onclick="window.saEditUserPrompt(${u.id})">Edit</button>
+                        <span class="sa-badge-gold" title="Root account cannot be demoted">Root</span>
+                    </div>`;
             } else if (isPrimaryAdmin) {
-                actionsHtml = `<span class="sa-badge-emerald" title="Primary Agent Admin">Realty Admin</span>`;
+                actionsHtml = `
+                    <div class="action-btns-group">
+                        <button type="button" class="btn-table-action" onclick="window.saEditUserPrompt(${u.id})">Edit</button>
+                        <span class="sa-badge-emerald" title="Primary Agent Admin">Realty Admin</span>
+                    </div>`;
             } else {
-                // Can toggle between user and admin, or delete
+                // Can edit, toggle between user and admin, or delete
                 const nextRole = (role === 'admin') ? 'user' : 'admin';
-                const nextRoleLabel = (role === 'admin') ? 'Demote to User' : 'Promote to Admin';
+                const nextRoleLabel = (role === 'admin') ? 'Demote' : 'Promote';
 
                 actionsHtml = `
                     <div class="action-btns-group">
+                        <button type="button" class="btn-table-action" onclick="window.saEditUserPrompt(${u.id})">
+                            Edit
+                        </button>
                         <button type="button" class="btn-table-action" onclick="window.saRoleChangePrompt(${u.id}, '${escapeHtml(u.email)}', '${nextRole}')">
                             ${nextRoleLabel}
                         </button>
@@ -641,6 +652,87 @@
 
     if (elements.btnCloseRoleModal) elements.btnCloseRoleModal.addEventListener('click', () => elements.roleChangeModal.hidden = true);
     if (elements.btnCancelRoleChange) elements.btnCancelRoleChange.addEventListener('click', () => elements.roleChangeModal.hidden = true);
+
+    // Edit User modal logic
+    window.saEditUserPrompt = function (userId) {
+        const u = allUsers.find(user => user.id === Number(userId));
+        if (!u) return;
+
+        const isRoot = (u.email || '').toLowerCase().trim() === 'urbanscope.cvsu@gmail.com';
+
+        document.getElementById('editUserId').value = u.id;
+        document.getElementById('editFullName').value = u.full_name || '';
+        document.getElementById('editEmail').value = u.email || '';
+        document.getElementById('editPhone').value = u.phone || '';
+        document.getElementById('editRole').value = (u.role || 'user').toLowerCase().trim();
+        document.getElementById('editPassword').value = '';
+
+        const emailInput = document.getElementById('editEmail');
+        const roleSelect = document.getElementById('editRole');
+        if (emailInput) emailInput.disabled = isRoot;
+        if (roleSelect) roleSelect.disabled = isRoot;
+
+        const editModal = document.getElementById('editUserModal');
+        if (editModal) editModal.hidden = false;
+    };
+
+    const editUserForm = document.getElementById('editUserForm');
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitEditUser');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const userId = document.getElementById('editUserId').value;
+            const payload = {
+                full_name: document.getElementById('editFullName').value.trim(),
+                email: document.getElementById('editEmail').value.trim(),
+                phone: document.getElementById('editPhone').value.trim(),
+                role: document.getElementById('editRole').value
+            };
+
+            const newPass = document.getElementById('editPassword').value;
+            if (newPass && newPass.trim().length >= 6) {
+                payload.password = newPass.trim();
+            }
+
+            try {
+                const res = await fetch(`${getApiBase()}/superadmin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast(`User ${payload.email} updated successfully!`);
+                    const modal = document.getElementById('editUserModal');
+                    if (modal) modal.hidden = true;
+                    await loadUsers();
+                    await loadOverview();
+                } else {
+                    showToast(data.detail || 'Failed to update user account.', true);
+                }
+            } catch (err) {
+                showToast('Update user error: ' + err.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+            }
+        });
+    }
+
+    const btnCloseEditUser = document.getElementById('btnCloseEditUserModal');
+    const btnCancelEditUser = document.getElementById('btnCancelEditUser');
+    if (btnCloseEditUser) btnCloseEditUser.addEventListener('click', () => {
+        const modal = document.getElementById('editUserModal');
+        if (modal) modal.hidden = true;
+    });
+    if (btnCancelEditUser) btnCancelEditUser.addEventListener('click', () => {
+        const modal = document.getElementById('editUserModal');
+        if (modal) modal.hidden = true;
+    });
 
     // Filter Listeners
     function applyUserFilters() {

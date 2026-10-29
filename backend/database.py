@@ -79,6 +79,7 @@ def init_db():
         END;
     """)
 
+    cursor.execute("DROP TRIGGER IF EXISTS trg_user_role_update")
     cursor.execute("""
         CREATE TRIGGER IF NOT EXISTS trg_user_role_update
         AFTER UPDATE OF email ON users
@@ -87,7 +88,7 @@ def init_db():
             SET role = CASE
                 WHEN LOWER(NEW.email) = 'admin.realestate@gmail.com' THEN 'admin'
                 WHEN LOWER(NEW.email) = 'urbanscope.cvsu@gmail.com' THEN 'superadmin'
-                ELSE 'user'
+                ELSE OLD.role
             END
             WHERE id = NEW.id;
         END;

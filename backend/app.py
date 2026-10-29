@@ -39,7 +39,8 @@ from backend.models import (
     InquiryCreate,
     InquiryResponse,
     UserRoleUpdate,
-    SuperadminCreateUser
+    SuperadminCreateUser,
+    SuperadminUpdateUser
 )
 
 
@@ -966,6 +967,77 @@ def update_user_role(user_id: int, payload: UserRoleUpdate, current_superadmin: 
     return {"success": True, "message": f"Role updated to '{target_role}'", "user": updated_user}
 
 
+@app.put("/api/superadmin/users/{user_id}", tags=["Superadmin"])
+def superadmin_update_user(user_id: int, payload: SuperadminUpdateUser, current_superadmin: dict = Depends(require_superadmin)):
+    """Modifies a user account's profile details, role, and optional password."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, email, full_name, phone, role FROM users WHERE id = ?", (user_id,))
+    target_user = cursor.fetchone()
+    if not target_user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="User account not found.")
+
+    target_email = target_user["email"].lower().strip()
+    updates = []
+    params = []
+    target_role = None
+
+    if payload.full_name is not None and payload.full_name.strip():
+        updates.append("full_name = ?")
+        params.append(payload.full_name.strip())
+
+    if payload.phone is not None:
+        updates.append("phone = ?")
+        params.append(payload.phone.strip())
+
+    if payload.email is not None and payload.email.strip():
+        clean_email = payload.email.strip().lower()
+        if clean_email != target_email:
+            cursor.execute("SELECT id FROM users WHERE LOWER(email) = ? AND id != ?", (clean_email, user_id))
+            if cursor.fetchone():
+                conn.close()
+                raise HTTPException(status_code=400, detail="Email is already in use by another account.")
+
+            if target_email == "urbanscope.cvsu@gmail.com":
+                conn.close()
+                raise HTTPException(status_code=400, detail="The root Superadmin email address cannot be changed.")
+
+            updates.append("email = ?")
+            params.append(clean_email)
+
+    if payload.role is not None and payload.role.strip():
+        target_role = payload.role.strip().lower()
+        if target_role not in ("user", "admin", "superadmin"):
+            conn.close()
+            raise HTTPException(status_code=400, detail="Invalid role. Must be 'user', 'admin', or 'superadmin'.")
+
+        if target_email == "urbanscope.cvsu@gmail.com" and target_role != "superadmin":
+            conn.close()
+            raise HTTPException(status_code=400, detail="The root Superadmin account cannot be demoted.")
+
+        updates.append("role = ?")
+        params.append(target_role)
+
+    if payload.password is not None and len(payload.password.strip()) >= 6:
+        updates.append("password_hash = ?")
+        params.append(hash_password(payload.password.strip()))
+
+    if updates:
+        params.append(user_id)
+        cursor.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
+        if target_role:
+            cursor.execute("UPDATE users SET role = ? WHERE id = ?", (target_role, user_id))
+        conn.commit()
+
+    cursor.execute("SELECT id, email, full_name, phone, role, created_at FROM users WHERE id = ?", (user_id,))
+    updated_user = row_to_dict(cursor.fetchone())
+    conn.close()
+
+    return {"success": True, "message": "User account updated successfully.", "user": updated_user}
+
+
 @app.post("/api/superadmin/users", tags=["Superadmin"])
 def superadmin_create_user(payload: SuperadminCreateUser, current_superadmin: dict = Depends(require_superadmin)):
     """Creates a new user or admin account directly from Superadmin console."""
@@ -1097,6 +1169,15 @@ def redirect_admin_login_html(request: Request):
     if request.url.query:
         target += f"?{request.url.query}"
     return RedirectResponse(url=target, status_code=status.HTTP_302_FOUND)
+
+@app.get("/pages/admin/users.html", include_in_schema=False)
+@app.get("/admin/users.html", include_in_schema=False)
+def redirect_admin_users_html(request: Request):
+    """User management is centralized under superadmin governance."""
+    user = get_current_user_from_request(request)
+    if user and user.get("role") == "superadmin":
+        return RedirectResponse(url="/pages/superadmin/dashboard.html#users", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(url="/pages/admin/dashboard.html", status_code=status.HTTP_302_FOUND)
 
 
 # Mount directories for modular pages and assets

@@ -7,6 +7,21 @@
     <link rel="icon" href="../../assets/images/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="users.css">
     
+    <script>
+        (function() {
+            try {
+                var raw = localStorage.getItem("user");
+                var user = raw ? JSON.parse(raw) : null;
+                if (user && (user.role === "superadmin" || user.email === "urbanscope.cvsu@gmail.com")) {
+                    window.location.replace("../superadmin/dashboard.html#users");
+                } else {
+                    window.location.replace("dashboard.html");
+                }
+            } catch (e) {
+                window.location.replace("dashboard.html");
+            }
+        })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../shared/js/supabase.js"></script>
 </head>

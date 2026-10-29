@@ -137,3 +137,11 @@ class SuperadminCreateUser(BaseModel):
     phone: Optional[str] = Field(default="", description="Contact phone number")
     role: Optional[str] = Field(default="user", description="Account role ('user', 'admin')")
 
+
+class SuperadminUpdateUser(BaseModel):
+    full_name: Optional[str] = Field(default=None, description="Full legal name")
+    email: Optional[str] = Field(default=None, description="Email address")
+    phone: Optional[str] = Field(default=None, description="Contact phone number")
+    role: Optional[str] = Field(default=None, description="Target role: 'user', 'admin', or 'superadmin'")
+    password: Optional[str] = Field(default=None, description="Optional new password (min. 6 characters if provided)")
+

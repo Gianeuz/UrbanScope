@@ -95,7 +95,7 @@ Client and admin accounts.
 | `password_hash` | TEXT | NOT NULL | Format `"<salt_hex>$<pbkdf2_hex>"` — see §6 |
 | `full_name` | TEXT | NOT NULL | |
 | `phone` | TEXT | — | Free-form; frontend validates PH formats (`+639…` / `09…`) |
-| `role` | TEXT | `CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user'` | Auto-assigned via database trigger: `urbanscope.cvsu@gmail.com` → `'superadmin'`, `admin.realestate@gmail.com` → `'admin'`, others → `'user'` |
+| `role` | TEXT | `CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user'` | Initial role assigned on insert via trigger `trg_user_role_insert` (`urbanscope.cvsu@gmail.com` → `'superadmin'`, `admin.realestate@gmail.com` → `'admin'`, others → `'user'`). Trigger `trg_user_role_update` preserves `OLD.role` on email changes. Superadmins modify roles via `PUT /api/superadmin/users/{id}`. |
 | `created_at` | TIMESTAMP | `CURRENT_TIMESTAMP` | UTC, `YYYY-MM-DD HH:MM:SS` |
 
 ### 3.2 `properties`
