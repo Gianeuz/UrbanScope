@@ -122,7 +122,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (statPending) statPending.textContent = pending;
         if (statApproved) statApproved.textContent = approved;
         if (statCompleted) statCompleted.textContent = completed;
-        if (notifCount) notifCount.textContent = pending;
+        if (typeof window.loadAdminNotifications === 'function') {
+            window.loadAdminNotifications();
+        }
     }
 
     function getNormalizedStatus(status) {

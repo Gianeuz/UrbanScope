@@ -203,6 +203,25 @@
         `).join('');
     }
 
+    let currentNotificationItems = [];
+
+    function markNotificationsAsViewed() {
+        const now = Date.now();
+        localStorage.setItem("admin_notifs_last_viewed", String(now));
+
+        if (Array.isArray(currentNotificationItems)) {
+            const readIds = currentNotificationItems.map(it => it.inquiryId).filter(Boolean);
+            localStorage.setItem("admin_notifs_read_ids", JSON.stringify(readIds));
+        }
+
+        const badges = document.querySelectorAll(".notif-badge");
+        badges.forEach(b => {
+            b.textContent = "0";
+            b.setAttribute("data-count", "0");
+            b.style.display = "none";
+        });
+    }
+
     async function loadNotifications() {
         let inquiries = [];
         if (typeof window.apiGetInquiries === "function") {
@@ -218,6 +237,7 @@
         }
 
         const items = buildNotificationItems(inquiries);
+        currentNotificationItems = items;
         const html = renderNotifHtml(items);
 
         const topbarList = document.getElementById("topbarNotifList");
@@ -226,17 +246,37 @@
         const dashList = document.getElementById("dashboardNotifList");
         if (dashList) dashList.innerHTML = html;
 
-        // Update badges
+        // Calculate unread count based on last viewed timestamp and read IDs
+        const lastViewed = parseInt(localStorage.getItem("admin_notifs_last_viewed") || "0", 10);
+        let readIds = [];
+        try {
+            readIds = JSON.parse(localStorage.getItem("admin_notifs_read_ids") || "[]");
+        } catch (_) {}
+
+        let unreadCount = 0;
+        if (lastViewed > 0 || readIds.length > 0) {
+            unreadCount = items.filter(it => {
+                if (it.inquiryId && readIds.includes(it.inquiryId)) return false;
+                if (it.time && lastViewed > 0 && it.time <= lastViewed) return false;
+                return true;
+            }).length;
+        } else {
+            unreadCount = items.length;
+        }
+
+        // Update badges to display unread count (completely hidden if 0)
         const badges = document.querySelectorAll(".notif-badge");
         badges.forEach(b => {
-            b.textContent = items.length > 0 ? items.length : "0";
-            b.style.display = items.length > 0 ? "flex" : "none";
+            b.textContent = String(unreadCount);
+            b.setAttribute("data-count", String(unreadCount));
+            b.style.display = unreadCount > 0 ? "flex" : "none";
         });
     }
 
     // Expose globally so other scripts can call it
     window.loadAdminNotifications = loadNotifications;
     window.buildNotificationItems = buildNotificationItems;
+    window.markNotificationsAsViewed = markNotificationsAsViewed;
 
     function initNotificationDropdown() {
         const notifBtn = document.querySelector(".notif-btn");
@@ -287,6 +327,9 @@
             e.preventDefault();
             e.stopPropagation();
 
+            // When icon is clicked / viewed, notification badge becomes 0
+            markNotificationsAsViewed();
+
             // Close profile dropdown if open
             const profileDropdown = document.getElementById("profileDropdown");
             if (profileDropdown) {
@@ -307,6 +350,10 @@
         }
 
         notifBtn.onclick = toggleNotif;
+
+        notifDropdown.addEventListener("click", function () {
+            markNotificationsAsViewed();
+        });
 
         // When profile button is clicked, close notifDropdown
         const profileBtn = document.getElementById("profileButton");

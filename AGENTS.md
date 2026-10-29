@@ -164,6 +164,9 @@ path when rendering from a page.
    and superadmins to `/pages/superadmin/dashboard.html#users`. Superadmins can edit full names, emails, contact phones,
    roles (`user`, `admin`, `superadmin`), and reset passwords via `PUT /api/superadmin/users/{user_id}` and the
    modal in `/pages/superadmin/dashboard.html`. Root account `urbanscope.cvsu@gmail.com` cannot be demoted or renamed.
+9. **Admin Topbar Notification Read State:** Clicking the notification bell or opening the dropdown marks notifications
+   as viewed in `localStorage` (`admin_notifs_last_viewed` and `admin_notifs_read_ids`). When the unread count reaches `0`,
+   the red badge is completely hidden (`display: none`), leaving a clean bell icon without any red dot until new inquiries arrive.
 
 ---
 

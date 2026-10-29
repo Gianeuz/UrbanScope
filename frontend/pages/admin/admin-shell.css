@@ -204,6 +204,13 @@ input:focus-visible {
     color: #ffffff;
     font-size: 9px;
     font-weight: 800;
+    line-height: 1;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.notif-badge[data-count="0"],
+.notif-badge:empty {
+    display: none !important;
 }
 
 /* NOTIFICATION DROPDOWN */
