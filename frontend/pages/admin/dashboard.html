@@ -630,6 +630,29 @@
 
     </main>
 
+    <!-- INQUIRY DETAILS MODAL -->
+    <div class="modal-overlay" id="inquiryModal" role="dialog" aria-modal="true" aria-labelledby="inquiryModalTitle" hidden>
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="modal-header-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </span>
+                    <div>
+                        <h3 id="inquiryModalTitle">Inquiry Details</h3>
+                        <p class="modal-subtitle">Review inquiry information and client details</p>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeModalBtn" type="button" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
     <script src="admin-shell.js"></script>
     <script src="dashboard.js"></script>
 </body>

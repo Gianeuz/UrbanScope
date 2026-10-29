@@ -30,6 +30,7 @@ class UserResponse(BaseModel):
     full_name: str
     phone: Optional[str] = ""
     role: str = "user"
+    avatar_url: Optional[str] = "assets/images/agent.jpg"
     created_at: Optional[str] = None
 
 

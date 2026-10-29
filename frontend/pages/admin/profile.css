@@ -88,19 +88,117 @@
 .profile-avatar-banner {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 22px;
     margin-bottom: 24px;
-    padding: 16px;
+    padding: 20px;
     background: #fafdfa;
     border: 1px solid #e2ebe3;
-    border-radius: 12px;
+    border-radius: 14px;
+    flex-wrap: wrap;
 }
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
 .profile-avatar-large {
-    width: 76px;
-    height: 76px;
+    width: 84px;
+    height: 84px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--green);
+    display: block;
+    box-shadow: 0 4px 12px rgba(10, 24, 15, 0.12);
+    transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.avatar-edit-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(13, 46, 24, 0.65);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.profile-avatar-wrapper:hover .avatar-edit-overlay,
+.profile-avatar-wrapper:focus-within .avatar-edit-overlay {
+    opacity: 1;
+}
+
+.profile-avatar-wrapper:hover .profile-avatar-large {
+    transform: scale(1.02);
+}
+
+.profile-avatar-meta {
+    flex: 1;
+    min-width: 220px;
+}
+
+.avatar-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.btn-change-avatar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eef6f0;
+    color: #1e5c33;
+    border: 1px solid #cbe0d1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.btn-change-avatar:hover {
+    background: #dff0e3;
+    border-color: #9fccaa;
+    color: #123d20;
+    transform: translateY(-1px);
+}
+
+.btn-reset-avatar {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.btn-reset-avatar:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #dc2626;
+}
+
+.avatar-size-note {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 .profile-badge-pill {
     display: inline-block;

@@ -701,3 +701,58 @@ input:focus-visible {
         width: 280px;
     }
 }
+
+/* ============================================================== */
+/* SHARED TABLE ACTION VIEW BUTTON                                 */
+/* ============================================================== */
+.action-view-btn,
+.table-panel .action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border: 1px solid #cbe0d1;
+    border-radius: 8px;
+    background: #f0f7f2;
+    color: #1e5c33;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(18, 52, 28, 0.04);
+    transition: all 0.18s ease;
+}
+
+.action-view-btn:hover,
+.table-panel .action-button:hover {
+    background: #1e5c33;
+    border-color: #1e5c33;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(30, 92, 51, 0.22);
+}
+
+.action-view-btn:active,
+.table-panel .action-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(30, 92, 51, 0.15);
+}
+
+.action-view-btn svg,
+.table-panel .action-button svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    flex-shrink: 0;
+    transition: transform 0.18s ease;
+}
+
+.action-view-btn:hover svg,
+.table-panel .action-button:hover svg {
+    transform: scale(1.08);
+}
+

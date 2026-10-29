@@ -181,11 +181,35 @@
                 </div>
 
                 <div class="profile-avatar-banner">
-                    <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="profile-avatar-large">
-                    <div>
+                    <div class="profile-avatar-wrapper" id="avatarWrapper" title="Click to change profile picture">
+                        <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="profile-avatar-large" id="profileAvatarImg">
+                        <label for="avatarFileInput" class="avatar-edit-overlay" title="Upload new profile picture" aria-label="Upload profile picture">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </label>
+                        <input type="file" id="avatarFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" style="display: none;">
+                    </div>
+                    <div class="profile-avatar-meta">
                         <span class="profile-badge-pill">Administrator</span>
                         <h3 id="bannerName" style="color: var(--dark-green); font-size: 1.2rem; font-weight: 800;">Miriam Lobren</h3>
-                        <p style="color: var(--text-muted); font-size: 0.88rem;">CD Miranda Realty Real Estate Agent</p>
+                        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 8px;">CD Miranda Realty Real Estate Agent</p>
+                        
+                        <div class="avatar-actions-row">
+                            <button type="button" class="btn-change-avatar" id="btnChangeAvatar">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span>Change Profile Picture</span>
+                            </button>
+                            <button type="button" class="btn-reset-avatar" id="btnResetAvatar" style="display: none;">
+                                Reset Photo
+                            </button>
+                            <span class="avatar-size-note">Max file size: 5MB (JPG, PNG, WebP)</span>
+                        </div>
                     </div>
                 </div>
 

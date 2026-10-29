@@ -354,15 +354,19 @@ function renderInquiryRows(inquiries) {
         const statusClass = getStatusClass(inquiry.status);
 
         const message = escapeHTML(
-            inquiry.message || "No inquiry message provided."
+            inquiry.message || inquiry.notes || "No inquiry message provided."
         );
 
         const phone = escapeHTML(
-            inquiry.client_phone || "N/A"
+            inquiry.client_phone || inquiry.phone || inquiry.contact_number || "N/A"
         );
 
         const email = escapeHTML(
-            inquiry.client_email || "N/A"
+            inquiry.client_email || inquiry.email || "N/A"
+        );
+
+        const scheduleDate = escapeHTML(
+            inquiry.schedule_date || inquiry.preferred_date || ""
         );
 
         return `
@@ -385,10 +389,24 @@ function renderInquiryRows(inquiries) {
                     <button
                         class="action-view-btn"
                         type="button"
-                        data-inquiry-message="${message}"
+                        data-inquiry-id="${inquiryId}"
+                        data-client-name="${clientName}"
+                        data-property-title="${propertyTitle}"
+                        data-created-at="${escapeHTML(createdAt)}"
+                        data-status="${status}"
+                        data-status-class="${statusClass}"
                         data-inquiry-phone="${phone}"
                         data-inquiry-email="${email}"
-                    >View</button>
+                        data-inquiry-message="${message}"
+                        data-schedule-date="${scheduleDate}"
+                        aria-label="View inquiry from ${clientName}"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <span>View</span>
+                    </button>
                 </td>
             </tr>
         `;
@@ -397,24 +415,180 @@ function renderInquiryRows(inquiries) {
     updateInquiryEmptyState();
 }
 
+/* INQUIRY DETAILS MODAL UI */
+
+function openInquiryModal(data) {
+    const modal = document.getElementById("inquiryModal");
+    const modalContent = document.getElementById("modalContent");
+    if (!modal || !modalContent) return;
+
+    const clientName = data.clientName || "Client";
+    const inquiryId = data.inquiryId || "INQ-N/A";
+    const propertyTitle = data.propertyTitle || "General Inquiry";
+    const createdAt = data.createdAt || "Recent";
+    const status = data.status || "Pending";
+    const statusClass = data.statusClass || "gray";
+    const phone = (data.inquiryPhone && data.inquiryPhone !== "N/A") ? data.inquiryPhone : "";
+    const email = (data.inquiryEmail && data.inquiryEmail !== "N/A") ? data.inquiryEmail : "";
+    const message = data.inquiryMessage || "No inquiry message provided.";
+    const scheduleDate = (data.scheduleDate && data.scheduleDate !== "N/A") ? data.scheduleDate : "";
+
+    const initials = clientName
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(w => w[0].toUpperCase())
+        .join("") || "CL";
+
+    modalContent.innerHTML = `
+        <div class="inquiry-modal-detail">
+            <!-- Client Banner -->
+            <div class="inquiry-client-banner">
+                <div class="inquiry-client-info">
+                    <div class="inquiry-avatar-pill" aria-hidden="true">${escapeHTML(initials)}</div>
+                    <div>
+                        <h4 class="inquiry-client-name">${escapeHTML(clientName)}</h4>
+                        <span class="inquiry-submitted-date">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Submitted: ${escapeHTML(createdAt)}
+                        </span>
+                    </div>
+                </div>
+                <div class="inquiry-banner-meta">
+                    <span class="status-pill ${escapeHTML(statusClass)}">${escapeHTML(status)}</span>
+                    <span class="inquiry-id-tag">${escapeHTML(inquiryId)}</span>
+                </div>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="inquiry-info-grid">
+                <div class="info-grid-card">
+                    <span class="info-label">Email Address</span>
+                    ${email ? `
+                        <a href="mailto:${escapeHTML(email)}" class="info-value info-link">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <span>${escapeHTML(email)}</span>
+                        </a>
+                    ` : `<span class="info-value muted">Not provided</span>`}
+                </div>
+
+                <div class="info-grid-card">
+                    <span class="info-label">Phone Number</span>
+                    ${phone ? `
+                        <a href="tel:${escapeHTML(phone)}" class="info-value info-link">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            <span>${escapeHTML(phone)}</span>
+                        </a>
+                    ` : `<span class="info-value muted">Not provided</span>`}
+                </div>
+
+                <div class="info-grid-card">
+                    <span class="info-label">Property Interested</span>
+                    <div class="info-value">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <span>${escapeHTML(propertyTitle)}</span>
+                    </div>
+                </div>
+
+                <div class="info-grid-card">
+                    <span class="info-label">Preferred Schedule</span>
+                    <div class="info-value">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>${escapeHTML(scheduleDate || "No schedule requested")}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Box -->
+            <div class="inquiry-message-section">
+                <span class="info-label">Message / Client Request</span>
+                <div class="inquiry-message-box">${escapeHTML(message)}</div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="modal-actions-footer">
+                <button type="button" class="btn-modal-secondary btn-close-modal" id="modalCloseActionBtn">
+                    Close
+                </button>
+                ${email ? `
+                    <a href="mailto:${encodeURIComponent(email)}?subject=Re:%20Inquiry%20regarding%20${encodeURIComponent(propertyTitle)}" class="btn-modal-primary" target="_blank" rel="noopener">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                        <span>Reply via Email</span>
+                    </a>
+                ` : `
+                    <a href="clients.html?view=inquiries" class="btn-modal-primary">
+                        <span>Open in Clients &rarr;</span>
+                    </a>
+                `}
+            </div>
+        </div>
+    `;
+
+    modal.hidden = false;
+    // Force layout recalculation for smooth CSS animation
+    void modal.offsetWidth;
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+}
+
+function closeInquiryModal() {
+    const modal = document.getElementById("inquiryModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    setTimeout(() => {
+        if (!modal.classList.contains("open")) {
+            modal.hidden = true;
+        }
+    }, 220);
+    document.body.style.overflow = "";
+}
+
 document.addEventListener("click", event => {
-    const button = event.target.closest(".action-view-btn");
+    const viewButton = event.target.closest(".action-view-btn");
+    if (viewButton) {
+        event.preventDefault();
+        openInquiryModal(viewButton.dataset);
+        return;
+    }
 
-    if (!button) return;
+    const closeBtn = event.target.closest("#closeModalBtn, #modalCloseActionBtn, .btn-close-modal");
+    if (closeBtn) {
+        event.preventDefault();
+        closeInquiryModal();
+        return;
+    }
 
-    const message = button.dataset.inquiryMessage || "No message available.";
-    const phone = button.dataset.inquiryPhone;
-    const email = button.dataset.inquiryEmail;
+    const modal = document.getElementById("inquiryModal");
+    if (modal && event.target === modal) {
+        closeInquiryModal();
+    }
+});
 
-    if (phone || email) {
-        alert(
-            `Inquiry Details\n\n` +
-            `Message: ${message}\n\n` +
-            `Phone: ${phone || "N/A"}\n` +
-            `Email: ${email || "N/A"}`
-        );
-    } else {
-        alert(message);
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        const modal = document.getElementById("inquiryModal");
+        if (modal && modal.classList.contains("open")) {
+            closeInquiryModal();
+        }
     }
 });
 

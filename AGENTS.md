@@ -167,6 +167,16 @@ path when rendering from a page.
 9. **Admin Topbar Notification Read State:** Clicking the notification bell or opening the dropdown marks notifications
    as viewed in `localStorage` (`admin_notifs_last_viewed` and `admin_notifs_read_ids`). When the unread count reaches `0`,
    the red badge is completely hidden (`display: none`), leaving a clean bell icon without any red dot until new inquiries arrive.
+10. **Admin Table Action Buttons & Inquiry Details Modal:** The `Recent Inquiries` table on `/pages/admin/dashboard.html` styles `.action-view-btn`
+    with matching brand design tokens (light green `#f0f7f2` background, deep forest `#1e5c33` text, border `#cbe0d1`,
+    hover elevation, and an inline SVG eye icon). Clicking "View" pops out a dedicated UI modal (`#inquiryModal`) with
+    client initials avatar, submission timestamp, status pill, email link, phone link, property title, tour schedule,
+    client message card, "Reply via Email" mailto button, and clean close triggers (X button, Close button, backdrop click, Escape key),
+    completely replacing blocking native `alert(...)` popups.
+11. **Admin Profile Picture Upload (< 5MB limit):** On `/pages/admin/profile.html`, administrators can upload and update their profile picture.
+    The file input strictly enforces a client-side limit of 5MB (`file.size <= 5 * 1024 * 1024`), validates image MIME types, optimizes the
+    avatar data URL via canvas, updates all topbar/dropdown avatar circles immediately via `syncAdminProfileDisplay()`, and allows
+    reverting back to the default photo with a "Reset Photo" button. The backend SQLite database supports non-destructive `avatar_url` migration.
 
 ---
 

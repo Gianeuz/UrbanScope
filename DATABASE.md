@@ -47,6 +47,7 @@ erDiagram
         TEXT full_name
         TEXT phone
         TEXT role
+        TEXT avatar_url
         TIMESTAMP created_at
     }
     PROPERTIES {
@@ -96,6 +97,7 @@ Client and admin accounts.
 | `full_name` | TEXT | NOT NULL | |
 | `phone` | TEXT | — | Free-form; frontend validates PH formats (`+639…` / `09…`) |
 | `role` | TEXT | `CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user'` | Initial role assigned on insert via trigger `trg_user_role_insert` (`urbanscope.cvsu@gmail.com` → `'superadmin'`, `admin.realestate@gmail.com` → `'admin'`, others → `'user'`). Trigger `trg_user_role_update` preserves `OLD.role` on email changes. Superadmins modify roles via `PUT /api/superadmin/users/{id}`. |
+| `avatar_url` | TEXT | `DEFAULT 'assets/images/agent.jpg'` | Profile picture image path or data URL (max client upload size: 5MB) |
 | `created_at` | TIMESTAMP | `CURRENT_TIMESTAMP` | UTC, `YYYY-MM-DD HH:MM:SS` |
 
 ### 3.2 `properties`

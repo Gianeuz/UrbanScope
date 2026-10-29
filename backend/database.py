@@ -60,6 +60,7 @@ def init_db():
             full_name TEXT NOT NULL,
             phone TEXT,
             role TEXT CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user',
+            avatar_url TEXT DEFAULT 'assets/images/agent.jpg',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
@@ -127,6 +128,11 @@ def init_db():
         cursor.execute("ALTER TABLE properties ADD COLUMN storeys INTEGER DEFAULT 2")
     if "amenities" not in existing_cols:
         cursor.execute("ALTER TABLE properties ADD COLUMN amenities TEXT DEFAULT ''")
+
+    cursor.execute("PRAGMA table_info(users)")
+    existing_user_cols = {col[1] for col in cursor.fetchall()}
+    if "avatar_url" not in existing_user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT 'assets/images/agent.jpg'")
 
     # 3. Inquiries Table
     cursor.execute("""

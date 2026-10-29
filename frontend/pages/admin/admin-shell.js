@@ -438,6 +438,31 @@
         });
     }
 
+    function syncAdminProfileDisplay() {
+        try {
+            const raw = localStorage.getItem("adminUser") || localStorage.getItem("urbanscope_user");
+            const customAvatar = localStorage.getItem("urbanscope_profile_avatar");
+            if (!raw && !customAvatar) return;
+
+            const user = raw ? JSON.parse(raw) : {};
+            const avatar = customAvatar || user.avatar_url || user.avatar || user.profile_image;
+            const name = user.name || user.full_name;
+
+            if (avatar) {
+                document.querySelectorAll(".admin-profile-badge .avatar-circle, .profile-dropdown-info .avatar-circle, #adminTopAvatar").forEach(el => {
+                    el.src = avatar;
+                });
+            }
+
+            if (name) {
+                document.querySelectorAll("#adminNameDisplay, .admin-profile-name, .profile-display-name").forEach(el => {
+                    el.textContent = name;
+                });
+            }
+        } catch (_) {}
+    }
+    window.syncAdminProfileDisplay = syncAdminProfileDisplay;
+
     // Initialize on DOM Ready
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function () {
@@ -445,11 +470,13 @@
             initProfileDropdown();
             initNotificationDropdown();
             updateActiveSidebarItem();
+            syncAdminProfileDisplay();
         });
     } else {
         initAdminSidebar();
         initProfileDropdown();
         initNotificationDropdown();
         updateActiveSidebarItem();
+        syncAdminProfileDisplay();
     }
 })();

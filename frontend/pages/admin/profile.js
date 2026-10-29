@@ -84,6 +84,126 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (adminNameDisplay) adminNameDisplay.textContent = currentProfile.name || 'Miriam Lobren';
     if (bannerName) bannerName.textContent = currentProfile.name || 'Miriam Lobren';
 
+    // Avatar Elements
+    const profileAvatarImg = document.getElementById('profileAvatarImg');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    const btnChangeAvatar = document.getElementById('btnChangeAvatar');
+    const btnResetAvatar = document.getElementById('btnResetAvatar');
+    const DEFAULT_AVATAR = '../../assets/images/agent.jpg';
+
+    // Populate avatar
+    const storedAvatar = storedAdmin.avatar_url || storedAdmin.avatar || localStorage.getItem('urbanscope_profile_avatar');
+    if (storedAvatar && profileAvatarImg) {
+        profileAvatarImg.src = storedAvatar;
+        if (btnResetAvatar) btnResetAvatar.style.display = 'inline-flex';
+        document.querySelectorAll('.avatar-circle').forEach(img => {
+            img.src = storedAvatar;
+        });
+    }
+
+    if (btnChangeAvatar && avatarFileInput) {
+        btnChangeAvatar.addEventListener('click', () => {
+            avatarFileInput.click();
+        });
+    }
+
+    const MAX_AVATAR_BYTES = 5 * 1024 * 1024; // 5MB
+
+    function readAndOptimizeAvatar(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onerror = () => reject(new Error('Invalid image data'));
+                img.onload = () => {
+                    const maxDim = 600;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        } else {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const mimeType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                    resolve(canvas.toDataURL(mimeType, 0.9));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    if (avatarFileInput) {
+        avatarFileInput.addEventListener('change', async () => {
+            const file = avatarFileInput.files && avatarFileInput.files[0];
+            if (!file) return;
+
+            // Enforce file size strictly under 5MB
+            if (file.size > MAX_AVATAR_BYTES) {
+                showAlert(`Selected file is too large (${(file.size / (1024 * 1024)).toFixed(2)} MB). Profile picture must be less than 5MB.`, 'error');
+                avatarFileInput.value = '';
+                return;
+            }
+
+            if (!file.type || !file.type.startsWith('image/')) {
+                showAlert('Invalid file format. Please upload an image file (PNG, JPG, WebP).', 'error');
+                avatarFileInput.value = '';
+                return;
+            }
+
+            try {
+                const dataUrl = await readAndOptimizeAvatar(file);
+
+                if (profileAvatarImg) profileAvatarImg.src = dataUrl;
+                document.querySelectorAll('.avatar-circle').forEach(img => {
+                    img.src = dataUrl;
+                });
+
+                storedAdmin.avatar_url = dataUrl;
+                storedAdmin.avatar = dataUrl;
+                localStorage.setItem('adminUser', JSON.stringify(storedAdmin));
+                localStorage.setItem('urbanscope_profile_avatar', dataUrl);
+
+                if (btnResetAvatar) btnResetAvatar.style.display = 'inline-flex';
+                showAlert(`Profile picture updated successfully! (${(file.size / 1024).toFixed(1)} KB, under 5MB limit)`, 'success');
+            } catch (err) {
+                console.error('Avatar upload error:', err);
+                showAlert('Failed to process image file. Please try another image.', 'error');
+            } finally {
+                avatarFileInput.value = '';
+            }
+        });
+    }
+
+    if (btnResetAvatar) {
+        btnResetAvatar.addEventListener('click', () => {
+            if (profileAvatarImg) profileAvatarImg.src = DEFAULT_AVATAR;
+            document.querySelectorAll('.avatar-circle').forEach(img => {
+                img.src = DEFAULT_AVATAR;
+            });
+
+            delete storedAdmin.avatar_url;
+            delete storedAdmin.avatar;
+            localStorage.setItem('adminUser', JSON.stringify(storedAdmin));
+            localStorage.removeItem('urbanscope_profile_avatar');
+
+            btnResetAvatar.style.display = 'none';
+            showAlert('Profile picture reset to default photo.', 'success');
+        });
+    }
+
     // 5. Handle Profile Form Submit
     if (profileForm) {
         profileForm.addEventListener('submit', async (e) => {
@@ -102,6 +222,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 license: licenseInput.value.trim(),
                 brokerage: brokerageInput.value.trim(),
                 bio: bioInput.value.trim(),
+                avatar_url: storedAdmin.avatar_url || localStorage.getItem('urbanscope_profile_avatar') || 'assets/images/agent.jpg',
                 role: 'admin'
             };
 
