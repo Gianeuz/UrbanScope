@@ -818,8 +818,7 @@
             };
 
             const originalEmail = (storedAdmin.email || '').trim().toLowerCase();
-            const queryId = userId || storedAdmin.id || (updatedUser && updatedUser.id) || null;
-            const filter = queryId ? `id=eq.${encodeURIComponent(queryId)}` : `email=ilike.${encodeURIComponent(originalEmail || targetEmail)}`;
+            const filter = `email=ilike.${encodeURIComponent(targetEmail || originalEmail)}`;
 
             try {
                 const res = await fetch(`${REST_BASE}/users?${filter}`, {
