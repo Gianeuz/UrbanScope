@@ -26,10 +26,6 @@ if (adminLoginForm) {
         try {
             const cleanEmail = adminId.toLowerCase();
 
-            // Strict admin email check
-            if (cleanEmail !== 'admin.realestate@gmail.com' && cleanEmail !== 'urbanscope.cvsu@gmail.com') {
-                throw new Error('Access denied: Only authorized administrators may log in here.');
-            }
 
             // Authenticate through apiSignIn (FastAPI Backend + Session)
             if (typeof apiSignIn === 'function') {

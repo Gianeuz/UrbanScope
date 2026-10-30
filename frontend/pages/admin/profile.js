@@ -371,12 +371,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const customAvatarNow = localStorage.getItem('urbanscope_profile_avatar');
             const avatarToPersist = customAvatarNow || (isCustomAvatar(storedAdmin.avatar_url) ? storedAdmin.avatar_url : 'assets/images/agent.jpg');
+            const prevEmail = (storedAdmin.email || savedProfile.email || currentProfile.email || 'admin.realestate@gmail.com').trim().toLowerCase();
 
             const updatedData = {
                 name: newName,
                 full_name: newName,
                 title: newTitle,
                 email: newEmail,
+                original_email: prevEmail,
                 phone: newPhone,
                 license: newLicense,
                 license_number: newLicense,
@@ -400,6 +402,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (typeof apiUpdateAdminProfile === 'function') {
                     await apiUpdateAdminProfile(updatedData);
                 }
+
+                currentProfile.email = newEmail;
+                storedAdmin.email = newEmail;
+                savedProfile.email = newEmail;
 
                 if (adminNameDisplay) adminNameDisplay.textContent = newName;
                 if (bannerName) bannerName.textContent = newName;

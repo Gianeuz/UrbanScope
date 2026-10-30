@@ -377,8 +377,8 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
 
             elif is_admin_path:
                 is_authorized_admin = (
-                    user_email in AUTHORIZED_ADMIN_EMAILS and
-                    user_role in AUTHORIZED_ADMIN_ROLES
+                    user_role in AUTHORIZED_ADMIN_ROLES or
+                    user_email in AUTHORIZED_ADMIN_EMAILS
                 )
                 if not is_authorized_admin:
                     return HTMLResponse(content=FORBIDDEN_HTML, status_code=status.HTTP_403_FORBIDDEN)
@@ -404,7 +404,7 @@ async def rbac_admin_guard_middleware(request: Request, call_next):
                     user_email, user_role = user_info
                     if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
                         return RedirectResponse(url="/pages/superadmin/dashboard.html", status_code=status.HTTP_302_FOUND)
-                    elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+                    elif user_role in AUTHORIZED_ADMIN_ROLES or user_email in AUTHORIZED_ADMIN_EMAILS:
                         return RedirectResponse(url="/pages/admin/dashboard.html", status_code=status.HTTP_302_FOUND)
 
     response = await call_next(request)
@@ -525,7 +525,7 @@ def register_user(payload: UserRegister, response: Response):
     # Automatic login redirection based on identity and role
     if user_dict["role"] == "superadmin" and clean_email in AUTHORIZED_SUPERADMIN_EMAILS:
         redirect_url = "/pages/superadmin/dashboard.html"
-    elif user_dict["role"] in AUTHORIZED_ADMIN_ROLES and clean_email in AUTHORIZED_ADMIN_EMAILS:
+    elif user_dict["role"] in AUTHORIZED_ADMIN_ROLES or clean_email in AUTHORIZED_ADMIN_EMAILS:
         redirect_url = "/pages/admin/dashboard.html"
     else:
         redirect_url = "/index.html"
@@ -591,7 +591,7 @@ def login_user(payload: UserLogin, response: Response):
     # - Otherwise -> Normal user dashboard
     if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
         redirect_url = "/pages/superadmin/dashboard.html"
-    elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+    elif user_role in AUTHORIZED_ADMIN_ROLES or user_email in AUTHORIZED_ADMIN_EMAILS:
         redirect_url = "/pages/admin/dashboard.html"
     else:
         redirect_url = "/index.html"
@@ -706,7 +706,7 @@ def google_authenticate(payload: GoogleAuthRequest, response: Response):
 
     if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
         redirect_url = "/pages/superadmin/dashboard.html"
-    elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+    elif user_role in AUTHORIZED_ADMIN_ROLES or user_email in AUTHORIZED_ADMIN_EMAILS:
         redirect_url = "/pages/admin/dashboard.html"
     else:
         redirect_url = "/index.html"
@@ -749,25 +749,33 @@ def update_current_user_profile(
     cursor = conn.cursor()
 
     target_email = (payload.email or "").strip().lower()
+    original_email = (payload.original_email or "").strip().lower()
     user_id = None
     target_row = None
 
-    # 1. Match account by payload email if explicitly provided (e.g. admin.realestate@gmail.com)
-    if target_email:
+    # 1. Match account by original_email if explicitly provided (prior to editing)
+    if original_email:
+        cursor.execute("SELECT * FROM users WHERE LOWER(email) = ?", (original_email,))
+        target_row = cursor.fetchone()
+        if target_row:
+            user_id = target_row["id"]
+
+    # 2. Match account by payload target email if explicitly provided
+    if not user_id and target_email:
         cursor.execute("SELECT * FROM users WHERE LOWER(email) = ?", (target_email,))
         target_row = cursor.fetchone()
         if target_row:
             user_id = target_row["id"]
 
-    # 2. If no user matched by email, fallback to authenticated user
+    # 3. If no user matched by email, fallback to authenticated user
     if not user_id and user:
         user_id = user["id"]
         cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
         target_row = cursor.fetchone()
 
-    # 3. Fallback to default lead admin if still unauthenticated in local development
+    # 4. Fallback to default lead admin if still unauthenticated in local development
     if not user_id:
-        cursor.execute("SELECT * FROM users WHERE LOWER(email) = 'admin.realestate@gmail.com' OR role = 'admin' ORDER BY id ASC LIMIT 1")
+        cursor.execute("SELECT * FROM users WHERE role = 'admin' OR LOWER(email) = 'admin.realestate@gmail.com' ORDER BY CASE WHEN role = 'admin' THEN 0 ELSE 1 END, id ASC LIMIT 1")
         target_row = cursor.fetchone()
         if target_row:
             user_id = target_row["id"]
@@ -796,6 +804,7 @@ def update_current_user_profile(
                 raise HTTPException(status_code=400, detail="Email is already in use by another account.")
             updates.append("email = ?")
             params.append(clean_email)
+            AUTHORIZED_ADMIN_EMAILS.add(clean_email)
 
     if payload.avatar_url is not None:
         updates.append("avatar_url = ?")
@@ -880,8 +889,8 @@ def get_public_agent_profile():
     cursor.execute("""
         SELECT id, email, full_name, phone, license_number, title, brokerage, bio, avatar_url, role
         FROM users
-        WHERE LOWER(email) = 'admin.realestate@gmail.com' OR role = 'admin'
-        ORDER BY CASE WHEN LOWER(email) = 'admin.realestate@gmail.com' THEN 0 ELSE 1 END, id ASC
+        WHERE role = 'admin' OR LOWER(email) = 'admin.realestate@gmail.com'
+        ORDER BY CASE WHEN role = 'admin' THEN 0 ELSE 1 END, id ASC
         LIMIT 1
     """)
     row = cursor.fetchone()
@@ -902,6 +911,8 @@ def get_public_agent_profile():
     data = dict(row)
     data["name"] = data.get("full_name") or "Miriam Lobren"
     data["license"] = data.get("license_number") or ""
+    if data.get("email"):
+        AUTHORIZED_ADMIN_EMAILS.add(data["email"].lower().strip())
     return data
 
 
@@ -1675,7 +1686,7 @@ def serve_home(request: Request):
             user_email, user_role = user_info
             if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
                 return RedirectResponse(url="/pages/superadmin/dashboard.html", status_code=status.HTTP_302_FOUND)
-            elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+            elif user_role in AUTHORIZED_ADMIN_ROLES or user_email in AUTHORIZED_ADMIN_EMAILS:
                 return RedirectResponse(url="/pages/admin/dashboard.html", status_code=status.HTTP_302_FOUND)
     return FileResponse(str(FRONTEND_DIR / "index.html"))
 
@@ -1690,7 +1701,7 @@ def serve_index(request: Request):
             user_email, user_role = user_info
             if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
                 return RedirectResponse(url="/pages/superadmin/dashboard.html", status_code=status.HTTP_302_FOUND)
-            elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+            elif user_role in AUTHORIZED_ADMIN_ROLES or user_email in AUTHORIZED_ADMIN_EMAILS:
                 return RedirectResponse(url="/pages/admin/dashboard.html", status_code=status.HTTP_302_FOUND)
     return FileResponse(str(FRONTEND_DIR / "index.html"))
 

@@ -581,7 +581,7 @@ async function initDynamicAgentDetails() {
         localProfile = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
         if (!localProfile) {
             const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
-            if (adminUser && adminUser.email === 'admin.realestate@gmail.com') {
+            if (adminUser && (adminUser.role === 'admin' || adminUser.email === 'admin.realestate@gmail.com')) {
                 localProfile = adminUser;
             }
         }

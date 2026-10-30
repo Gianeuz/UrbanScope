@@ -266,6 +266,19 @@ path when rendering from a page.
       - Real-time multi-tab synchronization via `window.addEventListener('storage', ...)`, `window.addEventListener('focus', ...)`, and custom `urbanscope:profileUpdated` events updates open homepage and client tabs immediately when changes are saved in the admin profile settings.
       - **Target User Email Resolution (`backend/app.py` & Supabase Gateway)**: `PUT /api/admin/profile` resolves target account by `payload.email` first (updating `admin.realestate@gmail.com` / user 1 directly even if the authenticated session has a different user ID, e.g. superadmin or OAuth account, preventing `400 Email is already in use` conflicts). `apiUpdateAdminProfile` in `supabase.js` and `api.js` filters Supabase updates by `email=ilike.${targetEmail}` rather than local SQLite integer IDs (which differ from Supabase IDs), ensuring remote Cloud records stay in sync. Public broker profile `urbanscope_admin_profile` is preserved on logout so unauthenticated visitors continuously see current credentials.
 
+22. **Lead Agent Email & Phone Change Synchronization Across All Architecture Tiers:**
+    - Administrators can update their **Email Address** and **Contact Phone Number** on `/pages/admin/profile.html` and have them persist across both local SQLite (`backend/urbanscope.db`) and Supabase Cloud (`users` table), displaying immediately and permanently on the homepage footer (`#footerAgentPhone`, `#footerAgentEmail`), chatbot, and site footers even after logging out.
+    - **Original Email Tracking & Account Resolution**:
+      - `AdminProfileUpdate` in `backend/models.py` accepts `original_email: Optional[str] = None`.
+      - On `/pages/admin/profile.html`, form submission captures `original_email` (the email address before the user edited the input) and sends it in `updatedData`.
+      - In `backend/app.py` (`update_current_user_profile`), the backend uses `original_email` first to locate the user row being modified before checking new target email or session IDs, avoiding '0 rows found' and preventing false duplicate conflicts. When email is updated, it automatically adds the new email to `AUTHORIZED_ADMIN_EMAILS`.
+    - **Cascading Supabase Cloud Sync (`supabase.js` & `api.js`)**:
+      - `apiUpdateAdminProfile` attempts PATCH by `email=ilike.${originalEmail}` first, followed by `email=ilike.${targetEmail}`, and finally falls back to querying `role=eq.admin&order=id.desc&limit=1` and patching by `id=eq.${adminId}`, ensuring remote Cloud user record (e.g. user 15) is guaranteed to update.
+      - `apiGetLeadAgentProfile()` queries Supabase Cloud by `cached.email` first or `role=eq.admin&order=id.desc&limit=1` (removing hardcoded `admin.realestate@gmail.com`), so updated email addresses load properly from Supabase on Vercel and remote deployments.
+    - **RBAC Guard & Auth Redirection Flexibility**:
+      - `require_admin` in `backend/auth.py` and `rbac_admin_guard_middleware` in `backend/app.py` authorize administrative requests if `role in AUTHORIZED_ADMIN_ROLES or email in AUTHORIZED_ADMIN_EMAILS`, preventing admins from getting locked out or redirected to `/index.html` after changing their email.
+      - Login redirection (`login.js`, `login_user`, `google_authenticate`) checks `role === 'admin'` to route directly to `../admin/dashboard.html`.
+
 ---
 
 ## Safety Rules

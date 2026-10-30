@@ -47,6 +47,7 @@ class UserResponse(BaseModel):
 class AdminProfileUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[str] = None
+    original_email: Optional[str] = None
     phone: Optional[str] = None
     license_number: Optional[str] = None
     title: Optional[str] = None

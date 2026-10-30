@@ -363,26 +363,40 @@
             p = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
             if (!p) {
                 var adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
-                if (adminUser && adminUser.email === 'admin.realestate@gmail.com') {
+                if (adminUser && (adminUser.role === 'admin' || adminUser.email === 'admin.realestate@gmail.com')) {
                     p = adminUser;
                 }
             }
         } catch (e) {}
-        if (!p) return;
 
-        var phone = p.phone || '+63 900 000 0000';
-        var email = p.email || 'admin.realestate@gmail.com';
-        var cleanDigits = phone.replace(/[^\d+]/g, '');
+        function applyContact(phone, email) {
+            if (!phone && !email) return;
+            var cleanPhone = phone || '+63 900 000 0000';
+            var cleanEmail = email || 'admin.realestate@gmail.com';
+            var cleanDigits = cleanPhone.replace(/[^\d+]/g, '');
 
-        document.querySelectorAll('.footer-contact a[href^="tel:"], footer a[href^="tel:"], #footerAgentPhone').forEach(function(el) {
-            el.textContent = phone;
-            el.setAttribute('href', 'tel:' + cleanDigits);
-        });
+            document.querySelectorAll('.footer-contact a[href^="tel:"], footer a[href^="tel:"], #footerAgentPhone').forEach(function(el) {
+                el.textContent = cleanPhone;
+                el.setAttribute('href', 'tel:' + cleanDigits);
+            });
 
-        document.querySelectorAll('.footer-contact a[href^="mailto:"], footer a[href^="mailto:"], #footerAgentEmail').forEach(function(el) {
-            el.textContent = email;
-            el.setAttribute('href', 'mailto:' + email);
-        });
+            document.querySelectorAll('.footer-contact a[href^="mailto:"], footer a[href^="mailto:"], #footerAgentEmail').forEach(function(el) {
+                el.textContent = cleanEmail;
+                el.setAttribute('href', 'mailto:' + cleanEmail);
+            });
+        }
+
+        if (p) {
+            applyContact(p.phone, p.email);
+        }
+
+        if (typeof window.apiGetLeadAgentProfile === 'function') {
+            window.apiGetLeadAgentProfile().then(function(lead) {
+                if (lead && (lead.phone || lead.email)) {
+                    applyContact(lead.phone, lead.email);
+                }
+            }).catch(function() {});
+        }
     }
 
     window.addEventListener('storage', function(e) {

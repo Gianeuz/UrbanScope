@@ -71,14 +71,16 @@ if (loginForm) {
                 const cleanEmail = (user.email || email).toLowerCase();
                 const role = user.role || 'user';
                 const isAdminUser = (
-                    (cleanEmail === 'admin.realestate@gmail.com' || cleanEmail === 'urbanscope.cvsu@gmail.com') &&
-                    (role === 'admin' || role === 'superadmin')
+                    role === 'admin' ||
+                    role === 'superadmin' ||
+                    cleanEmail === 'admin.realestate@gmail.com' ||
+                    cleanEmail === 'urbanscope.cvsu@gmail.com'
                 );
 
                 // Relative paths so this works from both the FastAPI server and Live Server
-                if (role === 'superadmin' && cleanEmail === 'urbanscope.cvsu@gmail.com') {
+                if (role === 'superadmin' || cleanEmail === 'urbanscope.cvsu@gmail.com') {
                     window.location.href = '../superadmin/dashboard.html';
-                } else if (isAdminUser) {
+                } else if (role === 'admin' || isAdminUser) {
                     window.location.href = '../admin/dashboard.html';
                 } else {
                     // Normal user dashboard / destination

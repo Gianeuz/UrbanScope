@@ -317,8 +317,8 @@ def require_admin(user: Optional[dict] = Depends(get_current_user_from_request))
     role = user.get("role", "")
 
     is_authorized = (
-        clean_email in AUTHORIZED_ADMIN_EMAILS and
-        role in AUTHORIZED_ADMIN_ROLES
+        role in AUTHORIZED_ADMIN_ROLES or
+        clean_email in AUTHORIZED_ADMIN_EMAILS
     )
 
     if not is_authorized:

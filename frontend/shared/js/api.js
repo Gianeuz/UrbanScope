@@ -762,7 +762,9 @@
             }
 
             const storedAdmin = JSON.parse(localStorage.getItem('adminUser') || localStorage.getItem(USER_KEY) || '{}');
-            const targetEmail = (profileData.email || storedAdmin.email || 'urbanscope.cvsu@gmail.com').trim().toLowerCase();
+            const savedProfile = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || '{}');
+            const targetEmail = (profileData.email || storedAdmin.email || savedProfile.email || 'admin.realestate@gmail.com').trim().toLowerCase();
+            const originalEmail = (profileData.original_email || storedAdmin.email || savedProfile.email || 'admin.realestate@gmail.com').trim().toLowerCase();
             const fullName = (profileData.full_name || profileData.name || profileData.fullName || storedAdmin.name || 'Miriam Lobren').trim();
             const phone = (profileData.phone !== undefined ? profileData.phone : (storedAdmin.phone || '')).trim();
             const license = (profileData.license_number || profileData.license || profileData.licenseNumber || storedAdmin.license || storedAdmin.license_number || '').trim();
@@ -789,6 +791,7 @@
                         body: JSON.stringify({
                             full_name: fullName,
                             email: targetEmail,
+                            original_email: originalEmail,
                             phone: phone,
                             license_number: license,
                             title: title,
@@ -817,31 +820,61 @@
                 avatar_url: avatarUrl
             };
 
-            const originalEmail = (storedAdmin.email || '').trim().toLowerCase();
-            const filter = `email=ilike.${encodeURIComponent(targetEmail || originalEmail)}`;
-
             try {
-                const res = await fetch(`${REST_BASE}/users?${filter}`, {
-                    method: 'PATCH',
-                    headers: getHeaders(),
-                    body: JSON.stringify(payload)
-                });
+                let sbUpdated = false;
 
-                if (res.ok) {
-                    const updated = await res.json().catch(() => []);
-                    if (Array.isArray(updated) && updated.length > 0) {
-                        updatedUser = { ...(updatedUser || {}), ...updated[0] };
-                    } else {
-                        // If user did not exist in Supabase, insert account
-                        const insRes = await fetch(`${REST_BASE}/users`, {
-                            method: 'POST',
-                            headers: getHeaders(),
-                            body: JSON.stringify({ ...payload, role: 'admin' })
-                        });
-                        if (insRes.ok) {
-                            const ins = await insRes.json().catch(() => []);
-                            if (Array.isArray(ins) && ins.length > 0) {
-                                updatedUser = { ...(updatedUser || {}), ...ins[0] };
+                // A. Try updating by original email first
+                if (originalEmail) {
+                    const res = await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(originalEmail)}`, {
+                        method: 'PATCH',
+                        headers: getHeaders(),
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        const updated = await res.json().catch(() => []);
+                        if (Array.isArray(updated) && updated.length > 0) {
+                            updatedUser = { ...(updatedUser || {}), ...updated[0] };
+                            sbUpdated = true;
+                        }
+                    }
+                }
+
+                // B. If not updated by original email, try target email
+                if (!sbUpdated && targetEmail) {
+                    const res = await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(targetEmail)}`, {
+                        method: 'PATCH',
+                        headers: getHeaders(),
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        const updated = await res.json().catch(() => []);
+                        if (Array.isArray(updated) && updated.length > 0) {
+                            updatedUser = { ...(updatedUser || {}), ...updated[0] };
+                            sbUpdated = true;
+                        }
+                    }
+                }
+
+                // C. If still not updated, locate lead admin row in Supabase and patch by ID
+                if (!sbUpdated) {
+                    const getAdminRes = await fetch(`${REST_BASE}/users?role=eq.admin&order=id.desc&limit=1`, {
+                        headers: getHeaders()
+                    });
+                    if (getAdminRes.ok) {
+                        const adminRows = await getAdminRes.json().catch(() => []);
+                        if (Array.isArray(adminRows) && adminRows.length > 0) {
+                            const adminId = adminRows[0].id;
+                            const patchByIdRes = await fetch(`${REST_BASE}/users?id=eq.${adminId}`, {
+                                method: 'PATCH',
+                                headers: getHeaders(),
+                                body: JSON.stringify(payload)
+                            });
+                            if (patchByIdRes.ok) {
+                                const patched = await patchByIdRes.json().catch(() => []);
+                                if (Array.isArray(patched) && patched.length > 0) {
+                                    updatedUser = { ...(updatedUser || {}), ...patched[0] };
+                                    sbUpdated = true;
+                                }
                             }
                         }
                     }
@@ -927,7 +960,7 @@
             cached = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
             if (!cached) {
                 const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
-                if (adminUser && adminUser.email === 'admin.realestate@gmail.com') {
+                if (adminUser && (adminUser.role === 'admin' || adminUser.email === 'admin.realestate@gmail.com')) {
                     cached = adminUser;
                 }
             }
@@ -966,30 +999,41 @@
 
         // 2. Query Supabase Cloud
         try {
-            const res = await fetch(`${REST_BASE}/users?email=ilike.admin.realestate%40gmail.com&select=*&limit=1`, {
-                headers: getHeaders()
-            });
+            let url = `${REST_BASE}/users?role=eq.admin&select=*&order=id.desc&limit=1`;
+            if (cached && cached.email) {
+                url = `${REST_BASE}/users?email=ilike.${encodeURIComponent(cached.email)}&select=*&limit=1`;
+            }
+            let res = await fetch(url, { headers: getHeaders() });
+            let users = [];
             if (res.ok) {
-                const users = await res.json().catch(() => []);
-                if (Array.isArray(users) && users.length > 0) {
-                    const u = users[0];
-                    const merged = {
-                        name: u.full_name || (cached && cached.name) || 'Miriam Lobren',
-                        full_name: u.full_name || (cached && cached.full_name) || 'Miriam Lobren',
-                        email: u.email || 'admin.realestate@gmail.com',
-                        phone: u.phone || (cached && cached.phone) || '+63 900 000 0000',
-                        license: u.license_number || (cached && cached.license) || 'PRC REB #0031892',
-                        license_number: u.license_number || (cached && cached.license_number) || 'PRC REB #0031892',
-                        title: u.title || (cached && cached.title) || 'Licensed Real Estate Broker / Agent',
-                        brokerage: u.brokerage || (cached && cached.brokerage) || 'CD Miranda Realty',
-                        bio: u.bio || (cached && cached.bio) || 'Serving Las Piñas, Cavite, and surrounding prime locations with high-integrity real estate solutions.',
-                        avatar_url: u.avatar_url || (cached && cached.avatar_url) || 'assets/images/agent.jpg'
-                    };
-                    try {
-                        localStorage.setItem('urbanscope_admin_profile', JSON.stringify(merged));
-                    } catch (e) {}
-                    return merged;
+                users = await res.json().catch(() => []);
+            }
+            if (!Array.isArray(users) || users.length === 0) {
+                const fallbackRes = await fetch(`${REST_BASE}/users?role=eq.admin&select=*&order=id.desc&limit=1`, {
+                    headers: getHeaders()
+                });
+                if (fallbackRes.ok) {
+                    users = await fallbackRes.json().catch(() => []);
                 }
+            }
+            if (Array.isArray(users) && users.length > 0) {
+                const u = users[0];
+                const merged = {
+                    name: u.full_name || (cached && cached.name) || 'Miriam Lobren',
+                    full_name: u.full_name || (cached && cached.full_name) || 'Miriam Lobren',
+                    email: u.email || (cached && cached.email) || 'admin.realestate@gmail.com',
+                    phone: u.phone || (cached && cached.phone) || '+63 900 000 0000',
+                    license: u.license_number || (cached && cached.license) || 'PRC REB #0031892',
+                    license_number: u.license_number || (cached && cached.license_number) || 'PRC REB #0031892',
+                    title: u.title || (cached && cached.title) || 'Licensed Real Estate Broker / Agent',
+                    brokerage: u.brokerage || (cached && cached.brokerage) || 'CD Miranda Realty',
+                    bio: u.bio || (cached && cached.bio) || 'Serving Las Piñas, Cavite, and surrounding prime locations with high-integrity real estate solutions.',
+                    avatar_url: u.avatar_url || (cached && cached.avatar_url) || 'assets/images/agent.jpg'
+                };
+                try {
+                    localStorage.setItem('urbanscope_admin_profile', JSON.stringify(merged));
+                } catch (e) {}
+                return merged;
             }
         } catch (sbErr) {
             console.warn('Supabase get agent profile notice:', sbErr);
@@ -1457,11 +1501,14 @@
             const locallyUpdated = localStorage.getItem('urbanscope_admin_password_updated') || '';
             const activePass = localStorage.getItem('adminPassword') || '';
 
+            const savedProfile = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || '{}');
+            const leadAdminEmail = (savedProfile.email || 'admin.realestate@gmail.com').toLowerCase();
+
             if (cleanEmail === 'urbanscope.cvsu@gmail.com') {
                 const isValid = (password === 'urbanscope2026' || password === 'urbanscope' || password === locallyUpdated || password === activePass);
                 if (!isValid) return { success: false, error: 'Incorrect admin password.' };
                 role = 'superadmin';
-            } else if (cleanEmail === 'admin.realestate@gmail.com') {
+            } else if (cleanEmail === 'admin.realestate@gmail.com' || cleanEmail === leadAdminEmail) {
                 const isValid = (password === 'realestate2026' || password === locallyUpdated || password === activePass);
                 if (!isValid) return { success: false, error: 'Incorrect admin password.' };
                 role = 'admin';
