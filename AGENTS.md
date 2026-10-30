@@ -225,6 +225,7 @@ path when rendering from a page.
     - Removed redundant `session.js` script tags from `pages/superadmin/dashboard.html` and `pages/admin/propertylist.html`, ensuring Superadmin (`#saProfileDropdownBtn`) and Admin profile dropdowns render cleanly and exclusively.
 17. **Inquiry Submission Modal & Feedback System:**
     - Replaced blocking browser `alert(...)` popups on `frontend/pages/inquiry/inquiry.html` with a dedicated UI Success Modal (`#inquirySuccessModal`) and animated pulse checkmark badge.
+    - Centered precisely across zoomed environments (`zoom: 1.25`) by avoiding `100vw/100vh` skew, utilizing `position: fixed; inset: 0; width: 100%; height: 100%; margin: auto;` and `z-index: 9999`.
     - Displays dynamic summary details: Subject/topic, schedule pill (if specified), client contact info (name, email, phone), and `Under Review` status pill.
     - Features action buttons: direct link to 'View in Inquiry History' (`pages/inquiry/history.html`), 'Submit Another' (resets form and closes modal), and 'Back to Home' (`../../index.html`).
     - Added loading state with a spinner (`.btn-spinner`) on the submit button while sending requests to prevent duplicate submissions.

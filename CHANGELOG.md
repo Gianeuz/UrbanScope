@@ -194,6 +194,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
     - Client contact person, email, and phone metadata recap card.
     - Action buttons: "View in Inquiry History" (linking to `history.html`), "Submit Another" (clears message/schedule and closes modal), and "Back to Home".
     - Clean dismiss triggers: Close button (X), backdrop click, and Escape key.
+    - Centered precisely across zoomed viewports (`zoom: 1.25`) by replacing `100vw/100vh` with `position: fixed; inset: 0; width: 100%; height: 100%; margin: auto; z-index: 9999;`.
   - Submit button loading spinner (`.btn-spinner`) with "Sending Request..." state and opacity reduction to prevent duplicate submissions.
   - Replaced error alerts with an animated slide-up toast notification (`#toastNotice`).
 
