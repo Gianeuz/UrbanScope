@@ -244,6 +244,10 @@ path when rendering from a page.
       - **Supabase Cloud Synchronization**: `apiUpdateAdminPassword` queries Supabase `users`, validates the current password against remote `password_hash` (or default seed fallbacks), generates a fresh PBKDF2 hash, and patches the remote record.
       - **Session & Sign-In Synchronization**: `apiSignIn` checks Supabase `password_hash` with `verifyPBKDF2` and honors updated session passwords (`urbanscope_admin_password_updated` and `adminPassword`), enabling seamless sign-in immediately after changing password.
       - **Dedicated Card Alert Box (`#passwordAlertBox`)**: Added dedicated in-card alert banner in `profile.html` and `showPasswordAlert()` in `profile.js` to provide immediate error/success feedback directly inside the Change Password card without scrolling away.
+20. **Supabase migration 0002 (`20261030230000_admin_profile_fields_and_superadmin_role.sql`):**
+    - Adds `users.title`, `users.brokerage`, `users.bio` and allows `'superadmin'` in `users_role_check`. Idempotent like 0001.
+    - Until it is applied to the live project (`supabase db push` or the Supabase GitHub integration), `apiUpdateAdminProfile` intentionally does **not** send `title`/`brokerage`/`bio` to Supabase (PostgREST would reject unknown columns); those fields persist in SQLite + `localStorage` only.
+    - Every migration must be committed to `main` — see DATABASE.md §10.1 team rule.
 
 ---
 

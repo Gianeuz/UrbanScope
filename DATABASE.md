@@ -370,6 +370,8 @@ erDiagram
 supabase/
   config.toml                                Supabase CLI project config
   migrations/20261028000000_initial_schema.sql   Tables, triggers, indexes, views, RLS (no DROPs)
+  migrations/20261030230000_admin_profile_fields_and_superadmin_role.sql
+                                             users.title / brokerage / bio + 'superadmin' in users_role_check
   seed.sql                                   Demo data (users, 6 properties, inquiries, ...)
   scripts/                                   One-off data fixes to paste into the SQL Editor (never auto-run)
 ```
@@ -386,6 +388,14 @@ supabase migration new add_some_column   # create the next migration file
 > `seed.sql` drops one row from the original script: a second `users` row (id 11) that
 > reused `urbanscope.cvsu@gmail.com` with a plaintext password. It broke `UNIQUE(email)`,
 > so the whole seed failed.
+
+> [!IMPORTANT]
+> **Team rule:** every migration file must be committed to `main`. If someone runs
+> `supabase db push` with migration files that only exist on their machine, the remote
+> history gets versions this repo doesn't have, and the Supabase GitHub check fails with
+> *"Remote migration versions not found in local migrations directory"*. Fix: commit the
+> missing files (same filenames/timestamps), or run `supabase migration repair --status reverted <version>`.
+> Write every migration idempotently (`IF NOT EXISTS`, `DROP … IF EXISTS`) so preview branches can replay it.
 
 ### 10.2 One-shot SQL Editor script (legacy)
 
