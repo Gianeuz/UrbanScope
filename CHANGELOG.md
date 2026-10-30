@@ -22,6 +22,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
 | **Oct 2026** | **Inquiry History** | Added client inquiry history page (`history.html`), profile menu link, real-time search, status filtering, stats pills, modify details modal, cancel confirmation modal, and delete permanently | `history.html`, `history.css`, `history.js`, `supabase.js`, `api.js`, `session.js`, `backend/app.py` |
 | **Oct 2026** | **Superadmin UI** | Fixed duplicate/unstyled profile dropdown artifact on superadmin console topbar (`session.js` route guard & script removal) | `session.js`, `pages/superadmin/dashboard.html`, `pages/admin/propertylist.html` |
 | **Oct 2026** | **Inquiry UX** | Replaced blocking native browser `alert()` on submission with animated success modal (`#inquirySuccessModal`), schedule recap, loading spinner, and toast notice | `inquiry.html`, `inquiry.js`, `inquiry.css` |
+| **Oct 2026** | **Database / CI** | Made Supabase migration `20261028000000_initial_schema.sql` idempotent (`IF NOT EXISTS`, drop trigger/policy guards) to fix GitHub Supabase Preview checks | `supabase/migrations/` |
 
 ---
 
@@ -195,6 +196,20 @@ This document records all features, enhancements, bug fixes, user requests, arch
     - Clean dismiss triggers: Close button (X), backdrop click, and Escape key.
   - Submit button loading spinner (`.btn-spinner`) with "Sending Request..." state and opacity reduction to prevent duplicate submissions.
   - Replaced error alerts with an animated slide-up toast notification (`#toastNotice`).
+
+---
+
+### 13. Idempotent Supabase Schema Migration (Fix for Supabase Preview Check)
+- **User Prompt:** *"why theres a error here"* (accompanied by GitHub Checks screenshot showing `ERROR: relation "users" already exists (SQLSTATE 42P07)` on `Supabase Preview`).
+- **Diagnosis:**
+  - After updating `project_id = "vfspjuqymfbagesjxjmc"` in `supabase/config.toml`, Supabase successfully recognized the remote project and attempted to run automated migrations on an ephemeral preview branch.
+  - Because tables had already been created previously in the base Supabase instance (via SQL Editor), running `supabase/migrations/20261028000000_initial_schema.sql` failed at statement 8 with `relation "users" already exists`.
+  - Non-idempotent `CREATE TABLE`, `CREATE TRIGGER`, and `CREATE POLICY` statements caused Postgres to fail immediately whenever an object already existed.
+- **Resolution:**
+  - Added `IF NOT EXISTS` to all 12 table creation statements (`users`, `property_types`, `properties`, `property_images`, `property_features`, `saved_properties`, `inquiries`, `inquiry_documents`, `inquiry_status_history`, `appointments`, `testimonials`, `notifications`).
+  - Added `DROP TRIGGER IF EXISTS ... ON ...` guards before each `CREATE TRIGGER` statement.
+  - Added `DROP POLICY IF EXISTS ... ON ...` guards before each `CREATE POLICY` statement.
+  - Enables Supabase Preview to run the migration safely without crashing when tables or policies are already present.
 
 ---
 

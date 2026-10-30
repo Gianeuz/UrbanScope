@@ -229,6 +229,9 @@ path when rendering from a page.
     - Features action buttons: direct link to 'View in Inquiry History' (`pages/inquiry/history.html`), 'Submit Another' (resets form and closes modal), and 'Back to Home' (`../../index.html`).
     - Added loading state with a spinner (`.btn-spinner`) on the submit button while sending requests to prevent duplicate submissions.
     - Replaced submission failure alerts with a slide-up toast notification (`#toastNotice`).
+18. **Idempotent Supabase Schema Migration (`20261028000000_initial_schema.sql`):**
+    - Made initial Supabase migration fully idempotent using `CREATE TABLE IF NOT EXISTS` across all 12 tables, `DROP TRIGGER IF EXISTS ... ON ...; CREATE TRIGGER ...` for all 6 triggers, and `DROP POLICY IF EXISTS ... ON ...; CREATE POLICY ...` for all RLS policies.
+    - Resolves `ERROR: relation "users" already exists (SQLSTATE 42P07)` in GitHub Actions / Supabase Preview checks during automated branch schema verification.
 
 ---
 
