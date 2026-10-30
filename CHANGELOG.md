@@ -21,6 +21,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
 | **Oct 2026** | **Google Auth** | Added Google Identity Services (OAuth 2.0) sign-in & sign-up with FastAPI token verification, SQLite `google_id` migration, Supabase cloud sync, and navbar Google avatar rendering | `backend/auth.py`, `backend/app.py`, `backend/database.py`, `supabase.js`, `auth.js`, `session.js` |
 | **Oct 2026** | **Inquiry History** | Added client inquiry history page (`history.html`), profile menu link, real-time search, status filtering, stats pills, modify details modal, cancel confirmation modal, and delete permanently | `history.html`, `history.css`, `history.js`, `supabase.js`, `api.js`, `session.js`, `backend/app.py` |
 | **Oct 2026** | **Superadmin UI** | Fixed duplicate/unstyled profile dropdown artifact on superadmin console topbar (`session.js` route guard & script removal) | `session.js`, `pages/superadmin/dashboard.html`, `pages/admin/propertylist.html` |
+| **Oct 2026** | **Inquiry UX** | Replaced blocking native browser `alert()` on submission with animated success modal (`#inquirySuccessModal`), schedule recap, loading spinner, and toast notice | `inquiry.html`, `inquiry.js`, `inquiry.css` |
 
 ---
 
@@ -176,6 +177,24 @@ This document records all features, enhancements, bug fixes, user requests, arch
   - Narrowed target element selection in `session.js` specifically to client navigation containers (`.navbar .nav-acts, .inquiry-topbar .nav-acts, .history-topbar .nav-acts, .nav-acts`).
   - Removed unnecessary `<script src="../../shared/js/session.js"></script>` tags from `pages/superadmin/dashboard.html` and `pages/admin/propertylist.html`.
   - Superadmin console now renders exclusively its dedicated `SA` avatar circle, `ROOT SUPERADMIN` role badge, and `#saDropdownMenu`.
+
+---
+
+### 12. Inquiry Submission UI Modal & Loading Feedback
+- **User Prompt:** *"add ui when submiting a inquiry"* (accompanied by screenshot of native browser `alert(...)` displaying submission confirmation).
+- **Diagnosis:**
+  - `submitInquiry()` in `inquiry.js` previously executed a native synchronous `alert(...)` upon successful submission and immediately redirected to `../../index.html`.
+  - On submission errors, it also triggered a native `alert('Submission error: ...')`.
+  - Submit button lacked a loading feedback spinner, permitting duplicate clicks.
+- **Resolution:**
+  - Designed and built `#inquirySuccessModal` in `frontend/pages/inquiry/inquiry.html`:
+    - Animated emerald checkmark badge (`.success-icon-badge`) with pulse ring animation (`@keyframes successPulse`).
+    - Subject/topic recap, `Under Review` status pill, and schedule box (displaying date and time slot when specified).
+    - Client contact person, email, and phone metadata recap card.
+    - Action buttons: "View in Inquiry History" (linking to `history.html`), "Submit Another" (clears message/schedule and closes modal), and "Back to Home".
+    - Clean dismiss triggers: Close button (X), backdrop click, and Escape key.
+  - Submit button loading spinner (`.btn-spinner`) with "Sending Request..." state and opacity reduction to prevent duplicate submissions.
+  - Replaced error alerts with an animated slide-up toast notification (`#toastNotice`).
 
 ---
 

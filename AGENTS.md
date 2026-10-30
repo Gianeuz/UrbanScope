@@ -223,6 +223,12 @@ path when rendering from a page.
 16. **Admin & Superadmin Header Isolation (Session Chip Guard):**
     - `frontend/shared/js/session.js` (`renderNavProfile` and `initMobileNav`) enforces an explicit admin route guard (`path.includes('/pages/admin/') || path.includes('/pages/superadmin/')`) and narrows container selectors to `.navbar .nav-acts, .inquiry-topbar .nav-acts, .history-topbar .nav-acts, .nav-acts`. This prevents the client navigation menu (`#profileMenu`, "Home", "Submit an Inquiry", "Inquiry History") from injecting duplicate, unstyled chips into administrative headers.
     - Removed redundant `session.js` script tags from `pages/superadmin/dashboard.html` and `pages/admin/propertylist.html`, ensuring Superadmin (`#saProfileDropdownBtn`) and Admin profile dropdowns render cleanly and exclusively.
+17. **Inquiry Submission Modal & Feedback System:**
+    - Replaced blocking browser `alert(...)` popups on `frontend/pages/inquiry/inquiry.html` with a dedicated UI Success Modal (`#inquirySuccessModal`) and animated pulse checkmark badge.
+    - Displays dynamic summary details: Subject/topic, schedule pill (if specified), client contact info (name, email, phone), and `Under Review` status pill.
+    - Features action buttons: direct link to 'View in Inquiry History' (`pages/inquiry/history.html`), 'Submit Another' (resets form and closes modal), and 'Back to Home' (`../../index.html`).
+    - Added loading state with a spinner (`.btn-spinner`) on the submit button while sending requests to prevent duplicate submissions.
+    - Replaced submission failure alerts with a slide-up toast notification (`#toastNotice`).
 
 ---
 

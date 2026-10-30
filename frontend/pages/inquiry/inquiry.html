@@ -177,6 +177,82 @@
         </form>
     </main>
 
+    <!-- INQUIRY SUBMISSION SUCCESS MODAL -->
+    <div class="modal-overlay" id="inquirySuccessModal" role="dialog" aria-modal="true" aria-labelledby="successModalTitle">
+        <div class="modal-box success-modal-box">
+            <button type="button" class="modal-close-btn" id="closeSuccessModalBtn" aria-label="Close dialog">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+
+            <div class="success-modal-hero">
+                <div class="success-icon-badge">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <h3 id="successModalTitle">Inquiry Sent Successfully!</h3>
+                <p class="success-modal-lead">Your consultation request has been received by Miriam Lobren Realty.</p>
+            </div>
+
+            <div class="modal-body success-modal-body">
+                <div class="success-card">
+                    <div class="success-card-header">
+                        <span class="success-status-pill">
+                            <span class="status-dot"></span> Under Review
+                        </span>
+                        <span class="success-date" id="successDateStamp">Today</span>
+                    </div>
+
+                    <div class="success-topic-info">
+                        <small class="success-label">Subject / Property Focus</small>
+                        <h4 id="successPropertyTitle" class="success-property-title">General Consultation</h4>
+                    </div>
+
+                    <div class="success-schedule-box" id="successScheduleBox" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span id="successScheduleText">Preferred Viewing: Oct 31, 2026 · Morning</span>
+                    </div>
+
+                    <div class="success-client-row">
+                        <div class="client-meta-item">
+                            <small>Contact Person</small>
+                            <span id="successClientName">--</span>
+                        </div>
+                        <div class="client-meta-item">
+                            <small>Notification Email</small>
+                            <span id="successClientEmail">--</span>
+                        </div>
+                        <div class="client-meta-item">
+                            <small>Phone Number</small>
+                            <span id="successClientPhone">--</span>
+                        </div>
+                    </div>
+
+                    <div class="success-note">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <span>Our accredited agents will review your inquiry and contact you via phone or email shortly to confirm your schedule and answer your questions.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer success-modal-footer">
+                <a href="history.html" class="btn-success-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span>View in Inquiry History</span>
+                </a>
+                <button type="button" class="btn-secondary" id="submitAnotherBtn">Submit Another</button>
+                <a href="../../index.html" class="btn-return-home">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast-notice" id="toastNotice" role="status" aria-live="polite">
+        <svg id="toastIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span id="toastMessage">Success</span>
+    </div>
+
     <script src="inquiry.js"></script>
 </body>
 </html>

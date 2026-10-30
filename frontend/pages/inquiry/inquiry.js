@@ -206,11 +206,91 @@ async function loadPropertiesCatalog() {
     }
 }
 
+function showSuccessModal(inquiryData, scheduleDetails) {
+    const modal = document.getElementById('inquirySuccessModal');
+    if (!modal) return;
+
+    const propTitleEl = document.getElementById('successPropertyTitle');
+    if (propTitleEl) propTitleEl.textContent = inquiryData.property_title || 'General Consultation';
+
+    const nameEl = document.getElementById('successClientName');
+    if (nameEl) nameEl.textContent = inquiryData.client_name || '--';
+
+    const emailEl = document.getElementById('successClientEmail');
+    if (emailEl) emailEl.textContent = inquiryData.client_email || '--';
+
+    const phoneEl = document.getElementById('successClientPhone');
+    if (phoneEl) phoneEl.textContent = inquiryData.client_phone || 'None provided';
+
+    const dateStampEl = document.getElementById('successDateStamp');
+    if (dateStampEl) {
+        const now = new Date();
+        dateStampEl.textContent = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    const scheduleBox = document.getElementById('successScheduleBox');
+    const scheduleText = document.getElementById('successScheduleText');
+    if (scheduleDetails) {
+        if (scheduleBox) scheduleBox.style.display = 'inline-flex';
+        if (scheduleText) scheduleText.textContent = `Schedule: ${scheduleDetails}`;
+    } else {
+        if (scheduleBox) scheduleBox.style.display = 'none';
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById('inquirySuccessModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function resetFormAndCloseModal() {
+    closeSuccessModal();
+    const textarea = document.getElementById('inquiryMessage');
+    if (textarea) textarea.value = '';
+    const prefDate = document.getElementById('preferredDate');
+    if (prefDate) prefDate.value = '';
+    showToastNotice('You can submit another consultation inquiry below.', false);
+}
+
+function showToastNotice(message, isError = false) {
+    const toast = document.getElementById('toastNotice');
+    const msgEl = document.getElementById('toastMessage');
+    const iconEl = document.getElementById('toastIcon');
+    if (!toast) return;
+
+    if (msgEl) msgEl.textContent = message;
+    if (isError) {
+        toast.classList.add('error');
+        if (iconEl) {
+            iconEl.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+        }
+    } else {
+        toast.classList.remove('error');
+        if (iconEl) {
+            iconEl.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
+        }
+    }
+
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 4500);
+}
+
 async function submitInquiry() {
     const submitBtn = document.querySelector('.submit-btn');
+    const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.7';
+        submitBtn.innerHTML = '<span class="btn-spinner"></span> <span>Sending Request...</span>';
+        submitBtn.style.opacity = '0.85';
     }
 
     const clientName = document.getElementById('clientName').value.trim();
@@ -220,6 +300,7 @@ async function submitInquiry() {
 
     let propertyTitle = "General Consultation";
     let formattedMessage = rawMessage;
+    let scheduleDetails = null;
 
     if (currentInquiryMode === 'general') {
         const topic = document.getElementById('consultationTopic').value;
@@ -229,8 +310,10 @@ async function submitInquiry() {
         propertyTitle = `General Consultation: ${topic}`;
         let scheduleNote = '';
         if (prefDate) {
+            scheduleDetails = `${prefDate} (${prefTime})`;
             scheduleNote = `[Preferred Schedule: ${prefDate} | ${prefTime}]\n\n`;
         } else if (prefTime && prefTime !== 'Flexible / Any Time') {
+            scheduleDetails = `${prefTime}`;
             scheduleNote = `[Preferred Slot: ${prefTime}]\n\n`;
         }
         formattedMessage = scheduleNote + rawMessage;
@@ -259,15 +342,17 @@ async function submitInquiry() {
         result = { success: false, error: err.message };
     }
 
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origBtnHtml;
+        submitBtn.style.opacity = '1';
+    }
+
     if (result && result.success) {
-        alert(`✓ Your consultation request has been successfully sent to Miriam Lobren Realty!\n\nSubject: ${propertyTitle}\nWe will contact you shortly.`);
-        window.location.href = '../../index.html';
+        showSuccessModal(inquiryData, scheduleDetails);
     } else {
-        alert('Submission error: ' + (result ? (result.error || 'Please try again.') : 'Please try again.'));
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-        }
+        const errMsg = result ? (result.error || 'Unable to submit inquiry. Please try again.') : 'Unable to submit inquiry. Please try again.';
+        showToastNotice(errMsg, true);
     }
 }
 
@@ -278,6 +363,24 @@ window.addEventListener('DOMContentLoaded', () => {
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
     }
+
+    // Modal close handlers
+    const closeBtn = document.getElementById('closeSuccessModalBtn');
+    if (closeBtn) closeBtn.addEventListener('click', closeSuccessModal);
+
+    const submitAnotherBtn = document.getElementById('submitAnotherBtn');
+    if (submitAnotherBtn) submitAnotherBtn.addEventListener('click', resetFormAndCloseModal);
+
+    const modal = document.getElementById('inquirySuccessModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeSuccessModal();
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSuccessModal();
+    });
 
     loadPropertiesCatalog();
 });
