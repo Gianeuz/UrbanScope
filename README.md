@@ -67,20 +67,21 @@ To reset the data, delete `backend/urbanscope.db` and restart the server.
 
 ### 1. Client / Homebuyer Guide
 - **Browsing Properties:** Visit the home page to view showcased listings, filter by property type (Houses, Townhouses, Lots, Commercial), or use search keywords. Click any property card to view high-resolution photos, pricing, lot/floor area, amenities, and location details.
-- **Client Registration & Login:** Click **Sign In** in the top navigation bar. New users can create an account with a name, email, Philippine mobile number (`+63` / `09...`), and password. The system automatically signs you in and secures your session.
-- **Submitting Inquiries:** On any property page, logged-in clients can click **Inquire Now** to submit questions, schedule site viewings, or request price computations directly to Miriam Lobren.
+- **Client Registration & Login:** Click **Sign In** in the top navigation bar. New users can create an account with a name, email, Philippine mobile number (`+63` / `09...`), and password. The system automatically signs you in and secures your session. Form input drafts are preserved in real-time when reviewing Terms of Service and Privacy Policy documents.
+- **Consultations & Dual-Mode Inquiries:** On the homepage, clicking **Book a Free Consultation** opens an interactive intent modal allowing clients to choose between *General Consultation / Question* (free site viewing, loan pre-approval, general advice) or *Inquire About a Specific Property* with dynamic listing selection, photo previews, and automated pricing details.
+- **Legal Compliance:** Review comprehensive, RESA-compliant Terms of Service and NPC-compliant Privacy Policy pages, fully integrated with seamless back navigation.
 - **Mira AI Assistant:** Use the floating chatbot bubble in the bottom-right corner for 24/7 assistance: search listings by budget, explore Cavite and Las Piñas locations, or ask about Pag-IBIG and bank financing requirements.
 
 ### 2. Administrator Guide (Miriam Lobren & Team)
 - **Unified Sign-In:** Log in via `/pages/auth/login.html`. Authorized administrative accounts are automatically routed to the Admin Dashboard.
-- **Dashboard Overview:** Monitor business health with key metrics: Total Properties, Total Inquiries, Pending Follow-ups, and recent activity streams.
+- **Dashboard Overview & Inquiry Modal:** Monitor business health with key metrics: Total Properties, Total Inquiries, Pending Follow-ups, and recent activity streams. Click **View** on any inquiry to open an interactive modal with full message details, tour schedule, and direct email reply options.
 - **Managing Properties (CRUD):**
   - **View Listings:** Access `propertylist.html` to browse active catalog listings with status indicators.
   - **Add Property:** Click **Add New Property** (`add-property.html`) to input property name, category, price (₱), location, bedrooms, bathrooms, dimensions, amenities, and upload images.
   - **Edit Property:** Select **Edit** on any listing card (`edit-property.html`) to update pricing, specifications, or replace photos.
   - **Delete Property:** Remove unlisted or sold properties with immediate database and cache synchronization.
 - **Client Inquiries & CRM:** Review client inquiries under `clients.html`, inspect contact information, track message details, and update inquiry follow-up statuses (e.g., *Pending*, *Contacted*, *Scheduled*, *Closed*).
-- **Profile & Account Settings:** Visit `profile.html` to update agent profile contact details and change administrator passwords. User account directory and role management are reserved for the Superadmin.
+- **Profile Picture Upload & Settings:** Visit `profile.html` to update contact details, change passwords, and upload custom profile photos (< 5MB limit) with automatic canvas optimization, live topbar avatar synchronization, and one-click photo reset. User account directory and role management are reserved for the Superadmin.
 
 ### 3. Superadministrator Guide
 - **Master Overview:** Access `/pages/superadmin/dashboard.html` for elevated system diagnostics and security governance.
@@ -100,6 +101,7 @@ To reset the data, delete `backend/urbanscope.db` and restart the server.
 │   ├── shared/         # Shared CSS & JS (navbar, session, chatbot, API client)
 │   └── assets/images/  # Photos, logos, icons
 ├── DATABASE.md         # Database schema & seed data
+├── CHANGELOG.md        # Session changelog & feature log
 └── AGENTS.md           # Developer & agent guidelines
 ```
 
