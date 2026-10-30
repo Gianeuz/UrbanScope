@@ -15,6 +15,7 @@ Built for **Miriam Lobren Real Estate Agent** (Las Piñas & Cavite, Philippines)
 - **Mira Chatbot** — on-site assistant for navigation, property search by location/budget/type, and financing guidance.
 - **Admin Dashboard** — KPI cards, inquiry charts, property CRUD, client inquiry tracking, and user overview.
 - **Superadmin Console** — role management (RBAC) and database health checks.
+- **Legal & Privacy Hub** — comprehensive Terms of Service (aligned with RESA RA 9646) and Privacy Policy (compliant with Philippine Data Privacy Act RA 10173).
 - **Responsive Design** — optimized for desktop, tablet, and mobile.
 
 ---
@@ -95,7 +96,7 @@ To reset the data, delete `backend/urbanscope.db` and restart the server.
 ├── backend/            # FastAPI app, database, models, auth
 ├── frontend/
 │   ├── index.html      # Home page
-│   ├── pages/          # One folder per feature (auth, properties, inquiry, admin, superadmin)
+│   ├── pages/          # One folder per feature (auth, properties, inquiry, legal, admin, superadmin)
 │   ├── shared/         # Shared CSS & JS (navbar, session, chatbot, API client)
 │   └── assets/images/  # Photos, logos, icons
 ├── DATABASE.md         # Database schema & seed data

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Miriam Lobren Real Estate | UrbanScope</title>
+    <link rel="icon" href="../../assets/images/favicon.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <link rel="stylesheet" href="../../shared/css/session.css">
+    <link rel="stylesheet" href="../../shared/css/chatbot.css">
+    <link rel="stylesheet" href="legal.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../shared/js/supabase.js"></script>
+    <script src="../../shared/js/session.js"></script>
+    <script src="../../shared/js/chatbot.js" defer></script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <a class="Cname" href="../../index.html">
+            <img src="../../assets/images/logo.png" alt="ML Logo" class="brand-logo" onerror="this.style.display='none'">
+            <span>
+                <strong>Miriam Lobren</strong>
+                <small>REAL ESTATE AGENT</small>
+            </span>
+        </a>
+
+        <nav id="mainNav">
+            <a href="../../index.html">Home</a>
+            <a href="../../index.html#properties">Properties</a>
+            <a href="../../index.html#about">About Us</a>
+            <a href="../../index.html#faqs">FAQs</a>
+            <a href="../../index.html#contact">Contact</a>
+        </nav>
+
+        <div class="nav-acts">
+            <a href="../auth/login.html" class="login-btn" id="loginBtn">Log In</a>
+            <a href="../auth/register.html" class="signup-btn" id="signupBtn">Sign Up</a>
+
+            <button class="mobile-nav-toggle" id="mobileNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO HEADER -->
+    <section class="legal-hero">
+        <div class="legal-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Data Protection &amp; Privacy</span>
+        </div>
+        <h1>Privacy Policy</h1>
+        <p>Your privacy is of utmost importance to us. This policy details how Miriam Lobren Real Estate and CD Miranda Realty collect, protect, and process your personal data in full compliance with the Philippine Data Privacy Act of 2012.</p>
+        <div class="legal-meta">
+            <span>Last Updated: October 2026</span>
+            <span>&bull;</span>
+            <span>Compliance: Republic Act No. 10173 (DPA)</span>
+        </div>
+
+        <div class="doc-switcher-wrap">
+            <nav class="doc-switcher" aria-label="Legal document selection">
+                <a href="terms.html" class="doc-tab">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>Terms of Service</span>
+                </a>
+                <a href="privacy.html" class="doc-tab active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <span>Privacy Policy</span>
+                </a>
+            </nav>
+        </div>
+    </section>
+
+    <!-- MAIN LEGAL CONTAINER -->
+    <main class="legal-main-container">
+        <!-- SIDEBAR TOC -->
+        <aside class="legal-sidebar" aria-label="Table of contents">
+            <h3 class="sidebar-title">Sections</h3>
+            <ul class="toc-list">
+                <li><a href="#commitment">1. Commitment to Privacy</a></li>
+                <li><a href="#collection">2. Information We Collect</a></li>
+                <li><a href="#methods">3. How We Collect Data</a></li>
+                <li><a href="#purpose">4. Purpose of Processing</a></li>
+                <li><a href="#sharing">5. Disclosure &amp; Sharing</a></li>
+                <li><a href="#security">6. Data Storage &amp; Security</a></li>
+                <li><a href="#retention">7. Retention Period</a></li>
+                <li><a href="#rights">8. Your Data Subject Rights</a></li>
+                <li><a href="#cookies">9. Cookies &amp; Local Storage</a></li>
+                <li><a href="#contact-dpo">10. Contact Our Privacy Officer</a></li>
+            </ul>
+        </aside>
+
+        <!-- CONTENT CARD -->
+        <article class="legal-content-card">
+            <!-- SECTION 1 -->
+            <section class="legal-section" id="commitment">
+                <div class="section-head">
+                    <span class="section-number">1</span>
+                    <h2>Commitment to Data Privacy</h2>
+                </div>
+                <p><strong>UrbanScope</strong>, operating under the licensed professional services of <strong>Miriam Lobren</strong> and <strong>CD Miranda Realty</strong>, is committed to safeguarding personal information in strict adherence to the <strong>Data Privacy Act of 2012 (Republic Act No. 10173)</strong>, its Implementing Rules and Regulations (IRR), and all circulars and directives of the <strong>National Privacy Commission (NPC)</strong> of the Philippines.</p>
+                <p>This Privacy Policy explains the nature of personal information collected through our website, mobile interface, and consultation forms, how such information is processed, stored, and shared, and the rights you possess as a valued data subject.</p>
+            </section>
+
+            <!-- SECTION 2 -->
+            <section class="legal-section" id="collection">
+                <div class="section-head">
+                    <span class="section-number">2</span>
+                    <h2>Information We Collect</h2>
+                </div>
+                <p>Depending on your interaction with UrbanScope, we collect the following categories of personal data:</p>
+
+                <table class="legal-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Data Elements Collected</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Identity &amp; Profile</strong></td>
+                            <td>Full legal name, preferred name, account password (cryptographically hashed)</td>
+                            <td>Account creation, personalized profile badge, and authentication.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Contact Details</strong></td>
+                            <td>Email address, Philippine mobile phone number (+63)</td>
+                            <td>Transmitting property info, confirming site tripping, loan updates.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Real Estate Inquiries</strong></td>
+                            <td>Preferred property title, location, unit type, message details, consultation topic</td>
+                            <td>Tailoring site tours, preparing computations, developer inquiries.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Financing Indicators</strong></td>
+                            <td>Preferred payment scheme (Pag-IBIG Fund, Bank Financing, In-house, Spot Cash)</td>
+                            <td>Evaluating loan pre-qualification and required documentation.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Technical &amp; Usage</strong></td>
+                            <td>IP address, browser type, device information, timestamp of inquiries</td>
+                            <td>Security audit logs, spam prevention, platform diagnostics.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SECTION 3 -->
+            <section class="legal-section" id="methods">
+                <div class="section-head">
+                    <span class="section-number">3</span>
+                    <h2>How We Collect Your Information</h2>
+                </div>
+                <p>We collect personal information through lawful, transparent, and fair means:</p>
+                <ul>
+                    <li><strong>Direct Form Submissions:</strong> When you register an account, submit an inquiry via our dual-mode consultation form, or book a site tour.</li>
+                    <li><strong>Mira Virtual Assistant:</strong> When you converse with our on-site chatbot to ask for property recommendations or financing requirements.</li>
+                    <li><strong>Direct Communications:</strong> When you contact Miriam Lobren directly via phone, WhatsApp, SMS, or email.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 4 -->
+            <section class="legal-section" id="purpose">
+                <div class="section-head">
+                    <span class="section-number">4</span>
+                    <h2>Purpose &amp; Legal Basis for Processing</h2>
+                </div>
+                <p>We process your personal information on the legal grounds of <strong>contractual necessity</strong>, <strong>explicit consent</strong>, and <strong>legitimate interest</strong> in conducting lawful real estate brokerage operations:</p>
+                <ul>
+                    <li>To coordinate and schedule free physical site viewings and model unit tripping across Las Piñas and Cavite projects.</li>
+                    <li>To verify unit availability and prepare official sample computations and amortization tables.</li>
+                    <li>To provide guidance on Pag-IBIG Fund and partner commercial bank housing loan pre-approval requirements.</li>
+                    <li>To verify client accounts, maintain security, and prevent fraudulent inquiries.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 5 -->
+            <section class="legal-section" id="sharing">
+                <div class="section-head">
+                    <span class="section-number">5</span>
+                    <h2>Disclosure &amp; Information Sharing</h2>
+                </div>
+                <div class="legal-callout">
+                    <h4>We Never Sell Your Data</h4>
+                    <p>UrbanScope and Miriam Lobren Realty maintain a strict no-sale policy. We do not sell, rent, trade, or monetize your contact information or real estate inquiries to third-party telemarketers or external advertisers.</p>
+                </div>
+                <p>Your personal data is disclosed only to the following authorized recipients on a strict need-to-know basis:</p>
+                <ul>
+                    <li><strong>Accredited Property Developers:</strong> Specifically when you decide to proceed with a formal property reservation (e.g., submitting Buyer Information Sheets and proof of billing to developers like Liora Homes or Airmen's Village).</li>
+                    <li><strong>Partner Financing Institutions:</strong> Commercial banks (e.g., BDO, BPI, Security Bank) or the Home Development Mutual Fund (Pag-IBIG Fund) strictly with your written authorization to facilitate housing loan applications.</li>
+                    <li><strong>Legal &amp; Regulatory Authorities:</strong> When required by Philippine law, subpoena, or lawful court order.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 6 -->
+            <section class="legal-section" id="security">
+                <div class="section-head">
+                    <span class="section-number">6</span>
+                    <h2>Data Storage &amp; Security Measures</h2>
+                </div>
+                <p>We implement robust organizational, physical, and technical security safeguards to prevent loss, unauthorized access, or unlawful alteration of your personal data:</p>
+                <ul>
+                    <li><strong>Cryptographic Password Hashing:</strong> User passwords are never stored in plain text. They are hashed using industry-standard PBKDF2 with unique salts.</li>
+                    <li><strong>Encrypted Connections:</strong> Data in transit is protected using TLS/HTTPS encryption.</li>
+                    <li><strong>Role-Based Access Control (RBAC):</strong> Client inquiries and administrative records are strictly accessible only by authenticated real estate personnel with verified roles.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 7 -->
+            <section class="legal-section" id="retention">
+                <div class="section-head">
+                    <span class="section-number">7</span>
+                    <h2>Data Retention Period</h2>
+                </div>
+                <p>Personal information is retained only for as long as necessary to fulfill the purposes for which it was gathered:</p>
+                <ul>
+                    <li><strong>General Inquiries:</strong> Retained for up to twenty-four (24) months to facilitate continuous client property search assistance.</li>
+                    <li><strong>Completed Reservations:</strong> Retained for the duration required by developer sales contracts, tax accounting regulations, and statutory prescriptive periods under Philippine real estate law.</li>
+                </ul>
+                <p>Upon expiration of the retention schedule or upon verified deletion request, records are securely shredded, permanently anonymized, or purged from our databases.</p>
+            </section>
+
+            <!-- SECTION 8 -->
+            <section class="legal-section" id="rights">
+                <div class="section-head">
+                    <span class="section-number">8</span>
+                    <h2>Your Rights under the Data Privacy Act</h2>
+                </div>
+                <p>Under Section 16 of Republic Act No. 10173 (Data Privacy Act of 2012), you are entitled to exercise the following statutory rights:</p>
+                <ul>
+                    <li><strong>Right to be Informed:</strong> To know whether personal data pertaining to you is being processed.</li>
+                    <li><strong>Right to Access:</strong> To request reasonable access to your personal information stored in our systems.</li>
+                    <li><strong>Right to Rectification:</strong> To dispute inaccuracy or error in your personal data and have it corrected.</li>
+                    <li><strong>Right to Erasure or Blocking:</strong> To suspend, withdraw, or order the removal of your personal data upon reasonable grounds.</li>
+                    <li><strong>Right to Damages:</strong> To be indemnified for any damages sustained due to inaccurate, incomplete, or unlawfully obtained personal data.</li>
+                    <li><strong>Right to File a Complaint:</strong> You may file a complaint with the <strong>National Privacy Commission (NPC)</strong> at <em>complaints@privacy.gov.ph</em> if your rights have been violated.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 9 -->
+            <section class="legal-section" id="cookies">
+                <div class="section-head">
+                    <span class="section-number">9</span>
+                    <h2>Cookies &amp; Local Storage</h2>
+                </div>
+                <p>UrbanScope utilizes standard browser cookies and local storage items strictly for essential functional purposes:</p>
+                <ul>
+                    <li><strong>Authentication State:</strong> Storing temporary JWT access tokens to maintain your secure logged-in session.</li>
+                    <li><strong>Offline Resilience:</strong> Caching property catalog previews to ensure smooth browsing during network latency.</li>
+                </ul>
+                <p>You can manage or disable cookies through your browser settings, though doing so may affect your ability to remain logged in or submit property inquiries.</p>
+            </section>
+
+            <!-- SECTION 10 -->
+            <section class="legal-section" id="contact-dpo">
+                <div class="section-head">
+                    <span class="section-number">10</span>
+                    <h2>Contact Our Data Protection Officer</h2>
+                </div>
+                <p>For questions, privacy requests, or to exercise your data subject rights, please contact Miriam Lobren or our designated privacy representative:</p>
+
+                <div class="legal-contact-box">
+                    <div class="legal-contact-info">
+                        <h3>Data Privacy &amp; Compliance Office</h3>
+                        <p>Miriam Lobren &bull; CD Miranda Realty</p>
+                        <p style="margin-top: 6px;">📍 Las Piñas City &amp; Cavite, Philippines</p>
+                        <p>📧 Email: <a href="mailto:admin.realestate@gmail.com" style="color:var(--green);font-weight:700;">admin.realestate@gmail.com</a></p>
+                        <p>📞 Phone: <a href="tel:+639000000000" style="color:var(--green);font-weight:700;">+63 900 000 0000</a></p>
+                    </div>
+
+                    <div class="legal-contact-actions">
+                        <a href="terms.html" class="btn-contact-primary">
+                            <span>View Terms of Service</span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                        <a href="../../index.html" class="btn-contact-secondary">Return Home</a>
+                    </div>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-about">
+                <h3>Miriam Lobren</h3>
+                <p>Trusted real estate agent affiliated with CD Miranda Realty, dedicated to helping families and investors find their dream homes across Las Piñas and Cavite.</p>
+            </div>
+
+            <div class="footer-links-column">
+                <h3>QUICK LINKS</h3>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../../index.html#properties">Properties</a></li>
+                    <li><a href="../../index.html#about">About Us</a></li>
+                    <li><a href="../../index.html#faqs">FAQs</a></li>
+                    <li><a href="../inquiry/inquiry.html">Consultation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>CONTACT</h3>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <a href="tel:+639000000000" style="color: inherit; text-decoration: none;">+63 900 000 0000</a>
+                </div>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <a href="mailto:admin.realestate@gmail.com" style="color: inherit; text-decoration: none;">admin.realestate@gmail.com</a>
+                </div>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <p>Las Piñas City &amp; Cavite, Philippines</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>&copy; 2026 Miriam Lobren. All rights reserved.</span>
+            <div class="legal">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

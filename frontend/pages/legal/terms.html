@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Miriam Lobren Real Estate | UrbanScope</title>
+    <link rel="icon" href="../../assets/images/favicon.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <link rel="stylesheet" href="../../shared/css/session.css">
+    <link rel="stylesheet" href="../../shared/css/chatbot.css">
+    <link rel="stylesheet" href="legal.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../shared/js/supabase.js"></script>
+    <script src="../../shared/js/session.js"></script>
+    <script src="../../shared/js/chatbot.js" defer></script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <a class="Cname" href="../../index.html">
+            <img src="../../assets/images/logo.png" alt="ML Logo" class="brand-logo" onerror="this.style.display='none'">
+            <span>
+                <strong>Miriam Lobren</strong>
+                <small>REAL ESTATE AGENT</small>
+            </span>
+        </a>
+
+        <nav id="mainNav">
+            <a href="../../index.html">Home</a>
+            <a href="../../index.html#properties">Properties</a>
+            <a href="../../index.html#about">About Us</a>
+            <a href="../../index.html#faqs">FAQs</a>
+            <a href="../../index.html#contact">Contact</a>
+        </nav>
+
+        <div class="nav-acts">
+            <a href="../auth/login.html" class="login-btn" id="loginBtn">Log In</a>
+            <a href="../auth/register.html" class="signup-btn" id="signupBtn">Sign Up</a>
+
+            <button class="mobile-nav-toggle" id="mobileNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO HEADER -->
+    <section class="legal-hero">
+        <div class="legal-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Legal Agreement</span>
+        </div>
+        <h1>Terms of Service</h1>
+        <p>Please review these terms governing your access to the UrbanScope portal and real estate consultation services provided by Miriam Lobren &amp; CD Miranda Realty.</p>
+        <div class="legal-meta">
+            <span>Last Updated: October 2026</span>
+            <span>&bull;</span>
+            <span>Applies to: All Visitors &amp; Clients</span>
+        </div>
+
+        <div class="doc-switcher-wrap">
+            <nav class="doc-switcher" aria-label="Legal document selection">
+                <a href="terms.html" class="doc-tab active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    <span>Terms of Service</span>
+                </a>
+                <a href="privacy.html" class="doc-tab">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <span>Privacy Policy</span>
+                </a>
+            </nav>
+        </div>
+    </section>
+
+    <!-- MAIN LEGAL CONTAINER -->
+    <main class="legal-main-container">
+        <!-- SIDEBAR TOC -->
+        <aside class="legal-sidebar" aria-label="Table of contents">
+            <h3 class="sidebar-title">Sections</h3>
+            <ul class="toc-list">
+                <li><a href="#acceptance">1. Acceptance &amp; Scope</a></li>
+                <li><a href="#brokerage">2. Real Estate Representation</a></li>
+                <li><a href="#listings">3. Property Listings &amp; Pricing</a></li>
+                <li><a href="#tripping">4. Site Viewing &amp; Consultations</a></li>
+                <li><a href="#accounts">5. Client Accounts &amp; Security</a></li>
+                <li><a href="#reservations">6. Reservations &amp; Financing</a></li>
+                <li><a href="#intellectual">7. Intellectual Property</a></li>
+                <li><a href="#liability">8. Limitation of Liability</a></li>
+                <li><a href="#governing">9. Governing Philippine Law</a></li>
+                <li><a href="#contact-legal">10. Contact Information</a></li>
+            </ul>
+        </aside>
+
+        <!-- CONTENT CARD -->
+        <article class="legal-content-card">
+            <!-- SECTION 1 -->
+            <section class="legal-section" id="acceptance">
+                <div class="section-head">
+                    <span class="section-number">1</span>
+                    <h2>Acceptance of Terms &amp; Scope</h2>
+                </div>
+                <p>Welcome to <strong>UrbanScope</strong>, the official real estate catalog, consultation scheduling, and property inquiry portal representing <strong>Miriam Lobren</strong>, a licensed real estate professional affiliated with <strong>CD Miranda Realty</strong>.</p>
+                <p>By browsing this website, registering an account, booking site viewings, or submitting inquiries through our platform, you acknowledge that you have read, understood, and agreed to be bound by these Terms of Service, along with our <a href="privacy.html" style="color:var(--green);font-weight:700;">Privacy Policy</a>.</p>
+                
+                <div class="legal-callout">
+                    <h4>Important Notice</h4>
+                    <p>If you do not agree with any part of these terms, please discontinue using this website and consult Miriam Lobren directly through accredited phone channels.</p>
+                </div>
+            </section>
+
+            <!-- SECTION 2 -->
+            <section class="legal-section" id="brokerage">
+                <div class="section-head">
+                    <span class="section-number">2</span>
+                    <h2>Real Estate Representation &amp; Regulatory Compliance</h2>
+                </div>
+                <p>All real estate advisory, property showcasing, brokerage facilitation, and buyer representation conducted through UrbanScope are performed in accordance with the <strong>Real Estate Service Act of the Philippines (Republic Act No. 9646 or RESA)</strong> and regulations set forth by the <strong>Professional Regulation Commission (PRC)</strong> and the <strong>Department of Human Settlements and Urban Development (DHSUD)</strong>.</p>
+                <p>Miriam Lobren acts as an accredited real estate sales professional under CD Miranda Realty, authorized to present accredited residential developments, subdivisions, townhouses, and lots across Las Piñas City, Cavite, and adjacent provinces.</p>
+            </section>
+
+            <!-- SECTION 3 -->
+            <section class="legal-section" id="listings">
+                <div class="section-head">
+                    <span class="section-number">3</span>
+                    <h2>Property Listings, Pricing &amp; Computations</h2>
+                </div>
+                <p>The listings displayed on UrbanScope (including project showcases such as Liora Homes, Airmen's Village, and accredited Cavite subdivisions) are presented for general informational purposes to assist prospective home buyers and investors:</p>
+                <ul>
+                    <li><strong>Pricing Disclaimer:</strong> Property prices, available discounts, and promotional payment terms shown in Philippine Pesos (₱) are based on the latest developer price lists and are subject to change without prior notice by the developer.</li>
+                    <li><strong>Sample Computations:</strong> Estimated monthly amortization, down payment schedules, and bank/Pag-IBIG loan amounts are sample calculations only and do not constitute a formal financing contract.</li>
+                    <li><strong>Inventory Availability:</strong> Unit inventory (corner lots, end units, inner townhouses) is subject to ongoing sales and developer validation upon formal reservation.</li>
+                </ul>
+                <div class="legal-callout warning">
+                    <h4>No Binding Contract of Sale</h4>
+                    <p>Information on this website serves as an invitation to treat and inquire. A binding purchase of real estate is only finalized through official developer Reservation Agreements, Contract to Sell (CTS), and Deed of Absolute Sale (DOAS).</p>
+                </div>
+            </section>
+
+            <!-- SECTION 4 -->
+            <section class="legal-section" id="tripping">
+                <div class="section-head">
+                    <span class="section-number">4</span>
+                    <h2>Free Site Viewing &amp; Consultation Services</h2>
+                </div>
+                <p>UrbanScope enables users to schedule free site viewings (tripping) and one-on-one property consultations:</p>
+                <ul>
+                    <li>Appointments must be booked at least 24 to 48 hours in advance to allow gate passes and model unit clearance with the respective subdivision administration.</li>
+                    <li>Tripping schedules are subject to weather conditions, developer model unit visiting hours, and health and safety guidelines.</li>
+                    <li>Miriam Lobren Realty does not charge prospective buyers any fees for scheduling site viewings or consulting on Pag-IBIG and bank loan pre-qualifications.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 5 -->
+            <section class="legal-section" id="accounts">
+                <div class="section-head">
+                    <span class="section-number">5</span>
+                    <h2>Client Accounts &amp; User Responsibilities</h2>
+                </div>
+                <p>To submit inquiries, save listings, or track consultations, you may register for a client account. You agree to:</p>
+                <ul>
+                    <li>Provide true, accurate, and current information, including a valid Philippine mobile number and email address.</li>
+                    <li>Maintain the confidentiality of your login credentials and accept responsibility for activities under your account.</li>
+                    <li>Refrain from submitting fraudulent, abusive, or automated inquiries, spam, or misleading messages.</li>
+                </ul>
+                <p>UrbanScope reserves the right to suspend or terminate accounts that violate platform policies or compromise security.</p>
+            </section>
+
+            <!-- SECTION 6 -->
+            <section class="legal-section" id="reservations">
+                <div class="section-head">
+                    <span class="section-number">6</span>
+                    <h2>Reservations, Down Payments &amp; Loan Approvals</h2>
+                </div>
+                <p>When you decide to reserve a property unit:</p>
+                <ul>
+                    <li><strong>Reservation Fees:</strong> All reservation fees are paid directly to the accredited developer's authorized bank accounts or cashier desks. Miriam Lobren and UrbanScope do not accept personal cash payments for property reservations.</li>
+                    <li><strong>Non-Refundability:</strong> Developer reservation fees are generally non-refundable and non-transferable pursuant to standard developer policies.</li>
+                    <li><strong>Financing Approvals:</strong> While Miriam Lobren assists clients in preparing documents for bank and Pag-IBIG Fund housing loans, approval is subject to the sole credit discretion of the financing institution.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 7 -->
+            <section class="legal-section" id="intellectual">
+                <div class="section-head">
+                    <span class="section-number">7</span>
+                    <h2>Intellectual Property Rights</h2>
+                </div>
+                <p>All content on UrbanScope, including but not limited to branding, design tokens, logos, site layout, architectural renders, written project descriptions, and software code, is protected by copyright and intellectual property laws of the Philippines.</p>
+                <p>Developer logos and project trademarks (e.g., Liora Homes, Airmen's Village) belong to their respective registered developer entities and are used under authorized sales representation.</p>
+            </section>
+
+            <!-- SECTION 8 -->
+            <section class="legal-section" id="liability">
+                <div class="section-head">
+                    <span class="section-number">8</span>
+                    <h2>Limitation of Liability</h2>
+                </div>
+                <p>To the fullest extent permitted by law, UrbanScope, Miriam Lobren, and CD Miranda Realty shall not be liable for any indirect, incidental, or consequential damages resulting from:</p>
+                <ul>
+                    <li>Delays or modifications in developer construction schedules or unit turnovers.</li>
+                    <li>Lender disapproval or reduction of requested loan amounts from third-party banks or Pag-IBIG Fund.</li>
+                    <li>Temporary website maintenance or unforeseen technical interruptions.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 9 -->
+            <section class="legal-section" id="governing">
+                <div class="section-head">
+                    <span class="section-number">9</span>
+                    <h2>Governing Philippine Law &amp; Jurisdiction</h2>
+                </div>
+                <p>These Terms of Service are governed by and construed in accordance with the laws of the <strong>Republic of the Philippines</strong>. Any dispute arising out of or related to these terms shall be settled amicably through negotiation, or submitted to the exclusive jurisdiction of the competent courts of <strong>Las Piñas City</strong> or <strong>Cavite</strong>, Philippines.</p>
+            </section>
+
+            <!-- SECTION 10 -->
+            <section class="legal-section" id="contact-legal">
+                <div class="section-head">
+                    <span class="section-number">10</span>
+                    <h2>Contact Information</h2>
+                </div>
+                <p>If you have questions, feedback, or concerns regarding these Terms of Service or our brokerage services, please contact our office:</p>
+                
+                <div class="legal-contact-box">
+                    <div class="legal-contact-info">
+                        <h3>Miriam Lobren Real Estate Agent</h3>
+                        <p>Affiliated with CD Miranda Realty</p>
+                        <p style="margin-top: 6px;">📍 Las Piñas City &amp; Cavite, Philippines</p>
+                        <p>📧 Email: <a href="mailto:admin.realestate@gmail.com" style="color:var(--green);font-weight:700;">admin.realestate@gmail.com</a></p>
+                        <p>📞 Phone: <a href="tel:+639000000000" style="color:var(--green);font-weight:700;">+63 900 000 0000</a></p>
+                    </div>
+
+                    <div class="legal-contact-actions">
+                        <a href="../inquiry/inquiry.html?type=general" class="btn-contact-primary">
+                            <span>Book Consultation</span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                        <a href="../../index.html" class="btn-contact-secondary">Return Home</a>
+                    </div>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-about">
+                <h3>Miriam Lobren</h3>
+                <p>Trusted real estate agent affiliated with CD Miranda Realty, dedicated to helping families and investors find their dream homes across Las Piñas and Cavite.</p>
+            </div>
+
+            <div class="footer-links-column">
+                <h3>QUICK LINKS</h3>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../../index.html#properties">Properties</a></li>
+                    <li><a href="../../index.html#about">About Us</a></li>
+                    <li><a href="../../index.html#faqs">FAQs</a></li>
+                    <li><a href="../inquiry/inquiry.html">Consultation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>CONTACT</h3>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <a href="tel:+639000000000" style="color: inherit; text-decoration: none;">+63 900 000 0000</a>
+                </div>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <a href="mailto:admin.realestate@gmail.com" style="color: inherit; text-decoration: none;">admin.realestate@gmail.com</a>
+                </div>
+                <div class="footer-contact-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <p>Las Piñas City &amp; Cavite, Philippines</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>&copy; 2026 Miriam Lobren. All rights reserved.</span>
+            <div class="legal">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

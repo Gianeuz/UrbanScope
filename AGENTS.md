@@ -54,6 +54,7 @@ frontend/              Everything the browser loads (served at /)
   pages/properties/    property-detail (?id=N), Liora.html & Airmen.html showcases (properties.html catalog was removed)
   pages/inquiry/       Inquiry form (requires login: <html data-require-auth>)
   pages/auth/          Unified login (auto-routes by role) & register
+  pages/legal/         Terms of Service (terms.html) & Privacy Policy (privacy.html)
   pages/admin/         Dashboard, propertylist.html, add-property, edit-property, clients, profile, legacy login redirect (users.html redirects)
   pages/superadmin/    Master overview, system diagnostics, user account modification & RBAC management
   shared/css/          common.css (design tokens, navbar, footer), session, splash, chatbot
@@ -190,6 +191,12 @@ path when rendering from a page.
       - Topbar navigation: The legacy placeholder hamburger menu icon on `pages/inquiry/inquiry.html` was removed and replaced with a dedicated pill "Go Back" button (`.go-back-btn`), which triggers `history.back()` with a fallback to `../../index.html`.
       - Unified profile chip: The legacy two-line client badge and placeholder notification bell on `pages/inquiry/inquiry.html` was replaced with the exact unified profile chip (`.profile-chip` / `.profile-menu`) from the homepage, rendering the dark green circle avatar initials, user first name, chevron dropdown toggle, and dropdown menu (containing Home, Submit an Inquiry, and Sign Out).
       - Cancel button navigates cleanly back to `../../index.html`.
+13. **Terms of Service & Privacy Policy Legal Pages:**
+    - Dedicated legal hub created under `frontend/pages/legal/` (`terms.html`, `privacy.html`, and `legal.css`).
+    - **Terms of Service (`terms.html`)**: Tailored to Philippine real estate brokerage operations for Miriam Lobren / CD Miranda Realty under Republic Act No. 9646 (Real Estate Service Act - RESA), covering property listings accuracy, pricing disclaimers, free site tripping guidelines, account safety, reservation fees, financing disclosures, limitation of liability, and venue jurisdiction (Las Piñas City & Cavite courts).
+    - **Privacy Policy (`privacy.html`)**: Fully compliant with the Philippine Data Privacy Act of 2012 (Republic Act No. 10173) and National Privacy Commission (NPC) circulars, detailing collected data categories, lawful processing purposes, strict non-disclosure/no-sale policy, physical & electronic security safeguards, data retention schedules, statutory data subject rights (access, correction, erasure, objection, damages), local storage usage, and Data Protection Officer (DPO) contact channels.
+    - Features a pill document switcher (`[ Terms of Service ]` / `[ Privacy Policy ]`) allowing seamless switching between both documents, sticky Table of Contents sidebar for rapid navigation, responsive reading typography, and integrated standard navbar & session profile chip.
+    - All dead `#` links and inline `alert(...)` handlers across `index.html`, `pages/auth/register.html` (including registration consent checkbox with `target="_blank"`), `pages/auth/login.html`, `pages/properties/property-detail.html`, `pages/properties/Liora.html`, and `pages/properties/Airmen.html` are linked directly to these new legal pages.
 
 ---
 
