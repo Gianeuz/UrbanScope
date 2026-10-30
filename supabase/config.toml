@@ -2,7 +2,7 @@
 # Only the settings we care about are listed; everything else uses CLI defaults.
 # Full reference: https://supabase.com/docs/guides/local-development/cli/config
 
-project_id = "UrbanScope"
+project_id = "vfspjuqymfbagesjxjmc"
 
 [db]
 # Local Postgres port used by `supabase start`.
