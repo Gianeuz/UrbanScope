@@ -48,6 +48,53 @@ body {
     pointer-events: none;
 }
 
+/* TOP BACK NAVIGATION */
+.legal-top-nav {
+    display: flex;
+    justify-content: flex-start;
+    max-width: 1200px;
+    margin: 0 auto 22px auto;
+    position: relative;
+    z-index: 2;
+}
+
+.legal-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.legal-back-btn:hover {
+    background: rgba(255, 255, 255, 0.26);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.legal-back-btn svg {
+    transition: transform 0.22s ease;
+    flex-shrink: 0;
+}
+
+.legal-back-btn:hover svg {
+    transform: translateX(-3px);
+}
+
 .legal-badge {
     display: inline-flex;
     align-items: center;

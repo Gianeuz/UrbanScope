@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../shared/js/supabase.js"></script>
     <script src="../../shared/js/session.js"></script>
+    <script src="legal.js" defer></script>
     <script src="../../shared/js/chatbot.js" defer></script>
 </head>
 <body>
@@ -48,6 +49,16 @@
 
     <!-- HERO HEADER -->
     <section class="legal-hero">
+        <div class="legal-top-nav">
+            <button class="legal-back-btn" id="legalBackBtn" type="button" aria-label="Go back" onclick="handleLegalBack()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span class="legal-back-text">Go Back</span>
+            </button>
+        </div>
+
         <div class="legal-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             <span>Data Protection &amp; Privacy</span>
