@@ -341,6 +341,13 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==========================================
 
 (function initGoogleAuthentication() {
+    // Google Identity Services rejects raw loopback IPs (127.0.0.1) in Authorized JavaScript origins
+    // and requires `http://localhost:<port>`. Normalize 127.0.0.1 -> localhost automatically.
+    if (window.location.hostname === "127.0.0.1") {
+        window.location.replace(window.location.href.replace("//127.0.0.1", "//localhost"));
+        return;
+    }
+
     let preloadedGoogleConfig = null;
 
     function prefetchGoogleConfig() {

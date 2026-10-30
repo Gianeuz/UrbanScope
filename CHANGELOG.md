@@ -134,6 +134,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
     - Added non-destructive `google_id` column migration and partial unique index `idx_users_google_id` to SQLite `users`.
     - Automatically creates new client accounts or links `google_id` to existing accounts while preserving passwords, RBAC roles (`user`, `admin`, `superadmin`), and custom admin avatars, and syncs verified users to Supabase Cloud (`users` table).
   - **UI & Session Polish (`auth.js`, `auth.css`, `session.js`, `session.css`):**
+    - Automatically normalizes `http://127.0.0.1:<port>` to `http://localhost:<port>` on auth pages since Google Cloud Console rejects raw IP addresses in Authorized JavaScript origins.
     - Preloads Google OAuth config on page load so `requestAccessToken` runs synchronously on click without triggering browser popup blockers.
     - Displays clean inline status/setup banners instead of blocking `alert()` dialogs, and renders Google profile pictures inside `.profile-avatar` with fallback to user initials.
 
