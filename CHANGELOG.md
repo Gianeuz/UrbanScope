@@ -20,6 +20,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
 | **Oct 2026** | **Registration Flow** | Same-tab legal link navigation with `?from=register`, mouse/keyboard back button support, and input draft persistence (`sessionStorage`) | `register.html`, `register.js`, `legal.js`, `legal.css` |
 | **Oct 2026** | **Google Auth** | Added Google Identity Services (OAuth 2.0) sign-in & sign-up with FastAPI token verification, SQLite `google_id` migration, Supabase cloud sync, and navbar Google avatar rendering | `backend/auth.py`, `backend/app.py`, `backend/database.py`, `supabase.js`, `auth.js`, `session.js` |
 | **Oct 2026** | **Inquiry History** | Added client inquiry history page (`history.html`), profile menu link, real-time search, status filtering, stats pills, modify details modal, cancel confirmation modal, and delete permanently | `history.html`, `history.css`, `history.js`, `supabase.js`, `api.js`, `session.js`, `backend/app.py` |
+| **Oct 2026** | **Superadmin UI** | Fixed duplicate/unstyled profile dropdown artifact on superadmin console topbar (`session.js` route guard & script removal) | `session.js`, `pages/superadmin/dashboard.html`, `pages/admin/propertylist.html` |
 
 ---
 
@@ -161,6 +162,20 @@ This document records all features, enhancements, bug fixes, user requests, arch
     - Added `POST /api/inquiries/{id}/cancel`: Marks inquiry status as `Cancelled`.
     - Added `DELETE /api/inquiries/{id}`: Validates ownership before permanently deleting from SQLite.
     - Implemented `apiGetMyInquiries`, `apiUpdateMyInquiry`, `apiCancelMyInquiry`, and `apiDeleteMyInquiry` in both `supabase.js` and `api.js`.
+
+---
+
+### 11. Superadmin Topbar UI Isolation & Duplicate Menu Artifact Fix
+- **User Prompt:** *"fix this ui in superadmin"* (accompanied by screenshot showing duplicate unstyled client profile chip `[ UCUrbanscope v ]` next to the official superadmin badge).
+- **Diagnosis:**
+  - `frontend/shared/js/session.js` had a broad fallback selector `document.querySelector('.nav-acts') || document.querySelector('.topbar-right')` designed for client navigation.
+  - When loaded inside `frontend/pages/superadmin/dashboard.html` and `frontend/pages/admin/propertylist.html`, `session.js` matched `.sa-topbar-right.topbar-right` and injected the generic client profile dropdown (`#profileMenu`, "Home", "Submit an Inquiry", "Inquiry History", "Sign Out") next to the dedicated Superadmin profile badge (`#saProfileDropdownBtn`).
+  - Because `session.css` is not loaded in the superadmin portal, the injected client dropdown appeared as an unstyled raw button and disrupted the topbar layout.
+- **Resolution:**
+  - Added an admin and superadmin route guard in `session.js` (`renderNavProfile` and `initMobileNav`) checking `path.includes('/pages/admin/') || path.includes('/pages/superadmin/')` to immediately abort client DOM injection.
+  - Narrowed target element selection in `session.js` specifically to client navigation containers (`.navbar .nav-acts, .inquiry-topbar .nav-acts, .history-topbar .nav-acts, .nav-acts`).
+  - Removed unnecessary `<script src="../../shared/js/session.js"></script>` tags from `pages/superadmin/dashboard.html` and `pages/admin/propertylist.html`.
+  - Superadmin console now renders exclusively its dedicated `SA` avatar circle, `ROOT SUPERADMIN` role badge, and `#saDropdownMenu`.
 
 ---
 

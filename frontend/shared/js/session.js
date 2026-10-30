@@ -173,7 +173,11 @@
     }
 
     function renderNavProfile(user) {
-        var acts = document.querySelector('.nav-acts') || document.querySelector('.topbar-right');
+        var path = location.pathname.toLowerCase().replace(/\\/g, '/');
+        var inAdmin = path.includes('/pages/admin/') || path.includes('/pages/superadmin/');
+        if (inAdmin) return;
+
+        var acts = document.querySelector('.navbar .nav-acts, .inquiry-topbar .nav-acts, .history-topbar .nav-acts, .nav-acts');
         if (acts) {
             ['loginBtn', 'signupBtn'].forEach(function (id) {
                 var b = document.getElementById(id);
@@ -219,6 +223,10 @@
     // UI: Mobile Navigation Drawer
     // ------------------------------------------------------------------
     function initMobileNav(user) {
+        var path = location.pathname.toLowerCase().replace(/\\/g, '/');
+        var inAdmin = path.includes('/pages/admin/') || path.includes('/pages/superadmin/');
+        if (inAdmin) return;
+
         var navbar = document.querySelector('.navbar');
         var nav = document.getElementById('mainNav');
         if (!navbar || !nav) return;

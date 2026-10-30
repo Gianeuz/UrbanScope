@@ -220,6 +220,9 @@ path when rendering from a page.
       - **Delete Inquiry (`#deleteModal`)**: Confirms permanent deletion via `DELETE /api/inquiries/{id}`.
     - **Backend Protection**:
       - Endpoints `GET /api/inquiries/my`, `PUT /api/inquiries/{id}`, `DELETE /api/inquiries/{id}`, and `POST /api/inquiries/{id}/cancel` enforce strict client email ownership validation (or administrative privileges), preventing unauthorized cross-user modifications.
+16. **Admin & Superadmin Header Isolation (Session Chip Guard):**
+    - `frontend/shared/js/session.js` (`renderNavProfile` and `initMobileNav`) enforces an explicit admin route guard (`path.includes('/pages/admin/') || path.includes('/pages/superadmin/')`) and narrows container selectors to `.navbar .nav-acts, .inquiry-topbar .nav-acts, .history-topbar .nav-acts, .nav-acts`. This prevents the client navigation menu (`#profileMenu`, "Home", "Submit an Inquiry", "Inquiry History") from injecting duplicate, unstyled chips into administrative headers.
+    - Removed redundant `session.js` script tags from `pages/superadmin/dashboard.html` and `pages/admin/propertylist.html`, ensuring Superadmin (`#saProfileDropdownBtn`) and Admin profile dropdowns render cleanly and exclusively.
 
 ---
 
