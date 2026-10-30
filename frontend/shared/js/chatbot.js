@@ -39,6 +39,32 @@
         serviceAreas: "Las Piñas City, Cavite (Dasmariñas, Bacoor, Imus, Naic)"
     };
 
+    function getLiveAgentInfo() {
+        let p = null;
+        try {
+            p = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
+            if (!p) {
+                const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+                if (adminUser && adminUser.email === 'admin.realestate@gmail.com') {
+                    p = adminUser;
+                }
+            }
+        } catch (e) {}
+
+        const rawName = (p && (p.name || p.full_name)) || AGENT_INFO.name;
+        const cleanName = String(rawName).replace(/\s*\((?:Admin|Administrator)\)\s*$/i, '').trim() || rawName;
+        return {
+            name: cleanName,
+            role: (p && p.title) || AGENT_INFO.role,
+            agency: (p && p.brokerage) || AGENT_INFO.agency,
+            tagline: AGENT_INFO.tagline,
+            phone: (p && p.phone) || AGENT_INFO.phone,
+            email: (p && p.email) || AGENT_INFO.email,
+            office: AGENT_INFO.office,
+            serviceAreas: AGENT_INFO.serviceAreas
+        };
+    }
+
     const STATIC_PROPERTIES = [
         {
             id: 1,
@@ -546,13 +572,14 @@
         }
 
         if (text.includes('about agent') || text.includes('about us') || text.includes('about me') || text.includes('who is miriam') || text.includes('who is mariam') || text.includes('who are you')) {
+            const agent = getLiveAgentInfo();
             return `
-                <p><strong>Miriam Lobren</strong> is a dedicated Real Estate Agent affiliated with <strong>CD Miranda Realty</strong>.</p>
-                <p>Motto: <em>"Better Homes, Brighter Futures."</em></p>
+                <p><strong>${agent.name}</strong> is a dedicated ${agent.role} affiliated with <strong>${agent.agency}</strong>.</p>
+                <p>Motto: <em>"${agent.tagline}"</em></p>
                 <ul>
-                    <li><strong>Service Areas:</strong> Las Piñas City, Cavite (Dasmariñas, Bacoor, Imus, Naic)</li>
+                    <li><strong>Service Areas:</strong> ${agent.serviceAreas}</li>
                     <li><strong>Specialties:</strong> Subdivision homes, modern townhouses &amp; luxury villas</li>
-                    <li><strong>Office:</strong> Las Piñas City &amp; Cavite, Philippines</li>
+                    <li><strong>Office:</strong> ${agent.office}</li>
                 </ul>
                 <div class="chatbot-btn-group">
                     <a href="${URLS.home}#about" class="chatbot-action-chip">📖 Read Agent Bio</a>
@@ -562,12 +589,14 @@
         }
 
         if (text.includes('contact') || text.includes('phone') || text.includes('email') || text.includes('call') || text.includes('office address')) {
+            const agent = getLiveAgentInfo();
+            const cleanDigits = (agent.phone || '').replace(/[^\d+]/g, '');
             return `
-                <p>Here are the direct contact details for <strong>Miriam Lobren Realty</strong>:</p>
+                <p>Here are the direct contact details for <strong>${agent.name} (${agent.agency})</strong>:</p>
                 <ul>
-                    <li>📞 <strong>Phone:</strong> <a href="tel:+639000000000" style="color:var(--chat-green)">+63 900 000 0000</a></li>
-                    <li>✉️ <strong>Email:</strong> <a href="mailto:admin.realestate@gmail.com" style="color:var(--chat-green)">admin.realestate@gmail.com</a></li>
-                    <li>📍 <strong>Location:</strong> Las Piñas City &amp; Cavite, Philippines</li>
+                    <li>📞 <strong>Phone:</strong> <a href="tel:${cleanDigits}" style="color:var(--chat-green)">${agent.phone}</a></li>
+                    <li>✉️ <strong>Email:</strong> <a href="mailto:${agent.email}" style="color:var(--chat-green)">${agent.email}</a></li>
+                    <li>📍 <strong>Location:</strong> ${agent.office}</li>
                 </ul>
                 <div class="chatbot-btn-group">
                     <a href="${URLS.inquiry}" class="chatbot-action-chip gold">📝 Send Direct Message</a>

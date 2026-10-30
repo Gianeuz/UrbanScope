@@ -248,6 +248,22 @@ path when rendering from a page.
     - Adds `users.title`, `users.brokerage`, `users.bio` and allows `'superadmin'` in `users_role_check`. Idempotent like 0001.
     - Until it is applied to the live project (`supabase db push` or the Supabase GitHub integration), `apiUpdateAdminProfile` intentionally does **not** send `title`/`brokerage`/`bio` to Supabase (PostgREST would reject unknown columns); those fields persist in SQLite + `localStorage` only.
     - Every migration must be committed to `main` — see DATABASE.md §10.1 team rule.
+21. **Dynamic Homepage & Multi-Page Contact Sync with Admin Settings:**
+    - Profile information saved on `/pages/admin/profile.html` (Full Name, Title, Email, Phone, License, Brokerage, Bio, Avatar) now automatically and dynamically propagates to the public homepage (`frontend/index.html`), Chatbot Mira (`frontend/shared/js/chatbot.js`), and footers across all site pages.
+    - **Homepage Elements Updated (`frontend/index.js` & `index.html`)**:
+      - Topbar Nav Brand: `#navAgentName` (clean name without `(Admin)` suffix), `#navAgentTitle` (uppercase role/title).
+      - About Me Section: `#aboutAgentName`, `#aboutAgentBrokerage`, `#aboutAgentBioText` (dynamic bio statement), and `#aboutAgentPhoto` (dynamic avatar URL).
+      - FAQs Section: `#faqAgentName`, `#faqAgentPhone` (dynamic site tripping contact number), and `#faqContactBtnText` ('Speak with {Name}').
+      - CTA Banner: `#ctaAgentName` and `#ctaAgentBrokerage`.
+      - Footer: `#footerAgentName`, `#footerAgentBio`, `#footerAgentPhone` (dynamic `tel:` link and formatted number), and `#footerAgentEmail` (dynamic `mailto:` link and address).
+    - **Multi-Page Global Footer Sync (`frontend/shared/js/session.js`)**:
+      - `syncGlobalFooterContact()` dynamically updates all `.footer-contact a[href^="tel:"]` and `.footer-contact a[href^="mailto:"]` across property details, showcases (`Liora.html`, `Airmen.html`), and legal pages (`terms.html`, `privacy.html`), ensuring contact numbers and emails always match admin settings.
+    - **Chatbot Mira Live Agent Info (`frontend/shared/js/chatbot.js`)**:
+      - `getLiveAgentInfo()` supplies live agent name, role, brokerage, phone, email, and service areas to Chatbot Mira when answering contact inquiries and agent bio questions.
+    - **Public API & Zero-Latency Caching**:
+      - Public endpoint `GET /api/agent/profile` in `backend/app.py` serves lead agent credentials without requiring authorization tokens.
+      - `apiGetLeadAgentProfile()` in `supabase.js` and `api.js` queries `urbanscope_admin_profile` first for instant 0ms rendering, followed by background synchronization with FastAPI and Supabase Cloud.
+      - Real-time multi-tab synchronization via `window.addEventListener('storage', ...)` updates open homepage and client tabs immediately when changes are saved in the admin profile settings.
 
 ---
 

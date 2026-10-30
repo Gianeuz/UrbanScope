@@ -928,6 +928,96 @@
         }
     }
 
+    async function apiGetLeadAgentProfile() {
+        let cached = null;
+        try {
+            cached = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
+            if (!cached) {
+                const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+                if (adminUser && adminUser.email === 'admin.realestate@gmail.com') {
+                    cached = adminUser;
+                }
+            }
+        } catch (e) {}
+
+        // 1. Query backend if on local dev host
+        if (isLocalDevHost()) {
+            const localBase = (typeof location !== 'undefined' && location.origin && location.port === '8000') ? `${location.origin}/api` : 'http://127.0.0.1:8000/api';
+            try {
+                const res = await fetch(`${localBase}/agent/profile`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.email) {
+                        const merged = {
+                            name: data.full_name || data.name || 'Miriam Lobren',
+                            full_name: data.full_name || data.name || 'Miriam Lobren',
+                            email: data.email || 'admin.realestate@gmail.com',
+                            phone: data.phone || '+63 900 000 0000',
+                            license: data.license_number || data.license || 'PRC REB #0031892',
+                            license_number: data.license_number || data.license || 'PRC REB #0031892',
+                            title: data.title || 'Licensed Real Estate Broker / Agent',
+                            brokerage: data.brokerage || 'CD Miranda Realty',
+                            bio: data.bio || 'Serving Las Piñas, Cavite, and surrounding prime locations with high-integrity real estate solutions.',
+                            avatar_url: data.avatar_url || 'assets/images/agent.jpg'
+                        };
+                        try {
+                            localStorage.setItem('urbanscope_admin_profile', JSON.stringify(merged));
+                        } catch (e) {}
+                        return merged;
+                    }
+                }
+            } catch (err) {
+                console.warn('Backend get agent profile notice:', err);
+            }
+        }
+
+        // 2. Query Supabase Cloud
+        try {
+            const res = await fetch(`${REST_BASE}/users?email=ilike.admin.realestate%40gmail.com&select=*&limit=1`, {
+                headers: getHeaders()
+            });
+            if (res.ok) {
+                const users = await res.json().catch(() => []);
+                if (Array.isArray(users) && users.length > 0) {
+                    const u = users[0];
+                    const merged = {
+                        name: u.full_name || (cached && cached.name) || 'Miriam Lobren',
+                        full_name: u.full_name || (cached && cached.full_name) || 'Miriam Lobren',
+                        email: u.email || 'admin.realestate@gmail.com',
+                        phone: u.phone || (cached && cached.phone) || '+63 900 000 0000',
+                        license: u.license_number || (cached && cached.license) || 'PRC REB #0031892',
+                        license_number: u.license_number || (cached && cached.license_number) || 'PRC REB #0031892',
+                        title: u.title || (cached && cached.title) || 'Licensed Real Estate Broker / Agent',
+                        brokerage: u.brokerage || (cached && cached.brokerage) || 'CD Miranda Realty',
+                        bio: u.bio || (cached && cached.bio) || 'Serving Las Piñas, Cavite, and surrounding prime locations with high-integrity real estate solutions.',
+                        avatar_url: u.avatar_url || (cached && cached.avatar_url) || 'assets/images/agent.jpg'
+                    };
+                    try {
+                        localStorage.setItem('urbanscope_admin_profile', JSON.stringify(merged));
+                    } catch (e) {}
+                    return merged;
+                }
+            }
+        } catch (sbErr) {
+            console.warn('Supabase get agent profile notice:', sbErr);
+        }
+
+        if (cached) return cached;
+
+        return {
+            name: 'Miriam Lobren',
+            full_name: 'Miriam Lobren',
+            email: 'admin.realestate@gmail.com',
+            phone: '+63 900 000 0000',
+            license: 'PRC REB #0031892',
+            license_number: 'PRC REB #0031892',
+            title: 'Licensed Real Estate Broker / Agent',
+            brokerage: 'CD Miranda Realty',
+            bio: 'Serving Las Piñas, Cavite, and surrounding prime locations with high-integrity real estate solutions.',
+            avatar_url: 'assets/images/agent.jpg'
+        };
+    }
+
     async function verifyPBKDF2(plainPassword, storedHash) {
         if (!plainPassword || !storedHash) return false;
         if (plainPassword === storedHash) return true;
@@ -1772,6 +1862,7 @@
     window.apiCancelMyInquiry = apiCancelMyInquiry;
     window.apiGetUsers = apiGetUsers;
     window.apiUpdateAdminProfile = apiUpdateAdminProfile;
+    window.apiGetLeadAgentProfile = apiGetLeadAgentProfile;
     window.apiUpdateAdminPassword = apiUpdateAdminPassword;
     window.apiSignUp = apiSignUp;
     window.apiSignIn = apiSignIn;

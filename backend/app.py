@@ -847,6 +847,40 @@ def update_user_password(
     return {"success": True, "message": "Password updated successfully."}
 
 
+@app.get("/api/agent/profile", tags=["Agent"])
+@app.get("/api/admin/profile/public", tags=["Agent"])
+def get_public_agent_profile():
+    """Returns the primary lead agent/admin's public profile details for public display on the homepage, chatbot, and footer."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, email, full_name, phone, license_number, title, brokerage, bio, avatar_url, role
+        FROM users
+        WHERE LOWER(email) = 'admin.realestate@gmail.com' OR role = 'admin'
+        ORDER BY CASE WHEN LOWER(email) = 'admin.realestate@gmail.com' THEN 0 ELSE 1 END, id ASC
+        LIMIT 1
+    """)
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return {
+            "name": "Miriam Lobren",
+            "full_name": "Miriam Lobren",
+            "email": "admin.realestate@gmail.com",
+            "phone": "+63 900 000 0000",
+            "license": "PRC REB #0031892",
+            "license_number": "PRC REB #0031892",
+            "title": "Licensed Real Estate Broker / Agent",
+            "brokerage": "CD Miranda Realty",
+            "bio": "Serving Las Piñas, Cavite, and surrounding prime locations with high-integrity real estate solutions.",
+            "avatar_url": "assets/images/agent.jpg"
+        }
+    data = dict(row)
+    data["name"] = data.get("full_name") or "Miriam Lobren"
+    data["license"] = data.get("license_number") or ""
+    return data
+
+
 # ==========================================================
 # PROPERTIES ENDPOINTS
 # ==========================================================

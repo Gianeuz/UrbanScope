@@ -351,10 +351,45 @@
         }
 
         initMobileNav(currentUser);
+        syncGlobalFooterContact();
 
         root.classList.remove('auth-pending', 'auth-checking');
         document.dispatchEvent(new CustomEvent('urbanscope:user', { detail: currentUser }));
     }
+
+    function syncGlobalFooterContact() {
+        var p = null;
+        try {
+            p = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
+            if (!p) {
+                var adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+                if (adminUser && adminUser.email === 'admin.realestate@gmail.com') {
+                    p = adminUser;
+                }
+            }
+        } catch (e) {}
+        if (!p) return;
+
+        var phone = p.phone || '+63 900 000 0000';
+        var email = p.email || 'admin.realestate@gmail.com';
+        var cleanDigits = phone.replace(/[^\d+]/g, '');
+
+        document.querySelectorAll('.footer-contact a[href^="tel:"], footer a[href^="tel:"], #footerAgentPhone').forEach(function(el) {
+            el.textContent = phone;
+            el.setAttribute('href', 'tel:' + cleanDigits);
+        });
+
+        document.querySelectorAll('.footer-contact a[href^="mailto:"], footer a[href^="mailto:"], #footerAgentEmail').forEach(function(el) {
+            el.textContent = email;
+            el.setAttribute('href', 'mailto:' + email);
+        });
+    }
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'urbanscope_admin_profile' || e.key === 'adminUser') {
+            syncGlobalFooterContact();
+        }
+    });
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();

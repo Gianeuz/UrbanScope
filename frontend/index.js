@@ -459,6 +459,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 9. Consultation Intent Modal Controller
     initConsultationIntentModal();
+
+    // 10. Dynamic Agent Profile & Contact Information (synced with admin settings)
+    initDynamicAgentDetails();
 });
 
 function initConsultationIntentModal() {
@@ -505,3 +508,111 @@ function initConsultationIntentModal() {
         }
     });
 }
+
+function renderHomepageAgentDetails(profile) {
+    if (!profile) return;
+
+    const rawName = profile.name || profile.full_name || 'Miriam Lobren';
+    const cleanName = String(rawName).replace(/\s*\((?:Admin|Administrator)\)\s*$/i, '').trim() || rawName;
+    const title = profile.title || 'Licensed Real Estate Broker / Agent';
+    const brokerage = profile.brokerage || 'CD Miranda Realty';
+    const phone = profile.phone || '+63 900 000 0000';
+    const email = profile.email || 'admin.realestate@gmail.com';
+    const bio = profile.bio || 'Serving Las Piñas, Cavite, and surrounding prime locations with high-integrity real estate solutions.';
+    const avatarUrl = profile.avatar_url || 'assets/images/agent.jpg';
+    const cleanDigits = phone.replace(/[^\d+]/g, '');
+
+    // 1. Navigation Brand
+    const navName = document.getElementById('navAgentName');
+    if (navName) navName.textContent = cleanName;
+    const navTitle = document.getElementById('navAgentTitle');
+    if (navTitle) navTitle.textContent = title.toUpperCase();
+
+    // 2. About Me Section
+    const aboutName = document.getElementById('aboutAgentName');
+    if (aboutName) aboutName.textContent = cleanName;
+    const aboutBrokerage = document.getElementById('aboutAgentBrokerage');
+    if (aboutBrokerage) aboutBrokerage.textContent = brokerage;
+    const aboutBio = document.getElementById('aboutAgentBioText');
+    if (aboutBio && bio) aboutBio.textContent = bio;
+    const aboutPhoto = document.getElementById('aboutAgentPhoto');
+    if (aboutPhoto && avatarUrl) {
+        aboutPhoto.src = avatarUrl;
+        aboutPhoto.alt = `${cleanName} - ${title}`;
+    }
+
+    // 3. FAQs Section
+    const faqName = document.getElementById('faqAgentName');
+    if (faqName) faqName.textContent = cleanName;
+    const faqPhone = document.getElementById('faqAgentPhone');
+    if (faqPhone) faqPhone.textContent = phone;
+    const faqBtn = document.getElementById('faqContactBtnText');
+    if (faqBtn) faqBtn.textContent = `Speak with ${cleanName}`;
+
+    // 4. CTA Banner
+    const ctaName = document.getElementById('ctaAgentName');
+    if (ctaName) ctaName.textContent = cleanName;
+    const ctaBrokerage = document.getElementById('ctaAgentBrokerage');
+    if (ctaBrokerage) ctaBrokerage.textContent = brokerage;
+
+    // 5. Footer Details
+    const footerName = document.getElementById('footerAgentName');
+    if (footerName) footerName.textContent = cleanName;
+    const footerBio = document.getElementById('footerAgentBio');
+    if (footerBio && bio) {
+        footerBio.textContent = `Trusted real estate agent affiliated with ${brokerage}. ${bio}`;
+    }
+    const footerPhone = document.getElementById('footerAgentPhone');
+    if (footerPhone) {
+        footerPhone.textContent = phone;
+        footerPhone.href = `tel:${cleanDigits}`;
+    }
+    const footerEmail = document.getElementById('footerAgentEmail');
+    if (footerEmail) {
+        footerEmail.textContent = email;
+        footerEmail.href = `mailto:${email}`;
+    }
+}
+
+async function initDynamicAgentDetails() {
+    // Immediate render from localStorage (0ms latency, eliminates any flash of old details)
+    let localProfile = null;
+    try {
+        localProfile = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
+        if (!localProfile) {
+            const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+            if (adminUser && adminUser.email === 'admin.realestate@gmail.com') {
+                localProfile = adminUser;
+            }
+        }
+    } catch (e) {}
+
+    if (localProfile) {
+        renderHomepageAgentDetails(localProfile);
+    }
+
+    // Background fetch from API Gateway (FastAPI local backend + Supabase Cloud)
+    if (typeof window.apiGetLeadAgentProfile === 'function') {
+        try {
+            const remoteProfile = await window.apiGetLeadAgentProfile();
+            if (remoteProfile) {
+                renderHomepageAgentDetails(remoteProfile);
+            }
+        } catch (err) {
+            console.warn('Background agent profile fetch note:', err);
+        }
+    }
+
+    // Real-time synchronization across browser tabs (when admin updates profile in admin settings)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'urbanscope_admin_profile' || e.key === 'adminUser') {
+            try {
+                const updated = JSON.parse(e.newValue || '{}');
+                if (updated && (updated.name || updated.email || updated.phone)) {
+                    renderHomepageAgentDetails(updated);
+                }
+            } catch (err) {}
+        }
+    });
+}
+
