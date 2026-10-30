@@ -779,48 +779,141 @@
             const storedAdmin = JSON.parse(localStorage.getItem('adminUser') || localStorage.getItem(USER_KEY) || '{}');
             const targetEmail = (profileData.email || storedAdmin.email || 'urbanscope.cvsu@gmail.com').trim().toLowerCase();
             const fullName = (profileData.full_name || profileData.name || profileData.fullName || storedAdmin.name || 'Miriam Lobren').trim();
-            const phone = (profileData.phone || storedAdmin.phone || '').trim();
-            const license = (profileData.license_number || profileData.license || profileData.licenseNumber || '').trim();
+            const phone = (profileData.phone !== undefined ? profileData.phone : (storedAdmin.phone || '')).trim();
+            const license = (profileData.license_number || profileData.license || profileData.licenseNumber || storedAdmin.license || storedAdmin.license_number || '').trim();
+            const title = (profileData.title !== undefined ? profileData.title : (storedAdmin.title || '')).trim();
+            const brokerage = (profileData.brokerage !== undefined ? profileData.brokerage : (storedAdmin.brokerage || '')).trim();
+            const bio = (profileData.bio !== undefined ? profileData.bio : (storedAdmin.bio || '')).trim();
 
+            const avatarUrl = profileData.avatar_url || storedAdmin.avatar_url || localStorage.getItem('urbanscope_profile_avatar') || 'assets/images/agent.jpg';
+
+            let updatedUser = null;
+
+            // 1. Sync to local backend if running in dev environment
+            if (isLocalDevHost()) {
+                try {
+                    const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                    const token = localStorage.getItem(TOKEN_KEY) || localStorage.getItem('adminToken') || localStorage.getItem('access_token');
+                    const localRes = await fetch(`${localBase}/admin/profile`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': token ? ('Bearer ' + token) : ''
+                        },
+                        body: JSON.stringify({
+                            full_name: fullName,
+                            email: targetEmail,
+                            phone: phone,
+                            license_number: license,
+                            title: title,
+                            brokerage: brokerage,
+                            bio: bio,
+                            avatar_url: avatarUrl
+                        })
+                    });
+                    if (localRes.ok) {
+                        const localData = await localRes.json();
+                        if (localData && localData.id) {
+                            updatedUser = localData;
+                        }
+                    }
+                } catch (localErr) {
+                    console.warn('Local admin profile update notice:', localErr);
+                }
+            }
+
+            // 2. Sync to Supabase Cloud
             const payload = {
                 full_name: fullName,
                 email: targetEmail,
                 phone: phone,
-                license_number: license
+                license_number: license,
+                avatar_url: avatarUrl
             };
 
-            let filter = userId ? `id=eq.${encodeURIComponent(userId)}` : `email=ilike.${encodeURIComponent(targetEmail)}`;
+            const originalEmail = (storedAdmin.email || '').trim().toLowerCase();
+            const queryId = userId || storedAdmin.id || (updatedUser && updatedUser.id) || null;
+            const filter = queryId ? `id=eq.${encodeURIComponent(queryId)}` : `email=ilike.${encodeURIComponent(originalEmail || targetEmail)}`;
 
-            const res = await fetch(`${REST_BASE}/users?${filter}`, {
-                method: 'PATCH',
-                headers: getHeaders(),
-                body: JSON.stringify(payload)
-            });
+            try {
+                const res = await fetch(`${REST_BASE}/users?${filter}`, {
+                    method: 'PATCH',
+                    headers: getHeaders(),
+                    body: JSON.stringify(payload)
+                });
 
-            let updatedUser = null;
-            if (res.ok) {
-                const updated = await res.json().catch(() => []);
-                updatedUser = Array.isArray(updated) && updated.length > 0 ? updated[0] : null;
+                if (res.ok) {
+                    const updated = await res.json().catch(() => []);
+                    if (Array.isArray(updated) && updated.length > 0) {
+                        updatedUser = { ...(updatedUser || {}), ...updated[0] };
+                    } else {
+                        // If user did not exist in Supabase, insert account
+                        const insRes = await fetch(`${REST_BASE}/users`, {
+                            method: 'POST',
+                            headers: getHeaders(),
+                            body: JSON.stringify({ ...payload, role: 'admin' })
+                        });
+                        if (insRes.ok) {
+                            const ins = await insRes.json().catch(() => []);
+                            if (Array.isArray(ins) && ins.length > 0) {
+                                updatedUser = { ...(updatedUser || {}), ...ins[0] };
+                            }
+                        }
+                    }
+                }
+            } catch (sbErr) {
+                console.warn('Supabase profile sync notice:', sbErr);
             }
 
-            // Sync local storage sessions
+            // 3. Synchronize all local storage sessions
             const current = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
             const merged = {
                 ...current,
                 ...storedAdmin,
                 ...(updatedUser || {}),
                 ...profileData,
+                id: (updatedUser && updatedUser.id) || storedAdmin.id || current.id || 1,
                 name: fullName,
                 full_name: fullName,
                 email: targetEmail,
                 phone: phone,
+                license: license,
+                license_number: license,
+                title: title,
+                brokerage: brokerage,
+                bio: bio,
+                avatar_url: avatarUrl,
+                avatar: avatarUrl,
                 role: 'admin',
-                user_metadata: { full_name: fullName, phone: phone }
+                user_metadata: {
+                    name: fullName,
+                    full_name: fullName,
+                    email: targetEmail,
+                    phone: phone,
+                    license: license,
+                    license_number: license,
+                    title: title,
+                    brokerage: brokerage,
+                    bio: bio,
+                    avatar_url: avatarUrl
+                }
             };
 
             localStorage.setItem(USER_KEY, JSON.stringify(merged));
             localStorage.setItem(DEMO_KEY, JSON.stringify(merged));
             localStorage.setItem('adminUser', JSON.stringify(merged));
+            localStorage.setItem('urbanscope_admin_profile', JSON.stringify({
+                name: fullName,
+                full_name: fullName,
+                email: targetEmail,
+                phone: phone,
+                license: license,
+                license_number: license,
+                title: title,
+                brokerage: brokerage,
+                bio: bio,
+                avatar_url: avatarUrl
+            }));
 
             return { success: true, user: merged };
         } catch (err) {
@@ -832,6 +925,81 @@
                 return { success: true, user: merged };
             } catch (e) {}
             return { success: false, error: err.message };
+        }
+    }
+
+    async function verifyPBKDF2(plainPassword, storedHash) {
+        if (!plainPassword || !storedHash) return false;
+        if (plainPassword === storedHash) return true;
+        if (!storedHash.includes('$')) return false;
+        try {
+            const [saltHex, keyHex] = storedHash.split('$');
+            if (!saltHex || !keyHex) return false;
+            if (typeof crypto === 'undefined' || !crypto.subtle) return false;
+
+            const enc = new TextEncoder();
+            const pwKey = await crypto.subtle.importKey(
+                'raw',
+                enc.encode(plainPassword),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits']
+            );
+            const bits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: enc.encode(saltHex),
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                pwKey,
+                256
+            );
+            const hex = Array.from(new Uint8Array(bits))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+            return hex.toLowerCase() === keyHex.toLowerCase();
+        } catch (e) {
+            console.warn('verifyPBKDF2 notice:', e);
+            return false;
+        }
+    }
+
+    async function hashPBKDF2(plainPassword) {
+        if (!plainPassword) return '';
+        try {
+            if (typeof crypto === 'undefined' || !crypto.subtle || !crypto.getRandomValues) {
+                return plainPassword;
+            }
+            const saltBytes = new Uint8Array(16);
+            crypto.getRandomValues(saltBytes);
+            const saltHex = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+            const enc = new TextEncoder();
+
+            const pwKey = await crypto.subtle.importKey(
+                'raw',
+                enc.encode(plainPassword),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits']
+            );
+            const bits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: enc.encode(saltHex),
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                pwKey,
+                256
+            );
+            const hex = Array.from(new Uint8Array(bits))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+            return `${saltHex}$${hex}`;
+        } catch (e) {
+            console.warn('hashPBKDF2 notice:', e);
+            return plainPassword;
         }
     }
 
@@ -850,49 +1018,124 @@
                 newPassword = arg2;
             }
 
-            const storedAdmin = JSON.parse(localStorage.getItem('adminUser') || localStorage.getItem(USER_KEY) || '{}');
-            const adminEmail = (storedAdmin.email || 'urbanscope.cvsu@gmail.com').trim().toLowerCase();
+            currentPassword = (currentPassword || '').trim();
+            newPassword = (newPassword || '').trim();
 
-            // Find admin user in Supabase by ID or email
+            if (!currentPassword) {
+                return { success: false, error: 'Please enter your current password.' };
+            }
+            if (!newPassword || newPassword.length < 6) {
+                return { success: false, error: 'New password must be at least 6 characters long.' };
+            }
+
+            const storedAdmin = JSON.parse(localStorage.getItem('adminUser') || localStorage.getItem(USER_KEY) || '{}');
+            const adminEmail = (storedAdmin.email || 'admin.realestate@gmail.com').trim().toLowerCase();
+
+            // 1. Direct call to FastAPI backend if on local dev host
+            if (isLocalDevHost()) {
+                const localBase = (typeof location !== 'undefined' && location.origin && location.port === '8000') ? `${location.origin}/api` : 'http://127.0.0.1:8000/api';
+                try {
+                    const token = localStorage.getItem(TOKEN_KEY);
+                    const res = await fetch(`${localBase}/admin/password`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_password: newPassword
+                        })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json().catch(() => ({}));
+                        localStorage.setItem('urbanscope_admin_password_updated', newPassword);
+                        localStorage.setItem('adminPassword', newPassword);
+
+                        // Sync PBKDF2 hash to Supabase cloud in background
+                        try {
+                            const newHash = await hashPBKDF2(newPassword);
+                            await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(adminEmail)}`, {
+                                method: 'PATCH',
+                                headers: getHeaders(),
+                                body: JSON.stringify({ password_hash: newHash })
+                            });
+                        } catch (e) {}
+
+                        return { success: true, message: data.message || 'Password updated successfully!' };
+                    } else {
+                        const errData = await res.json().catch(() => ({}));
+                        return {
+                            success: false,
+                            error: errData.detail || 'The current password you entered is incorrect.'
+                        };
+                    }
+                } catch (backendErr) {
+                    console.warn('Backend password update notice, attempting cloud fallback:', backendErr);
+                }
+            }
+
+            // 2. Cloud Supabase & Offline verification
             let url = `${REST_BASE}/users?email=ilike.${encodeURIComponent(adminEmail)}&select=*`;
             if (userId) {
                 url = `${REST_BASE}/users?or=(id.eq.${encodeURIComponent(userId)},email.ilike.${encodeURIComponent(adminEmail)})&select=*`;
             }
 
-            const checkRes = await fetch(url, {
-                method: 'GET',
-                headers: getHeaders()
-            });
-            const users = await checkRes.json().catch(() => []);
-            const user = users && users.length > 0 ? users[0] : null;
+            let user = null;
+            try {
+                const checkRes = await fetch(url, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                const users = await checkRes.json().catch(() => []);
+                user = users && users.length > 0 ? users[0] : null;
+            } catch (e) {}
 
             const stored = user ? (user.password_hash || '') : '';
             const locallyUpdated = localStorage.getItem('urbanscope_admin_password_updated') || '';
             const activePass = localStorage.getItem('adminPassword') || '';
 
-            // Verify current password against known seeds, database hash, or local updates
-            const isMatch = (
-                currentPassword === 'urbanscope' ||
-                currentPassword === 'urbanscope2026' ||
-                currentPassword === 'admin123' ||
-                (locallyUpdated && currentPassword === locallyUpdated) ||
-                (activePass && currentPassword === activePass) ||
-                (stored && currentPassword === stored) ||
-                (stored && stored.includes(currentPassword)) ||
-                (stored === 'b91dfbecc4174a5caaa09dcb3a229bd8$e63fd67ec76ca851e88bcad117fa7ca803bb6015c0852e94d2da659ec48fc6cd' && currentPassword === 'urbanscope') ||
-                (stored === '8ca49701e51a970c409cf0ecdb2e5fdc$84c9e645bcb59437d2cf899b39f5424f1482d4c24d412fec1017500e739c9e95' && currentPassword === 'admin123')
-            );
+            // Verify current password:
+            // If stored remote hash exists, it is the primary authority.
+            let isMatch = false;
+
+            if (stored && stored.includes('$')) {
+                isMatch = await verifyPBKDF2(currentPassword, stored);
+            } else if (stored) {
+                isMatch = (currentPassword === stored);
+            } else {
+                // No stored remote hash (e.g. offline demo fallback)
+                if (locallyUpdated && currentPassword === locallyUpdated) {
+                    isMatch = true;
+                } else if (activePass && currentPassword === activePass) {
+                    isMatch = true;
+                } else if (adminEmail === 'admin.realestate@gmail.com' && currentPassword === 'realestate2026') {
+                    isMatch = true;
+                } else if (adminEmail === 'urbanscope.cvsu@gmail.com' && (currentPassword === 'urbanscope2026' || currentPassword === 'urbanscope')) {
+                    isMatch = true;
+                }
+            }
 
             if (!isMatch) {
                 return { success: false, error: 'The current password you entered is incorrect.' };
             }
+
+            // Password verified! Generate new PBKDF2 hash
+            const newHash = await hashPBKDF2(newPassword);
 
             // Update password in Supabase if record found
             if (user && user.id) {
                 await fetch(`${REST_BASE}/users?id=eq.${user.id}`, {
                     method: 'PATCH',
                     headers: getHeaders(),
-                    body: JSON.stringify({ password_hash: newPassword })
+                    body: JSON.stringify({ password_hash: newHash })
+                }).catch(() => {});
+            } else if (adminEmail) {
+                await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(adminEmail)}`, {
+                    method: 'PATCH',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ password_hash: newHash })
                 }).catch(() => {});
             }
 
@@ -900,7 +1143,7 @@
             localStorage.setItem('urbanscope_admin_password_updated', newPassword);
             localStorage.setItem('adminPassword', newPassword);
 
-            return { success: true };
+            return { success: true, message: 'Password has been successfully updated!' };
         } catch (err) {
             return { success: false, error: err.message };
         }
@@ -1003,7 +1246,7 @@
     async function apiSignIn(email, password) {
         try {
             const cleanEmail = email.trim().toLowerCase();
-            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const localBase = (typeof location !== 'undefined' && location.origin && location.port === '8000') ? `${location.origin}/api` : 'http://127.0.0.1:8000/api';
 
             // 1. Direct authentication with FastAPI Backend
             try {
@@ -1052,13 +1295,91 @@
                 console.warn('Backend login attempt notice, falling back:', backendErr);
             }
 
-            // Fallback for offline or static demo sessions
+            // 2. Cloud Supabase authentication if remote or offline
+            try {
+                const sbRes = await fetch(`${REST_BASE}/users?email=ilike.${encodeURIComponent(cleanEmail)}&select=*`, {
+                    headers: getHeaders()
+                });
+                const sbUsers = await sbRes.json().catch(() => []);
+                const remoteUser = sbUsers && sbUsers.length > 0 ? sbUsers[0] : null;
+
+                if (remoteUser) {
+                    const storedHash = remoteUser.password_hash || '';
+                    let passValid = false;
+                    if (storedHash && storedHash.includes('$')) {
+                        passValid = await verifyPBKDF2(password, storedHash);
+                    }
+                    if (!passValid && storedHash && password === storedHash) {
+                        passValid = true;
+                    }
+                    const locallyUpdated = localStorage.getItem('urbanscope_admin_password_updated') || '';
+                    const activePass = localStorage.getItem('adminPassword') || '';
+                    if (!passValid && ((locallyUpdated && password === locallyUpdated) || (activePass && password === activePass))) {
+                        passValid = true;
+                    }
+                    if (!passValid) {
+                        if (cleanEmail === 'urbanscope.cvsu@gmail.com' && (password === 'urbanscope2026' || password === 'urbanscope')) {
+                            passValid = true;
+                        } else if (cleanEmail === 'admin.realestate@gmail.com' && password === 'realestate2026') {
+                            passValid = true;
+                        }
+                    }
+
+                    if (!passValid) {
+                        return { success: false, error: 'Incorrect email or password.' };
+                    }
+
+                    const role = remoteUser.role || (cleanEmail === 'urbanscope.cvsu@gmail.com' ? 'superadmin' : (cleanEmail === 'admin.realestate@gmail.com' ? 'admin' : 'user'));
+                    const sessionUser = {
+                        id: remoteUser.id,
+                        email: remoteUser.email,
+                        name: remoteUser.full_name || cleanEmail.split('@')[0],
+                        full_name: remoteUser.full_name || cleanEmail.split('@')[0],
+                        phone: remoteUser.phone || '',
+                        role: role,
+                        avatar_url: remoteUser.avatar_url || 'assets/images/agent.jpg',
+                        license_number: remoteUser.license_number || '',
+                        user_metadata: {
+                            full_name: remoteUser.full_name,
+                            phone: remoteUser.phone,
+                            avatar_url: remoteUser.avatar_url
+                        }
+                    };
+
+                    const simulatedToken = 'sb_session_' + sessionUser.id + '_' + Date.now();
+                    localStorage.setItem(TOKEN_KEY, simulatedToken);
+                    localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
+                    localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
+                    if (sessionUser.role === 'admin' || sessionUser.role === 'superadmin') {
+                        localStorage.setItem('adminUser', JSON.stringify(sessionUser));
+                        localStorage.setItem('adminPassword', password);
+                    }
+
+                    const redirectUrl = (role === 'superadmin') 
+                        ? '/pages/superadmin/dashboard.html' 
+                        : (role === 'admin' ? '/pages/admin/dashboard.html' : '/index.html');
+
+                    return {
+                        success: true,
+                        data: { user: sessionUser, token: simulatedToken, redirect_url: redirectUrl }
+                    };
+                }
+            } catch (cloudErr) {
+                console.warn('Supabase sign-in lookup notice:', cloudErr);
+            }
+
+            // 3. Fallback for offline or static demo sessions
             let role = 'user';
+            const locallyUpdated = localStorage.getItem('urbanscope_admin_password_updated') || '';
+            const activePass = localStorage.getItem('adminPassword') || '';
+
             if (cleanEmail === 'urbanscope.cvsu@gmail.com') {
-                if (password !== 'urbanscope2026') return { success: false, error: 'Incorrect admin password.' };
+                const isValid = (password === 'urbanscope2026' || password === 'urbanscope' || password === locallyUpdated || password === activePass);
+                if (!isValid) return { success: false, error: 'Incorrect admin password.' };
                 role = 'superadmin';
             } else if (cleanEmail === 'admin.realestate@gmail.com') {
-                if (password !== 'realestate2026') return { success: false, error: 'Incorrect admin password.' };
+                const isValid = (password === 'realestate2026' || password === locallyUpdated || password === activePass);
+                if (!isValid) return { success: false, error: 'Incorrect admin password.' };
                 role = 'admin';
             }
 

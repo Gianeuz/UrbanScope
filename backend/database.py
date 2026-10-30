@@ -62,6 +62,10 @@ def init_db():
             role TEXT CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user',
             avatar_url TEXT DEFAULT 'assets/images/agent.jpg',
             google_id TEXT,
+            license_number TEXT DEFAULT '',
+            title TEXT DEFAULT 'Licensed Real Estate Broker / Agent',
+            brokerage TEXT DEFAULT 'CD Miranda Realty',
+            bio TEXT DEFAULT '',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
@@ -136,6 +140,14 @@ def init_db():
         cursor.execute("ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT 'assets/images/agent.jpg'")
     if "google_id" not in existing_user_cols:
         cursor.execute("ALTER TABLE users ADD COLUMN google_id TEXT")
+    if "license_number" not in existing_user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN license_number TEXT DEFAULT ''")
+    if "title" not in existing_user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN title TEXT DEFAULT 'Licensed Real Estate Broker / Agent'")
+    if "brokerage" not in existing_user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN brokerage TEXT DEFAULT 'CD Miranda Realty'")
+    if "bio" not in existing_user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN bio TEXT DEFAULT ''")
     cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id) WHERE google_id IS NOT NULL")
 
     # 3. Inquiries Table

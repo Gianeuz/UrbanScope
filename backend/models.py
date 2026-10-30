@@ -36,8 +36,28 @@ class UserResponse(BaseModel):
     phone: Optional[str] = ""
     role: str = "user"
     avatar_url: Optional[str] = "assets/images/agent.jpg"
+    license_number: Optional[str] = ""
+    title: Optional[str] = "Licensed Real Estate Broker / Agent"
+    brokerage: Optional[str] = "CD Miranda Realty"
+    bio: Optional[str] = ""
     google_id: Optional[str] = None
     created_at: Optional[str] = None
+
+
+class AdminProfileUpdate(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    license_number: Optional[str] = None
+    title: Optional[str] = None
+    brokerage: Optional[str] = None
+    bio: Optional[str] = None
+    avatar_url: Optional[str] = None
+
+
+class PasswordChangeRequest(BaseModel):
+    current_password: str = Field(..., min_length=1, description="Current account password")
+    new_password: str = Field(..., min_length=6, description="New password (minimum 6 characters)")
 
 
 class AuthResponse(BaseModel):

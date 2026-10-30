@@ -45,7 +45,9 @@ from backend.models import (
     InquiryUpdate,
     UserRoleUpdate,
     SuperadminCreateUser,
-    SuperadminUpdateUser
+    SuperadminUpdateUser,
+    AdminProfileUpdate,
+    PasswordChangeRequest
 )
 
 
@@ -734,6 +736,115 @@ def get_current_user_profile(user: Optional[dict] = Depends(get_current_user_fro
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     return user
+
+
+@app.put("/api/admin/profile", response_model=UserResponse, tags=["Admin"])
+@app.put("/api/auth/me", response_model=UserResponse, tags=["Auth"])
+def update_current_user_profile(
+    payload: AdminProfileUpdate,
+    user: Optional[dict] = Depends(get_current_user_from_request)
+):
+    """Updates profile details (phone, full name, email, license, title, brokerage, bio, avatar) for the active user/admin."""
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+
+    user_id = user["id"]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    updates = []
+    params = []
+
+    if payload.full_name is not None and payload.full_name.strip():
+        updates.append("full_name = ?")
+        params.append(payload.full_name.strip())
+
+    if payload.phone is not None:
+        updates.append("phone = ?")
+        params.append(payload.phone.strip())
+
+    if payload.email is not None and payload.email.strip():
+        clean_email = payload.email.strip().lower()
+        if clean_email != user.get("email", "").lower():
+            cursor.execute("SELECT id FROM users WHERE LOWER(email) = ? AND id != ?", (clean_email, user_id))
+            if cursor.fetchone():
+                conn.close()
+                raise HTTPException(status_code=400, detail="Email is already in use by another account.")
+            updates.append("email = ?")
+            params.append(clean_email)
+
+    if payload.avatar_url is not None:
+        updates.append("avatar_url = ?")
+        params.append(payload.avatar_url.strip())
+
+    if payload.license_number is not None:
+        updates.append("license_number = ?")
+        params.append(payload.license_number.strip())
+
+    if payload.title is not None:
+        updates.append("title = ?")
+        params.append(payload.title.strip())
+
+    if payload.brokerage is not None:
+        updates.append("brokerage = ?")
+        params.append(payload.brokerage.strip())
+
+    if payload.bio is not None:
+        updates.append("bio = ?")
+        params.append(payload.bio.strip())
+
+    if updates:
+        params.append(user_id)
+        cursor.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
+        conn.commit()
+
+    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    updated_row = cursor.fetchone()
+    conn.close()
+
+    if not updated_row:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    return dict(updated_row)
+
+
+@app.put("/api/admin/password", tags=["Admin"])
+@app.put("/api/auth/password", tags=["Auth"])
+def update_user_password(
+    payload: PasswordChangeRequest,
+    user: Optional[dict] = Depends(get_current_user_from_request)
+):
+    """Changes password for the currently authenticated user/admin after verifying current password."""
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated. Please log in.")
+
+    user_id = user["id"]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT password_hash FROM users WHERE id = ?", (user_id,))
+    row = cursor.fetchone()
+    if not row or not verify_password(payload.current_password, row["password_hash"]):
+        conn.close()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The current password you entered is incorrect."
+        )
+
+    clean_new_password = payload.new_password.strip()
+    if len(clean_new_password) < 6:
+        conn.close()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password must be at least 6 characters long."
+        )
+
+    new_hash = hash_password(clean_new_password)
+    cursor.execute("UPDATE users SET password_hash = ? WHERE id = ?", (new_hash, user_id))
+    conn.commit()
+    conn.close()
+
+    return {"success": True, "message": "Password updated successfully."}
 
 
 # ==========================================================

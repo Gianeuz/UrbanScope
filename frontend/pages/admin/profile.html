@@ -48,7 +48,7 @@
             </button>
 
             <button class="admin-profile-badge" id="profileButton" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown">
-                <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="avatar-circle">
+                <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="avatar-circle" onerror="this.onerror=null;this.src='../../assets/images/agent.jpg'">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
@@ -56,7 +56,7 @@
 
             <div class="profile-dropdown" id="profileDropdown" role="menu" hidden>
                 <div class="profile-dropdown-info">
-                    <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="avatar-circle">
+                    <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="avatar-circle" onerror="this.onerror=null;this.src='../../assets/images/agent.jpg'">
                     <span class="profile-dropdown-name"><strong id="adminNameDisplay">Miriam Lobren</strong><small>Administrator</small></span>
                 </div>
                 <div class="profile-dropdown-divider"></div>
@@ -182,7 +182,7 @@
 
                 <div class="profile-avatar-banner">
                     <div class="profile-avatar-wrapper" id="avatarWrapper" title="Click to change profile picture">
-                        <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="profile-avatar-large" id="profileAvatarImg">
+                        <img src="../../assets/images/agent.jpg" alt="Miriam Lobren" class="profile-avatar-large" id="profileAvatarImg" onerror="this.onerror=null;this.src='../../assets/images/agent.jpg'">
                         <label for="avatarFileInput" class="avatar-edit-overlay" title="Upload new profile picture" aria-label="Upload profile picture">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
@@ -280,6 +280,7 @@
                 </div>
 
                 <form id="passwordForm">
+                    <div class="alert-box" id="passwordAlertBox" style="display: none; margin-bottom: 20px;"></div>
                     <div class="form-grid single" style="max-width: 560px;">
                         <div class="form-group">
                             <label for="currentPassword">Current Password *</label>

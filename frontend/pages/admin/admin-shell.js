@@ -438,21 +438,45 @@
         });
     }
 
+    function resolveAdminAvatar(avatarUrl) {
+        const defaultAvatar = "../../assets/images/agent.jpg";
+        if (!avatarUrl || typeof avatarUrl !== "string") return defaultAvatar;
+        const trimmed = avatarUrl.trim();
+        if (!trimmed) return defaultAvatar;
+        if (trimmed.startsWith("data:") || /^https?:\/\//i.test(trimmed)) {
+            return trimmed;
+        }
+        if (trimmed.startsWith("/") || trimmed.startsWith("../")) {
+            return trimmed;
+        }
+        const clean = trimmed.replace(/^\/+/, "");
+        return "../../" + clean;
+    }
+
     function syncAdminProfileDisplay() {
         try {
+            // Clean up any stale/corrupted default path stored in custom avatar key
+            let customAvatar = localStorage.getItem("urbanscope_profile_avatar");
+            if (customAvatar && (customAvatar.includes("agent.jpg") || (!customAvatar.startsWith("data:") && !/^https?:\/\//i.test(customAvatar)))) {
+                localStorage.removeItem("urbanscope_profile_avatar");
+                customAvatar = null;
+            }
+
             const raw = localStorage.getItem("adminUser") || localStorage.getItem("urbanscope_user");
-            const customAvatar = localStorage.getItem("urbanscope_profile_avatar");
             if (!raw && !customAvatar) return;
 
             const user = raw ? JSON.parse(raw) : {};
-            const avatar = customAvatar || user.avatar_url || user.avatar || user.profile_image;
+            const avatar = customAvatar || user.avatar_url || user.avatar || user.profile_image || "../../assets/images/agent.jpg";
             const name = user.name || user.full_name;
 
-            if (avatar) {
-                document.querySelectorAll(".admin-profile-badge .avatar-circle, .profile-dropdown-info .avatar-circle, #adminTopAvatar").forEach(el => {
-                    el.src = avatar;
-                });
-            }
+            const resolvedAvatar = resolveAdminAvatar(avatar);
+            document.querySelectorAll(".admin-profile-badge .avatar-circle, .profile-dropdown-info .avatar-circle, #adminTopAvatar").forEach(el => {
+                el.onerror = function () {
+                    this.onerror = null;
+                    this.src = "../../assets/images/agent.jpg";
+                };
+                el.src = resolvedAvatar;
+            });
 
             if (name) {
                 document.querySelectorAll("#adminNameDisplay, .admin-profile-name, .profile-display-name").forEach(el => {
@@ -462,6 +486,7 @@
         } catch (_) {}
     }
     window.syncAdminProfileDisplay = syncAdminProfileDisplay;
+    window.resolveAdminAvatar = resolveAdminAvatar;
 
     // Initialize on DOM Ready
     if (document.readyState === "loading") {

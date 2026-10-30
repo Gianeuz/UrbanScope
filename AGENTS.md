@@ -175,10 +175,14 @@ path when rendering from a page.
     client initials avatar, submission timestamp, status pill, email link, phone link, property title, tour schedule,
     client message card, "Reply via Email" mailto button, and clean close triggers (X button, Close button, backdrop click, Escape key),
     completely replacing blocking native `alert(...)` popups.
-11. **Admin Profile Picture Upload (< 5MB limit):** On `/pages/admin/profile.html`, administrators can upload and update their profile picture.
-    The file input strictly enforces a client-side limit of 5MB (`file.size <= 5 * 1024 * 1024`), validates image MIME types, optimizes the
-    avatar data URL via canvas, updates all topbar/dropdown avatar circles immediately via `syncAdminProfileDisplay()`, and allows
-    reverting back to the default photo with a "Reset Photo" button. The backend SQLite database supports non-destructive `avatar_url` migration.
+11. **Admin Profile Information & Picture Management (< 5MB limit):** On `/pages/admin/profile.html`, administrators can modify and save all personal and professional credentials: Full Name, Professional Title, Email Address, Contact Phone Number, PRC License Number, Brokerage / Company, Professional Bio & About, and Profile Picture.
+    - **Persistence & API Endpoints**: Updates are persisted across both storage layers:
+      - Local FastAPI SQLite backend: `PUT /api/admin/profile` and `PUT /api/auth/me` update the `users` table (`full_name`, `email`, `phone`, `license_number`, `title`, `brokerage`, `bio`, `avatar_url`).
+      - Supabase Cloud: `apiUpdateAdminProfile` patches or auto-inserts the admin record in the remote `users` table.
+      - Client Storage: Synchronizes `urbanscope_admin_profile`, `adminUser`, `urbanscope_user`, and `urbanscope_demo_user` in `localStorage`, guaranteeing instant persistence across page refreshes and offline sessions.
+    - **Path Resolution**: `resolveAdminAvatar()` in `admin-shell.js` and `profile.js` normalizes root-relative paths (e.g. `'assets/images/agent.jpg'`) to `'../../assets/images/agent.jpg'`, preventing 404 broken image alt-text across admin pages on Vercel and local subpaths.
+    - **Custom Photo State**: The "Reset Photo" button is hidden (`display: none`) when using the default agent photo and only appears when a custom photo (`data:image/...` or external URL) is present.
+    - **Error Fallback**: Inline and scripted `onerror` handlers automatically recover to `../../assets/images/agent.jpg` if any network or missing asset error occurs.
 12. **Consultation Intent Flow & Dual-Mode Inquiry System:**
     - On the homepage (`index.html`), clicking "Book a Free Consultation" (`.cta-consult-btn` / `#ctaConsultBtn`) or consultation triggers presents an interactive modal (`#consultationIntentModal`) asking the user for their consultation focus instead of immediately forcing an unwanted pre-selected property.
     - The modal offers two clear cards:
@@ -233,6 +237,13 @@ path when rendering from a page.
 18. **Idempotent Supabase Schema Migration (`20261028000000_initial_schema.sql`):**
     - Made initial Supabase migration fully idempotent using `CREATE TABLE IF NOT EXISTS` across all 12 tables, `DROP TRIGGER IF EXISTS ... ON ...; CREATE TRIGGER ...` for all 6 triggers, and `DROP POLICY IF EXISTS ... ON ...; CREATE POLICY ...` for all RLS policies.
     - Resolves `ERROR: relation "users" already exists (SQLSTATE 42P07)` in GitHub Actions / Supabase Preview checks during automated branch schema verification.
+19. **Admin Profile Password Change & Interoperable Cryptography:**
+    - On `/pages/admin/profile.html`, the "Change Password" form is fully wired to verify current credentials and persist new passwords across all architecture tiers:
+      - **FastAPI Endpoints**: Implemented `PUT /api/admin/password` and `PUT /api/auth/password` taking `PasswordChangeRequest(current_password, new_password)`. Validates current password against SQLite `users.password_hash` using `verify_password()`, hashes the new password with PBKDF2-HMAC-SHA256 (100,000 iterations), and updates the database row.
+      - **Browser WebCrypto PBKDF2 Engine (`supabase.js` & `api.js`)**: Implemented `verifyPBKDF2()` and `hashPBKDF2()` using native `crypto.subtle`, completely matching Python's PBKDF2-HMAC-SHA256 standard without external dependencies.
+      - **Supabase Cloud Synchronization**: `apiUpdateAdminPassword` queries Supabase `users`, validates the current password against remote `password_hash` (or default seed fallbacks), generates a fresh PBKDF2 hash, and patches the remote record.
+      - **Session & Sign-In Synchronization**: `apiSignIn` checks Supabase `password_hash` with `verifyPBKDF2` and honors updated session passwords (`urbanscope_admin_password_updated` and `adminPassword`), enabling seamless sign-in immediately after changing password.
+      - **Dedicated Card Alert Box (`#passwordAlertBox`)**: Added dedicated in-card alert banner in `profile.html` and `showPasswordAlert()` in `profile.js` to provide immediate error/success feedback directly inside the Change Password card without scrolling away.
 
 ---
 

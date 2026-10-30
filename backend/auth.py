@@ -281,7 +281,7 @@ def get_current_user_from_request(
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT id, email, full_name, phone, role, avatar_url, google_id, created_at FROM users WHERE id = ?",
+        "SELECT * FROM users WHERE id = ?",
         (user_id,)
     )
     row = cursor.fetchone()

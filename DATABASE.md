@@ -100,6 +100,10 @@ Client and admin accounts.
 | `role` | TEXT | `CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user'` | Initial role assigned on insert via trigger `trg_user_role_insert` (`urbanscope.cvsu@gmail.com` → `'superadmin'`, `admin.realestate@gmail.com` → `'admin'`, others → `'user'`). Trigger `trg_user_role_update` preserves `OLD.role` on email changes. Superadmins modify roles via `PUT /api/superadmin/users/{id}`. |
 | `avatar_url` | TEXT | `DEFAULT 'assets/images/agent.jpg'` | Profile picture image path, Google avatar URL, or data URL (max client upload size: 5MB) |
 | `google_id` | TEXT | Partial `UNIQUE` (`idx_users_google_id`) | Google OpenID `sub` identifier linked on Google Sign-In (*added by non-destructive migration*) |
+| `license_number` | TEXT | `DEFAULT ''` | Professional real estate broker / agent PRC registration identifier |
+| `title` | TEXT | `DEFAULT 'Licensed Real Estate Broker / Agent'` | Professional title or organizational role |
+| `brokerage` | TEXT | `DEFAULT 'CD Miranda Realty'` | Accredited brokerage or realty firm |
+| `bio` | TEXT | `DEFAULT ''` | Professional biography and summary |
 | `created_at` | TIMESTAMP | `CURRENT_TIMESTAMP` | UTC, `YYYY-MM-DD HH:MM:SS` |
 
 ### 3.2 `properties`
@@ -223,13 +227,19 @@ Defined in [`backend/auth.py`](backend/auth.py).
 - **Hashing:** PBKDF2-HMAC-SHA256, 100,000 iterations, 16-byte random hex salt.
   Stored as `salt$hash` (both hex). Verified with `hmac.compare_digest`. Accounts created
   purely via Google Sign-In receive a PBKDF2 hash of a 256-bit random token.
+- **Password Updates (`PUT /api/admin/password` & `PUT /api/auth/password`):** Authenticated users
+  and admins can update their password via `PasswordChangeRequest(current_password, new_password)`.
+  The backend verifies `current_password` against SQLite `users.password_hash` before hashing and updating.
+- **Client & Cloud PBKDF2 Interoperability (`supabase.js` & `api.js`):** Client-side scripts implement
+  `verifyPBKDF2()` and `hashPBKDF2()` via native Web Crypto API (`crypto.subtle`), ensuring 100% cryptographic
+  interoperability with Python PBKDF2 hashes across Supabase and Vercel hosting.
 - **Google OAuth 2.0:** Verifies Google Identity Services `access_token` or `credential` (ID token)
   against `oauth2.googleapis.com/tokeninfo` and `www.googleapis.com/oauth2/v3/userinfo`, enforcing
   audience (`aud`/`azp`) match against `GOOGLE_CLIENT_ID` (from env or `.env`) and `email_verified == true`.
 - **JWT:** HS256, 7-day expiry, payload `{ sub: "<user id>", email, role, exp, iat }`.
   Secret from env var `URBANSCOPE_SECRET_KEY` (a hard-coded fallback exists for dev).
 - **Client storage:** `localStorage` keys `urbanscope_jwt_token`, `urbanscope_user`,
-  `urbanscope_demo_user`.
+  `urbanscope_demo_user`, `adminUser`, `adminPassword`, `urbanscope_admin_password_updated`.
 
 ---
 
