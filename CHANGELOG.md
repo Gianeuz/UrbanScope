@@ -19,6 +19,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
 | **Oct 2026** | **Legal Hub** | Added Terms of Service (`terms.html`) compliant with RESA (RA 9646) and Privacy Policy (`privacy.html`) compliant with DPA (RA 10173) | `frontend/pages/legal/` |
 | **Oct 2026** | **Registration Flow** | Same-tab legal link navigation with `?from=register`, mouse/keyboard back button support, and input draft persistence (`sessionStorage`) | `register.html`, `register.js`, `legal.js`, `legal.css` |
 | **Oct 2026** | **Google Auth** | Added Google Identity Services (OAuth 2.0) sign-in & sign-up with FastAPI token verification, SQLite `google_id` migration, Supabase cloud sync, and navbar Google avatar rendering | `backend/auth.py`, `backend/app.py`, `backend/database.py`, `supabase.js`, `auth.js`, `session.js` |
+| **Oct 2026** | **Inquiry History** | Added client inquiry history page (`history.html`), profile menu link, real-time search, status filtering, stats pills, modify details modal, cancel confirmation modal, and delete permanently | `history.html`, `history.css`, `history.js`, `supabase.js`, `api.js`, `session.js`, `backend/app.py` |
 
 ---
 
@@ -138,12 +139,44 @@ This document records all features, enhancements, bug fixes, user requests, arch
     - Preloads Google OAuth config on page load so `requestAccessToken` runs synchronously on click without triggering browser popup blockers.
     - Displays clean inline status/setup banners instead of blocking `alert()` dialogs, and renders Google profile pictures inside `.profile-avatar` with fallback to user initials.
 
+### 10. Client Inquiry History (Lifecycle Management: Modify, Cancel, Delete)
+- **User Prompt:** *"add a inquiry history here where they can cancel/delete or modified"*
+- **Rationale & Implementation:**
+  - Clients needed full transparency and control over their inquiries and consultation requests directly from the user profile dropdown menu.
+  - **Navigation Integration (`session.js`, `session.css`, `inquiry.html`):**
+    - Added **"Inquiry History"** to the profile menu (`.profile-dropdown`) across the entire website between "Submit an Inquiry" and "Sign Out".
+    - Added "Inquiry History" to the mobile navigation drawer (`.mobile-drawer-user`) for logged-in clients on small screens.
+    - Added a direct pill button `My Inquiry History` in the page header of `pages/inquiry/inquiry.html`.
+  - **Inquiry History Hub (`frontend/pages/inquiry/history.html`, `history.css`, `history.js`):**
+    - Protected route requiring authentication (`<html data-require-auth>`).
+    - Responsive header with summary stats pills: Total Inquiries, Under Review, Scheduled, and Cancelled.
+    - Segmented filter tabs (`All`, `Under Review`, `Scheduled`, `Contacted`, `Cancelled`) and real-time search input filtering by property, keyword, phone, or date.
+    - **Modify Inquiry Modal (`#modifyModal`)**: Allows clients to edit their inquiry message, preferred viewing schedule, contact phone number, or consultation topic.
+    - **Cancel Inquiry Modal (`#cancelModal`)**: Gives clients the ability to cancel an active request, marking status as `Cancelled` and notifying the team.
+    - **Delete Inquiry Modal (`#deleteModal`)**: Prompts confirmation for permanent removal from the client's records.
+    - Toast feedback notifications (`#toastNotice`) with non-intrusive alerts.
+  - **Backend API & Authorization (`backend/app.py`, `backend/models.py`, `supabase.js`, `api.js`):**
+    - Added `GET /api/inquiries/my`: Returns inquiries matching the authenticated client session or email parameter.
+    - Added `PUT /api/inquiries/{id}` & `PATCH /api/inquiries/{id}`: Validates client ownership (`client_email`) or admin privilege before allowing updates.
+    - Added `POST /api/inquiries/{id}/cancel`: Marks inquiry status as `Cancelled`.
+    - Added `DELETE /api/inquiries/{id}`: Validates ownership before permanently deleting from SQLite.
+    - Implemented `apiGetMyInquiries`, `apiUpdateMyInquiry`, `apiCancelMyInquiry`, and `apiDeleteMyInquiry` in both `supabase.js` and `api.js`.
+
 ---
 
 ## 🛠️ Verification & Testing Matrix
 
 | Component | Test Performed | Result |
 | :--- | :--- | :--- |
+| **HTTP Routing** | `curl -s -w "%{http_code}" http://127.0.0.1:8000/pages/inquiry/history.html` | `200 OK` |
+| **HTTP Routing** | `curl -s -w "%{http_code}" http://127.0.0.1:8000/pages/inquiry/history.css` | `200 OK` |
+| **HTTP Routing** | `curl -s -w "%{http_code}" http://127.0.0.1:8000/pages/inquiry/history.js` | `200 OK` |
+| **Inquiry Creation** | `POST /api/inquiries` payload validation & insertion | `200 OK` (ID generated) |
+| **My Inquiries API** | `GET /api/inquiries/my?email=...` email filter | `200 OK` (list returned) |
+| **Inquiry Modification** | `PUT /api/inquiries/{id}` updates message & phone | `200 OK` (verified in DB) |
+| **Inquiry Cancellation** | `POST /api/inquiries/{id}/cancel` status set to `Cancelled` | `200 OK` (status updated) |
+| **Inquiry Deletion** | `DELETE /api/inquiries/{id}` permanent removal | `200 OK` (subsequent 404 confirmed) |
+| **Ownership Security** | Cross-client modification rejection without matching email/token | `403 Forbidden` |
 | **HTTP Routing** | `curl -s -w "%{http_code}" http://127.0.0.1:8000/pages/legal/terms.html` | `200 OK` |
 | **HTTP Routing** | `curl -s -w "%{http_code}" http://127.0.0.1:8000/pages/legal/privacy.html` | `200 OK` |
 | **HTTP Routing** | `curl -s -w "%{http_code}" http://127.0.0.1:8000/pages/legal/legal.css` | `200 OK` |

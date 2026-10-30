@@ -167,6 +167,7 @@
                 '</div>' +
                 '<a href="' + base + 'index.html" role="menuitem">Home</a>' +
                 '<a href="' + base + 'pages/inquiry/inquiry.html" role="menuitem">Submit an Inquiry</a>' +
+                '<a href="' + base + 'pages/inquiry/history.html" role="menuitem">Inquiry History</a>' +
                 '<button type="button" class="signout-item" role="menuitem" data-action="signout">Sign Out</button>' +
             '</div>';
     }
@@ -259,6 +260,7 @@
                     '<span class="profile-avatar" style="width:30px;height:30px;font-size:0.75rem;">' + avatarInnerHtml(user) + '</span>' +
                     '<span>' + esc(user.name) + '</span>' +
                 '</div>' +
+                '<a href="' + base + 'pages/inquiry/history.html" class="m-inquiry-link" style="display:block;padding:8px 0;color:#1e5c33;font-weight:600;text-decoration:none;">Inquiry History</a>' +
                 '<button type="button" class="m-signout-btn" data-action="signout">Sign Out</button>';
             wireAvatarFallbacks(userSection);
             nav.appendChild(userSection);

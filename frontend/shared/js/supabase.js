@@ -588,6 +588,147 @@
         return updated;
     }
 
+    async function apiGetMyInquiries(email) {
+        let list = [];
+        const cleanEmail = (email || '').trim().toLowerCase();
+
+        // 1. Try FastAPI backend
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem('access_token') || localStorage.getItem('supabase_token') || localStorage.getItem('adminToken');
+            const url = cleanEmail ? `${localBase}/inquiries/my?email=${encodeURIComponent(cleanEmail)}` : `${localBase}/inquiries/my`;
+            const res = await fetch(url, {
+                method: 'GET',
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) list = data;
+            }
+        } catch (e) {}
+
+        // 2. Try Supabase Cloud
+        if (!list.length && cleanEmail) {
+            try {
+                const res = await fetch(`${REST_BASE}/inquiries?client_email=ilike.${encodeURIComponent(cleanEmail)}&order=created_at.desc`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length > 0) list = data;
+                }
+            } catch (err) {}
+        }
+
+        // 3. Fallback: filter cached inquiries in localStorage
+        if (!list.length && cleanEmail) {
+            try {
+                const cached = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                if (Array.isArray(cached) && cached.length > 0) {
+                    list = cached.filter(i => (i.client_email || i.clientEmail || '').trim().toLowerCase() === cleanEmail);
+                }
+            } catch (_) {}
+        }
+
+        return list;
+    }
+
+    async function apiUpdateMyInquiry(id, updates, email) {
+        let updated = false;
+        let updatedRecord = null;
+        const cleanEmail = (email || '').trim().toLowerCase();
+        const payload = { ...updates };
+        if (cleanEmail && !payload.client_email) payload.client_email = cleanEmail;
+
+        // 1. Try FastAPI
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem('access_token') || localStorage.getItem('supabase_token') || localStorage.getItem('adminToken');
+            const res = await fetch(`${localBase}/inquiries/${encodeURIComponent(id)}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const data = await res.json();
+                updated = true;
+                updatedRecord = data.data || data;
+            }
+        } catch (e) {}
+
+        // 2. Try Supabase
+        if (!updated) {
+            try {
+                const res = await fetch(`${REST_BASE}/inquiries?id=eq.${encodeURIComponent(id)}`, {
+                    method: 'PATCH',
+                    headers: getHeaders(),
+                    body: JSON.stringify(updates)
+                });
+                if (res.ok) {
+                    updated = true;
+                }
+            } catch (e) {}
+        }
+
+        // 3. Update localStorage cache
+        try {
+            const cached = JSON.parse(localStorage.getItem('inquiries') || '[]');
+            const idx = cached.findIndex(i => String(i.id) === String(id));
+            if (idx !== -1) {
+                cached[idx] = { ...cached[idx], ...updates };
+                localStorage.setItem('inquiries', JSON.stringify(cached));
+                if (!updatedRecord) updatedRecord = cached[idx];
+            }
+        } catch (_) {}
+
+        return { success: updated || Boolean(updatedRecord), data: updatedRecord };
+    }
+
+    async function apiDeleteMyInquiry(id, email) {
+        let deleted = false;
+        const cleanEmail = (email || '').trim().toLowerCase();
+
+        // 1. Try FastAPI
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const token = localStorage.getItem('access_token') || localStorage.getItem('supabase_token') || localStorage.getItem('adminToken');
+            const url = cleanEmail ? `${localBase}/inquiries/${encodeURIComponent(id)}?client_email=${encodeURIComponent(cleanEmail)}` : `${localBase}/inquiries/${encodeURIComponent(id)}`;
+            const res = await fetch(url, {
+                method: 'DELETE',
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+            });
+            if (res.ok) deleted = true;
+        } catch (e) {}
+
+        // 2. Try Supabase
+        if (!deleted) {
+            try {
+                const res = await fetch(`${REST_BASE}/inquiries?id=eq.${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                if (res.ok) deleted = true;
+            } catch (e) {}
+        }
+
+        // 3. Remove from localStorage cache
+        try {
+            const cached = JSON.parse(localStorage.getItem('inquiries') || '[]');
+            const filtered = cached.filter(i => String(i.id) !== String(id));
+            localStorage.setItem('inquiries', JSON.stringify(filtered));
+        } catch (_) {}
+
+        return { success: true };
+    }
+
+    async function apiCancelMyInquiry(id, email) {
+        return apiUpdateMyInquiry(id, { status: 'Cancelled' }, email);
+    }
+
 
     // ----------------------------------------------------------
     // 4. AUTHENTICATION & USER SERVICES
@@ -1304,6 +1445,10 @@
     window.apiSubmitInquiry = apiSubmitInquiry;
     window.apiGetInquiries = apiGetInquiries;
     window.apiUpdateInquiryStatus = apiUpdateInquiryStatus;
+    window.apiGetMyInquiries = apiGetMyInquiries;
+    window.apiUpdateMyInquiry = apiUpdateMyInquiry;
+    window.apiDeleteMyInquiry = apiDeleteMyInquiry;
+    window.apiCancelMyInquiry = apiCancelMyInquiry;
     window.apiGetUsers = apiGetUsers;
     window.apiUpdateAdminProfile = apiUpdateAdminProfile;
     window.apiUpdateAdminPassword = apiUpdateAdminPassword;

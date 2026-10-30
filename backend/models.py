@@ -129,6 +129,13 @@ class InquiryResponse(BaseModel):
     created_at: Optional[str] = None
 
 
+class InquiryUpdate(BaseModel):
+    property_title: Optional[str] = None
+    client_phone: Optional[str] = None
+    message: Optional[str] = None
+    status: Optional[str] = None
+
+
 # ==========================================================
 # SUPERADMIN SCHEMAS
 # ==========================================================

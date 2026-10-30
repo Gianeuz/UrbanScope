@@ -52,7 +52,7 @@ backend/               app.py (routes + static mounts + RBAC guard), database.py
 frontend/              Everything the browser loads (served at /)
   index.html/.css/.js  Home page
   pages/properties/    property-detail (?id=N), Liora.html & Airmen.html showcases (properties.html catalog was removed)
-  pages/inquiry/       Inquiry form (requires login: <html data-require-auth>)
+  pages/inquiry/       Inquiry form (inquiry.html) & client history (history.html) (requires login: <html data-require-auth>)
   pages/auth/          Unified login (auto-routes by role) & register
   pages/legal/         Terms of Service (terms.html) & Privacy Policy (privacy.html)
   pages/admin/         Dashboard, propertylist.html, add-property, edit-property, clients, profile, legacy login redirect (users.html redirects)
@@ -205,6 +205,21 @@ path when rendering from a page.
     - **Server-Side Token Verification (`POST /api/auth/google`):** `backend/auth.py` (`verify_google_token`) validates Google OAuth2 access tokens and ID tokens against `oauth2.googleapis.com/tokeninfo` and `www.googleapis.com/oauth2/v3/userinfo`, enforcing strict `GOOGLE_CLIENT_ID` audience (`aud`/`azp`) matching and `email_verified == true`.
     - **Account Linking & Supabase Sync:** Automatically links `google_id` to existing email accounts (preserving passwords, roles, and custom admin avatars) or creates new `user` rows in SQLite (`users.google_id` with partial unique index `idx_users_google_id`), issues UrbanScope JWTs + HTTP-only `access_token` cookies, and syncs the verified record to Supabase Cloud (`REST_BASE/users`).
     - **Navbar Google Avatar Rendering (`session.js` & `session.css`):** Displays verified external Google profile photos (`referrerpolicy="no-referrer"`) inside `.profile-avatar` with automatic fallback to user initials.
+15. **Client Inquiry History & Lifecycle Management:**
+    - Dedicated client history hub created under `frontend/pages/inquiry/` (`history.html`, `history.css`, and `history.js`).
+    - **Navigation Entry Points**:
+      - Client profile dropdown menu in `frontend/shared/js/session.js` (`dropdownHtml` renders "Inquiry History" between "Submit an Inquiry" and "Sign Out").
+      - Mobile drawer navigation for logged-in clients (`.mobile-drawer-user`).
+      - Direct pill link in `inquiry.html` header alongside page title.
+    - **Features**:
+      - Real-time search query filter across property titles, message content, and contact phones.
+      - Status filter segmented tabs: `All`, `Under Review`, `Scheduled`, `Contacted`, `Cancelled`.
+      - Real-time KPI stat pills (Total Inquiries, Under Review, Scheduled, Cancelled).
+      - **Modify Inquiry (`#modifyModal`)**: Allows clients to update their inquiry message, contact phone, or property/topic title, calling `PUT /api/inquiries/{id}`.
+      - **Cancel Inquiry (`#cancelModal`)**: Allows clients to cancel active requests, setting status to `Cancelled` via `POST /api/inquiries/{id}/cancel` while keeping history record intact.
+      - **Delete Inquiry (`#deleteModal`)**: Confirms permanent deletion via `DELETE /api/inquiries/{id}`.
+    - **Backend Protection**:
+      - Endpoints `GET /api/inquiries/my`, `PUT /api/inquiries/{id}`, `DELETE /api/inquiries/{id}`, and `POST /api/inquiries/{id}/cancel` enforce strict client email ownership validation (or administrative privileges), preventing unauthorized cross-user modifications.
 
 ---
 

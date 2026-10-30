@@ -42,6 +42,7 @@ from backend.models import (
     PropertyResponse,
     InquiryCreate,
     InquiryResponse,
+    InquiryUpdate,
     UserRoleUpdate,
     SuperadminCreateUser,
     SuperadminUpdateUser
@@ -947,18 +948,184 @@ def list_inquiries(admin_user: dict = Depends(require_admin)):
     return inquiries
 
 
-@app.patch("/api/inquiries/{inquiry_id}", tags=["Inquiries"])
-def update_inquiry_status(inquiry_id: int, payload: dict, admin_user: dict = Depends(require_admin)):
-    """Updates status of an inquiry (admin only)."""
-    status = payload.get("status")
-    if not status:
-        raise HTTPException(status_code=400, detail="Status is required")
+@app.get("/api/inquiries/my", response_model=List[InquiryResponse], tags=["Inquiries"])
+def list_my_inquiries(
+    email: Optional[str] = Query(None),
+    current_user: Optional[dict] = Depends(get_current_user_from_request)
+):
+    """
+    Lists inquiries submitted by the current client.
+    Matches either the authenticated session email, or the provided email query parameter.
+    """
+    user_email = (current_user.get("email") if current_user else email) or ""
+    user_email = user_email.strip().lower()
+
+    if not user_email:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required or client email must be provided."
+        )
+
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE inquiries SET status = ? WHERE id = ?", (status, inquiry_id))
+    cursor.execute(
+        "SELECT * FROM inquiries WHERE LOWER(client_email) = ? ORDER BY created_at DESC",
+        (user_email,)
+    )
+    rows = cursor.fetchall()
+    inquiries = [row_to_dict(r) for r in rows]
+    conn.close()
+
+    return inquiries
+
+
+@app.put("/api/inquiries/{inquiry_id}", tags=["Inquiries"])
+@app.patch("/api/inquiries/{inquiry_id}", tags=["Inquiries"])
+def modify_inquiry(
+    inquiry_id: int,
+    payload: dict,
+    current_user: Optional[dict] = Depends(get_current_user_from_request)
+):
+    """
+    Modifies or cancels an inquiry.
+    Authorized for the client who submitted the inquiry (matching email) or administrators.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM inquiries WHERE id = ?", (inquiry_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Inquiry not found")
+
+    inq = row_to_dict(row)
+    inq_email = (inq.get("client_email") or "").strip().lower()
+
+    is_admin = False
+    is_owner = False
+
+    if current_user:
+        role = (current_user.get("role") or "").lower()
+        caller_email = (current_user.get("email") or "").strip().lower()
+        if role in AUTHORIZED_ADMIN_ROLES or caller_email in AUTHORIZED_ADMIN_EMAILS:
+            is_admin = True
+        if caller_email and caller_email == inq_email:
+            is_owner = True
+    else:
+        passed_email = (payload.get("client_email") or "").strip().lower()
+        if passed_email and passed_email == inq_email:
+            is_owner = True
+
+    if not is_admin and not is_owner:
+        conn.close()
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to modify this inquiry."
+        )
+
+    updates = []
+    params = []
+
+    if "message" in payload and payload["message"] is not None:
+        updates.append("message = ?")
+        params.append(str(payload["message"]).strip())
+
+    if "client_phone" in payload and payload["client_phone"] is not None:
+        updates.append("client_phone = ?")
+        params.append(str(payload["client_phone"]).strip())
+
+    if "property_title" in payload and payload["property_title"] is not None:
+        updates.append("property_title = ?")
+        params.append(str(payload["property_title"]).strip())
+
+    if "status" in payload and payload["status"] is not None:
+        new_status = str(payload["status"]).strip()
+        if not is_admin and new_status not in ["Cancelled", "Under Review"]:
+            conn.close()
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Clients can only cancel an inquiry."
+            )
+        updates.append("status = ?")
+        params.append(new_status)
+
+    if not updates:
+        conn.close()
+        return {"success": True, "data": inq, "message": "No fields to update."}
+
+    params.append(inquiry_id)
+    cursor.execute(f"UPDATE inquiries SET {', '.join(updates)} WHERE id = ?", tuple(params))
+    conn.commit()
+
+    cursor.execute("SELECT * FROM inquiries WHERE id = ?", (inquiry_id,))
+    updated_inq = row_to_dict(cursor.fetchone())
+    conn.close()
+
+    return {"success": True, "data": updated_inq}
+
+
+@app.delete("/api/inquiries/{inquiry_id}", tags=["Inquiries"])
+def delete_inquiry(
+    inquiry_id: int,
+    client_email: Optional[str] = Query(None),
+    current_user: Optional[dict] = Depends(get_current_user_from_request)
+):
+    """
+    Deletes an inquiry permanently.
+    Authorized for the client owner (matching email) or administrators.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM inquiries WHERE id = ?", (inquiry_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Inquiry not found")
+
+    inq = row_to_dict(row)
+    inq_email = (inq.get("client_email") or "").strip().lower()
+
+    is_admin = False
+    is_owner = False
+
+    if current_user:
+        role = (current_user.get("role") or "").lower()
+        caller_email = (current_user.get("email") or "").strip().lower()
+        if role in AUTHORIZED_ADMIN_ROLES or caller_email in AUTHORIZED_ADMIN_EMAILS:
+            is_admin = True
+        if caller_email and caller_email == inq_email:
+            is_owner = True
+    elif client_email:
+        if client_email.strip().lower() == inq_email:
+            is_owner = True
+
+    if not is_admin and not is_owner:
+        conn.close()
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to delete this inquiry."
+        )
+
+    cursor.execute("DELETE FROM inquiries WHERE id = ?", (inquiry_id,))
     conn.commit()
     conn.close()
-    return {"success": True, "id": inquiry_id, "status": status}
+
+    return {"success": True, "message": f"Inquiry #{inquiry_id} successfully deleted"}
+
+
+@app.post("/api/inquiries/{inquiry_id}/cancel", tags=["Inquiries"])
+def cancel_inquiry(
+    inquiry_id: int,
+    payload: Optional[dict] = None,
+    current_user: Optional[dict] = Depends(get_current_user_from_request)
+):
+    """
+    Cancels an inquiry by setting its status to 'Cancelled'.
+    """
+    data = {"status": "Cancelled"}
+    if payload and "client_email" in payload:
+        data["client_email"] = payload["client_email"]
+    return modify_inquiry(inquiry_id, data, current_user)
 
 
 # ==========================================================
