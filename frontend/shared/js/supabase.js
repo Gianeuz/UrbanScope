@@ -48,6 +48,10 @@
         return true;
     }
 
+    function isLocalDevHost() {
+        return location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    }
+
     // ----------------------------------------------------------
     // 2. PROPERTY SERVICES
     // ----------------------------------------------------------
@@ -950,17 +954,19 @@
     }
 
     async function apiGetGoogleConfig() {
-        const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
-        try {
-            const res = await fetch(`${localBase}/auth/google/config`, { method: 'GET' });
-            if (res.ok) {
-                const cfg = await res.json();
-                const cid = (cfg.client_id || '').trim();
-                if (cid && !cid.toLowerCase().startsWith('your_google_client_id')) {
-                    return { enabled: true, client_id: cid };
+        if (isLocalDevHost()) {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            try {
+                const res = await fetch(`${localBase}/auth/google/config`, { method: 'GET' });
+                if (res.ok) {
+                    const cfg = await res.json();
+                    const cid = (cfg.client_id || '').trim();
+                    if (cid && !cid.toLowerCase().startsWith('your_google_client_id')) {
+                        return { enabled: true, client_id: cid };
+                    }
                 }
-            }
-        } catch (e) {}
+            } catch (e) {}
+        }
 
         const fallbackCid = (window.URBANSCOPE_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID || '').trim();
         if (fallbackCid && !fallbackCid.toLowerCase().startsWith('your_google_client_id')) {
@@ -1031,65 +1037,67 @@
                 access_token: googlePayload.access_token || null
             };
 
-            // 1. Authoritative server-side verification & session creation via FastAPI
-            try {
-                const res = await fetch(`${localBase}/auth/google`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
+            // 1. Authoritative server-side verification & session creation via FastAPI (local dev only)
+            if (isLocalDevHost()) {
+                try {
+                    const res = await fetch(`${localBase}/auth/google`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
 
-                if (res.ok) {
-                    const authRes = await res.json();
-                    if (authRes.success && authRes.user) {
-                        const u = authRes.user;
-                        const sessionUser = {
-                            id: u.id,
-                            email: u.email,
-                            name: u.full_name,
-                            full_name: u.full_name,
-                            phone: u.phone || '',
-                            role: u.role || 'user',
-                            avatar_url: u.avatar_url || '',
-                            google_id: u.google_id || null,
-                            user_metadata: {
+                    if (res.ok) {
+                        const authRes = await res.json();
+                        if (authRes.success && authRes.user) {
+                            const u = authRes.user;
+                            const sessionUser = {
+                                id: u.id,
+                                email: u.email,
+                                name: u.full_name,
                                 full_name: u.full_name,
                                 phone: u.phone || '',
-                                avatar_url: u.avatar_url || ''
-                            }
-                        };
+                                role: u.role || 'user',
+                                avatar_url: u.avatar_url || '',
+                                google_id: u.google_id || null,
+                                user_metadata: {
+                                    full_name: u.full_name,
+                                    phone: u.phone || '',
+                                    avatar_url: u.avatar_url || ''
+                                }
+                            };
 
-                        localStorage.setItem(TOKEN_KEY, authRes.token);
-                        localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
-                        localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
-                        if (sessionUser.role === 'admin' || sessionUser.role === 'superadmin') {
-                            localStorage.setItem('adminUser', JSON.stringify(sessionUser));
-                        } else {
-                            localStorage.removeItem('adminUser');
+                            localStorage.setItem(TOKEN_KEY, authRes.token);
+                            localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
+                            localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
+                            if (sessionUser.role === 'admin' || sessionUser.role === 'superadmin') {
+                                localStorage.setItem('adminUser', JSON.stringify(sessionUser));
+                            } else {
+                                localStorage.removeItem('adminUser');
+                            }
+
+                            // Sync verified Google profile to Supabase Cloud users table
+                            syncGoogleUserToSupabase(u).catch(() => {});
+
+                            return {
+                                success: true,
+                                data: {
+                                    session: true,
+                                    user: sessionUser,
+                                    token: authRes.token,
+                                    redirect_url: authRes.redirect_url
+                                }
+                            };
                         }
-
-                        // Sync verified Google profile to Supabase Cloud users table
-                        syncGoogleUserToSupabase(u).catch(() => {});
-
+                    } else {
+                        const errData = await res.json().catch(() => ({}));
                         return {
-                            success: true,
-                            data: {
-                                session: true,
-                                user: sessionUser,
-                                token: authRes.token,
-                                redirect_url: authRes.redirect_url
-                            }
+                            success: false,
+                            error: errData.detail || 'Google authentication failed.'
                         };
                     }
-                } else {
-                    const errData = await res.json().catch(() => ({}));
-                    return {
-                        success: false,
-                        error: errData.detail || 'Google authentication failed.'
-                    };
+                } catch (networkErr) {
+                    console.warn('Local FastAPI Google auth unreachable, attempting static cloud verification:', networkErr);
                 }
-            } catch (networkErr) {
-                console.warn('Local FastAPI Google auth unreachable, attempting static cloud verification:', networkErr);
             }
 
             // 2. Static deployment fallback (e.g. Vercel without Python server)
@@ -1184,10 +1192,12 @@
     }
 
     async function apiSignOut() {
-        try {
-            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
-            await fetch(`${localBase}/auth/logout`, { method: 'POST' }).catch(() => {});
-        } catch (e) {}
+        if (isLocalDevHost()) {
+            try {
+                const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+                await fetch(`${localBase}/auth/logout`, { method: 'POST' }).catch(() => {});
+            } catch (e) {}
+        }
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
         localStorage.removeItem(DEMO_KEY);
@@ -1196,10 +1206,10 @@
 
     async function apiGetCurrentUser() {
         try {
-            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
             const token = localStorage.getItem(TOKEN_KEY);
-            if (token) {
+            if (token && isLocalDevHost()) {
                 try {
+                    const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
                     const res = await fetch(`${localBase}/auth/me`, {
                         method: 'GET',
                         headers: { 'Authorization': 'Bearer ' + token }

@@ -128,7 +128,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
 - **Rationale & Implementation:**
   - Replaced placeholder `alert()` handlers and the legacy `google_auth.php` redirect on `login.html` ("Continue with Google") and `register.html` ("Sign up with Google") with real Google Identity Services (OAuth 2.0) authentication.
   - **Backend Verification & Config (`backend/auth.py`, `backend/app.py`, `backend/models.py`):**
-    - Added zero-dependency `.env` file support (`.env.example` template provided) for `GOOGLE_CLIENT_ID`, activated local git-ignored `.env`, and configured static Web Client ID fallback in `supabase.js` / `api.js` so Google Sign-In works across FastAPI (`:8000`), Live Server (`:5500`), and static deployments.
+    - Added zero-dependency `.env` file support (`.env.example` template provided) for `GOOGLE_CLIENT_ID`, activated local git-ignored `.env`, and configured static Web Client ID fallback with `isLocalDevHost()` guard in `supabase.js` / `api.js` so Google Sign-In works across FastAPI (`:8000`), Live Server (`:5500`), and HTTPS Vercel deployments without probing `127.0.0.1:8000` on remote hosts.
     - Added `GET /api/auth/google/config` and `POST /api/auth/google`, validating tokens against Google's `oauth2.googleapis.com/tokeninfo` and `www.googleapis.com/oauth2/v3/userinfo` endpoints with strict `GOOGLE_CLIENT_ID` audience verification and `email_verified` enforcement.
   - **Database & Cloud Sync (`backend/database.py`, `supabase.js`, `api.js`):**
     - Added non-destructive `google_id` column migration and partial unique index `idx_users_google_id` to SQLite `users`.
