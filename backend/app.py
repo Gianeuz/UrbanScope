@@ -5,6 +5,7 @@ and static website hosting.
 """
 
 import os
+import secrets
 from pathlib import Path
 from typing import Optional, List
 from contextlib import asynccontextmanager
@@ -20,6 +21,8 @@ from backend.auth import (
     verify_password,
     create_access_token,
     decode_access_token,
+    get_google_client_id,
+    verify_google_token,
     get_current_user_from_request,
     get_current_user_from_header,
     require_admin,
@@ -31,6 +34,7 @@ from backend.auth import (
 from backend.models import (
     UserRegister,
     UserLogin,
+    GoogleAuthRequest,
     UserResponse,
     AuthResponse,
     PropertyCreate,
@@ -490,7 +494,10 @@ def register_user(payload: UserRegister, response: Response):
     conn.commit()
 
     user_id = cursor.lastrowid
-    cursor.execute("SELECT id, email, full_name, phone, role, created_at FROM users WHERE id = ?", (user_id,))
+    cursor.execute(
+        "SELECT id, email, full_name, phone, role, avatar_url, google_id, created_at FROM users WHERE id = ?",
+        (user_id,)
+    )
     user_dict = row_to_dict(cursor.fetchone())
     conn.close()
 
@@ -592,6 +599,121 @@ def login_user(payload: UserLogin, response: Response):
         user=UserResponse(**user_dict),
         redirect_url=redirect_url,
         message="Sign in successful"
+    )
+
+
+@app.get("/api/auth/google/config", tags=["Auth"])
+def get_google_auth_config():
+    """Returns public Google Identity Services configuration status and OAuth Client ID."""
+    client_id = get_google_client_id()
+    return {
+        "enabled": bool(client_id),
+        "client_id": client_id
+    }
+
+
+@app.post("/api/auth/google", response_model=AuthResponse, tags=["Auth"])
+def google_authenticate(payload: GoogleAuthRequest, response: Response):
+    """
+    Verifies a Google Identity Services ID token or OAuth2 access token,
+    auto-creates or links the corresponding SQLite user record, issues an
+    UrbanScope JWT + HTTP-only cookie, and returns role-aware redirection.
+    """
+    google_info = verify_google_token(
+        credential=payload.credential,
+        access_token=payload.access_token
+    )
+
+    clean_email = google_info["email"].strip().lower()
+    google_sub = google_info["google_id"]
+    google_name = google_info["full_name"]
+    google_avatar = google_info["avatar_url"]
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM users WHERE google_id = ? OR LOWER(email) = ?",
+        (google_sub, clean_email)
+    )
+    existing_row = cursor.fetchone()
+
+    if existing_row:
+        existing = row_to_dict(existing_row)
+        user_id = existing["id"]
+        updates = []
+        params = []
+
+        if not existing.get("google_id"):
+            updates.append("google_id = ?")
+            params.append(google_sub)
+
+        if not (existing.get("full_name") or "").strip() and google_name:
+            updates.append("full_name = ?")
+            params.append(google_name)
+
+        # Only populate Google avatar when user has no custom photo (preserve admin default/custom avatar)
+        current_avatar = (existing.get("avatar_url") or "").strip()
+        is_regular_user = existing.get("role") == "user"
+        if google_avatar and (not current_avatar or (is_regular_user and current_avatar == "assets/images/agent.jpg")):
+            updates.append("avatar_url = ?")
+            params.append(google_avatar)
+
+        if updates:
+            params.append(user_id)
+            cursor.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
+            conn.commit()
+    else:
+        role = determine_user_role(clean_email)
+        pwd_hash = hash_password(secrets.token_urlsafe(32))
+        avatar_to_save = google_avatar if google_avatar else "assets/images/agent.jpg"
+
+        cursor.execute("""
+            INSERT INTO users (email, password_hash, full_name, phone, role, avatar_url, google_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (clean_email, pwd_hash, google_name, "", role, avatar_to_save, google_sub))
+        conn.commit()
+        user_id = cursor.lastrowid
+
+    cursor.execute(
+        "SELECT id, email, full_name, phone, role, avatar_url, google_id, created_at FROM users WHERE id = ?",
+        (user_id,)
+    )
+    user_dict = row_to_dict(cursor.fetchone())
+    conn.close()
+
+    user_email = user_dict["email"].lower().strip()
+    user_role = user_dict["role"]
+
+    token = create_access_token({
+        "sub": str(user_dict["id"]),
+        "id": user_dict["id"],
+        "email": user_dict["email"],
+        "role": user_role
+    })
+
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        samesite="lax",
+        max_age=7 * 24 * 3600,
+        path="/"
+    )
+
+    if user_role == "superadmin" and user_email in AUTHORIZED_SUPERADMIN_EMAILS:
+        redirect_url = "/pages/superadmin/dashboard.html"
+    elif user_role in AUTHORIZED_ADMIN_ROLES and user_email in AUTHORIZED_ADMIN_EMAILS:
+        redirect_url = "/pages/admin/dashboard.html"
+    else:
+        redirect_url = "/index.html"
+
+    return AuthResponse(
+        success=True,
+        token=token,
+        user=UserResponse(**user_dict),
+        redirect_url=redirect_url,
+        message="Google sign-in successful"
     )
 
 

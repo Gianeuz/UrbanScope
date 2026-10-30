@@ -10,7 +10,7 @@ Built for **Miriam Lobren Real Estate Agent** (Las Piñas & Cavite, Philippines)
 ## ✨ Features
 
 - **Property Showcase** — featured listings with category tabs, detail pages with photo galleries, specs, and maps.
-- **Client Accounts** — registration with PH phone validation and password strength meter; unified sign-in that routes users by role.
+- **Client Accounts & Google Sign-In** — registration with PH phone validation and password strength meter, plus one-click **Google Authentication** (OAuth 2.0 via Google Identity Services); unified sign-in that routes users by role.
 - **Consultations & Inquiries** — interactive consultation intent flow allowing clients to book general consultations (free site tripping, loan pre-approval, property advice) or inquire about specific accredited listings.
 - **Mira Chatbot** — on-site assistant for navigation, property search by location/budget/type, and financing guidance.
 - **Admin Dashboard** — KPI cards, inquiry charts, property CRUD, client inquiry tracking, and user overview.
@@ -27,7 +27,7 @@ Built for **Miriam Lobren Real Estate Agent** (Las Piñas & Cavite, Philippines)
 | Frontend | HTML5, vanilla CSS3, vanilla JavaScript (ES6) |
 | Backend | Python 3, FastAPI, Uvicorn |
 | Database | SQLite (auto-created and seeded on first run) |
-| Auth | PBKDF2 password hashing, JWT (PyJWT) |
+| Auth | PBKDF2 password hashing, Google Identity Services (OAuth 2.0), JWT (PyJWT) |
 
 ---
 
@@ -47,13 +47,14 @@ python3 run.py
 | API Docs | http://127.0.0.1:8000/docs |
 
 
-**Environment variables (optional):**
+**Environment variables (optional — or configure in `.env`, see `.env.example`):**
 
 | Variable | Default | Purpose |
 | :--- | :--- | :--- |
 | `HOST` | `127.0.0.1` | Server host |
 | `PORT` | `8000` | Server port |
 | `URBANSCOPE_SECRET_KEY` | dev fallback | JWT signing secret. **Set this in production.** |
+| `GOOGLE_CLIENT_ID` | *(empty)* | Google OAuth 2.0 Web Client ID (`*.apps.googleusercontent.com`) for Google Sign-In |
 
 To reset the data, delete `backend/urbanscope.db` and restart the server.
 

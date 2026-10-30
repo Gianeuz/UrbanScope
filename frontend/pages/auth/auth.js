@@ -295,7 +295,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const meter = document.getElementById("strengthMeter");
     const label = document.getElementById("strengthLabel");
     const hint = document.getElementById("matchHint");
-    const googleBtn = document.getElementById("googleSignup");
 
     if (!pwd || !meter) return;
 
@@ -334,10 +333,223 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmPwd) {
         confirmPwd.addEventListener("input", updateMatch);
     }
+});
 
-    if (googleBtn) {
-        googleBtn.addEventListener("click", () => {
-            window.location.href = "google_auth.php?mode=register";
+
+// ==========================================
+// 4. GOOGLE IDENTITY SERVICES AUTHENTICATION
+// ==========================================
+
+(function initGoogleAuthentication() {
+    let preloadedGoogleConfig = null;
+
+    function prefetchGoogleConfig() {
+        if (typeof apiGetGoogleConfig === "function") {
+            apiGetGoogleConfig()
+                .then((cfg) => {
+                    if (cfg && cfg.enabled && cfg.client_id) {
+                        preloadedGoogleConfig = cfg;
+                    }
+                })
+                .catch(() => {});
+        }
+    }
+
+    function ensureGoogleIdentitySdk(timeoutMs = 6000) {
+        return new Promise((resolve) => {
+            if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+                resolve(true);
+                return;
+            }
+
+            let existingScript = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+            if (!existingScript) {
+                existingScript = document.createElement("script");
+                existingScript.src = "https://accounts.google.com/gsi/client";
+                existingScript.async = true;
+                existingScript.defer = true;
+                document.head.appendChild(existingScript);
+            }
+
+            const started = Date.now();
+            const poll = setInterval(() => {
+                if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+                    clearInterval(poll);
+                    resolve(true);
+                } else if (Date.now() - started >= timeoutMs) {
+                    clearInterval(poll);
+                    resolve(false);
+                }
+            }, 120);
         });
     }
-});
+
+    function renderGoogleBanner(anchorBtn, message, variant) {
+        let banner = document.getElementById("googleAuthBanner");
+        if (!message) {
+            if (banner) banner.remove();
+            return;
+        }
+        if (!banner) {
+            banner = document.createElement("div");
+            banner.id = "googleAuthBanner";
+            banner.setAttribute("role", "alert");
+            anchorBtn.insertAdjacentElement("afterend", banner);
+        }
+        banner.className = "google-auth-banner is-" + (variant || "info");
+        banner.textContent = message;
+    }
+
+    function redirectAuthenticatedGoogleUser(authResult) {
+        try {
+            sessionStorage.removeItem("urbanscope_register_draft");
+        } catch (_) {}
+
+        const queryParams = new URLSearchParams(window.location.search);
+        const rawNext = queryParams.get("redirect") || "";
+        const safeNext = /^[A-Za-z0-9_\-\/]+\.html([?#][A-Za-z0-9_\-=&%.]*)?$/.test(rawNext) ? rawNext : "index.html";
+
+        const user = (authResult && authResult.data && authResult.data.user) || {};
+        const cleanEmail = (user.email || "").toLowerCase().trim();
+        const role = (user.role || "user").toLowerCase();
+        const isAdminUser = (
+            (cleanEmail === "admin.realestate@gmail.com" || cleanEmail === "urbanscope.cvsu@gmail.com") &&
+            (role === "admin" || role === "superadmin")
+        );
+
+        if (role === "superadmin" && cleanEmail === "urbanscope.cvsu@gmail.com") {
+            window.location.href = "../superadmin/dashboard.html";
+        } else if (isAdminUser) {
+            window.location.href = "../admin/dashboard.html";
+        } else if (safeNext && safeNext !== "index.html") {
+            window.location.href = "../../" + safeNext;
+        } else {
+            window.location.href = "../../index.html";
+        }
+    }
+
+    function attachGoogleButton(btn) {
+        if (!btn || btn.dataset.googleBound === "true") return;
+        btn.dataset.googleBound = "true";
+
+        const labelSpan = btn.querySelector("span");
+        const defaultLabel = labelSpan ? labelSpan.textContent : "Continue with Google";
+
+        function setLoadingState(loading, text) {
+            btn.disabled = loading;
+            btn.classList.toggle("is-loading", loading);
+            if (labelSpan) labelSpan.textContent = text || defaultLabel;
+        }
+
+        function launchGoogleTokenPopup(clientId) {
+            const tokenClient = window.google.accounts.oauth2.initTokenClient({
+                client_id: clientId,
+                scope: "openid email profile",
+                callback: async (tokenResponse) => {
+                    if (!tokenResponse || tokenResponse.error) {
+                        setLoadingState(false);
+                        if (tokenResponse && tokenResponse.error &&
+                            tokenResponse.error !== "popup_closed_by_user" &&
+                            tokenResponse.error !== "access_denied") {
+                            renderGoogleBanner(
+                                btn,
+                                "Google sign-in error: " + (tokenResponse.error_description || tokenResponse.error),
+                                "error"
+                            );
+                        }
+                        return;
+                    }
+
+                    if (!tokenResponse.access_token) {
+                        setLoadingState(false);
+                        return;
+                    }
+
+                    setLoadingState(true, "Verifying Google Account...");
+                    const res = await apiSignInWithGoogle({ access_token: tokenResponse.access_token });
+                    if (res && res.success) {
+                        setLoadingState(true, "Signed in! Redirecting...");
+                        redirectAuthenticatedGoogleUser(res);
+                    } else {
+                        setLoadingState(false);
+                        renderGoogleBanner(
+                            btn,
+                            (res && res.error) || "Google authentication failed. Please try again.",
+                            "error"
+                        );
+                    }
+                },
+                error_callback: (err) => {
+                    setLoadingState(false);
+                    if (err && err.type === "popup_failed_to_open") {
+                        renderGoogleBanner(
+                            btn,
+                            "Google sign-in popup was blocked. Please allow popups for this site and try again.",
+                            "error"
+                        );
+                    }
+                }
+            });
+
+            tokenClient.requestAccessToken({ prompt: "select_account" });
+        }
+
+        btn.addEventListener("click", async () => {
+            renderGoogleBanner(btn, "");
+            setLoadingState(true, "Connecting to Google...");
+
+            // Fast synchronous path when config & GIS SDK are already preloaded (prevents popup blockers)
+            if (
+                preloadedGoogleConfig &&
+                preloadedGoogleConfig.enabled &&
+                preloadedGoogleConfig.client_id &&
+                window.google &&
+                window.google.accounts &&
+                window.google.accounts.oauth2
+            ) {
+                launchGoogleTokenPopup(preloadedGoogleConfig.client_id);
+                return;
+            }
+
+            // Async fallback (re-checks .env config on the fly & waits for GIS SDK if still loading)
+            const cfg = (typeof apiGetGoogleConfig === "function")
+                ? await apiGetGoogleConfig()
+                : { enabled: false, client_id: "" };
+
+            if (!cfg || !cfg.enabled || !cfg.client_id) {
+                setLoadingState(false);
+                renderGoogleBanner(
+                    btn,
+                    "Google Sign-In setup required: add your GOOGLE_CLIENT_ID in the .env file (see .env.example) to enable Google authentication.",
+                    "setup"
+                );
+                return;
+            }
+
+            preloadedGoogleConfig = cfg;
+            const sdkReady = await ensureGoogleIdentitySdk();
+            if (!sdkReady) {
+                setLoadingState(false);
+                renderGoogleBanner(
+                    btn,
+                    "Unable to reach Google Identity Services. Please check your internet connection or disable script blockers.",
+                    "error"
+                );
+                return;
+            }
+
+            launchGoogleTokenPopup(cfg.client_id);
+        });
+    }
+
+    function setup() {
+        prefetchGoogleConfig();
+        document.querySelectorAll(".btn-google").forEach(attachGoogleButton);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setup);
+    } else {
+        setup();
+    }
+})();

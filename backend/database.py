@@ -61,6 +61,7 @@ def init_db():
             phone TEXT,
             role TEXT CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user',
             avatar_url TEXT DEFAULT 'assets/images/agent.jpg',
+            google_id TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
@@ -133,6 +134,9 @@ def init_db():
     existing_user_cols = {col[1] for col in cursor.fetchall()}
     if "avatar_url" not in existing_user_cols:
         cursor.execute("ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT 'assets/images/agent.jpg'")
+    if "google_id" not in existing_user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN google_id TEXT")
+    cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id) WHERE google_id IS NOT NULL")
 
     # 3. Inquiries Table
     cursor.execute("""

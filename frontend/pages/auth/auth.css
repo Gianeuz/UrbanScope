@@ -635,6 +635,37 @@ body {
     transform: translateY(0);
 }
 
+.btn-google:disabled,
+.btn-google.is-loading {
+    opacity: 0.72;
+    cursor: wait;
+    transform: none;
+}
+
+.google-auth-banner {
+    margin-top: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.45;
+    font-weight: 500;
+    border: 1px solid #d1ddd3;
+    background-color: #f4f9f5;
+    color: #1f3b26;
+}
+
+.google-auth-banner.is-setup {
+    background-color: #fffbeb;
+    border-color: #f5d08a;
+    color: #7c4d08;
+}
+
+.google-auth-banner.is-error {
+    background-color: #fdeeec;
+    border-color: #e9b8b3;
+    color: #9e2a1f;
+}
+
 .register-prompt {
     margin-top: 16px;
     text-align: center;

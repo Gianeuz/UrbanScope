@@ -48,6 +48,7 @@ erDiagram
         TEXT phone
         TEXT role
         TEXT avatar_url
+        TEXT google_id UK
         TIMESTAMP created_at
     }
     PROPERTIES {
@@ -97,7 +98,8 @@ Client and admin accounts.
 | `full_name` | TEXT | NOT NULL | |
 | `phone` | TEXT | — | Free-form; frontend validates PH formats (`+639…` / `09…`) |
 | `role` | TEXT | `CHECK(role IN ('user', 'admin', 'superadmin')) DEFAULT 'user'` | Initial role assigned on insert via trigger `trg_user_role_insert` (`urbanscope.cvsu@gmail.com` → `'superadmin'`, `admin.realestate@gmail.com` → `'admin'`, others → `'user'`). Trigger `trg_user_role_update` preserves `OLD.role` on email changes. Superadmins modify roles via `PUT /api/superadmin/users/{id}`. |
-| `avatar_url` | TEXT | `DEFAULT 'assets/images/agent.jpg'` | Profile picture image path or data URL (max client upload size: 5MB) |
+| `avatar_url` | TEXT | `DEFAULT 'assets/images/agent.jpg'` | Profile picture image path, Google avatar URL, or data URL (max client upload size: 5MB) |
+| `google_id` | TEXT | Partial `UNIQUE` (`idx_users_google_id`) | Google OpenID `sub` identifier linked on Google Sign-In (*added by non-destructive migration*) |
 | `created_at` | TIMESTAMP | `CURRENT_TIMESTAMP` | UTC, `YYYY-MM-DD HH:MM:SS` |
 
 ### 3.2 `properties`
@@ -214,12 +216,16 @@ There is no migration framework. `init_db()` is **idempotent** and non-destructi
 
 ---
 
-## 6. Passwords & Tokens
+## 6. Passwords, Google OAuth & Tokens
 
 Defined in [`backend/auth.py`](backend/auth.py).
 
 - **Hashing:** PBKDF2-HMAC-SHA256, 100,000 iterations, 16-byte random hex salt.
-  Stored as `salt$hash` (both hex). Verified with `hmac.compare_digest`.
+  Stored as `salt$hash` (both hex). Verified with `hmac.compare_digest`. Accounts created
+  purely via Google Sign-In receive a PBKDF2 hash of a 256-bit random token.
+- **Google OAuth 2.0:** Verifies Google Identity Services `access_token` or `credential` (ID token)
+  against `oauth2.googleapis.com/tokeninfo` and `www.googleapis.com/oauth2/v3/userinfo`, enforcing
+  audience (`aud`/`azp`) match against `GOOGLE_CLIENT_ID` (from env or `.env`) and `email_verified == true`.
 - **JWT:** HS256, 7-day expiry, payload `{ sub: "<user id>", email, role, exp, iat }`.
   Secret from env var `URBANSCOPE_SECRET_KEY` (a hard-coded fallback exists for dev).
 - **Client storage:** `localStorage` keys `urbanscope_jwt_token`, `urbanscope_user`,

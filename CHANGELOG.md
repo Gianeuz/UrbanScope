@@ -18,6 +18,7 @@ This document records all features, enhancements, bug fixes, user requests, arch
 | **Oct 2026** | **Event Handling** | Fixed `session.js` global document click interceptor bypassing consultation modal on homepage | `session.js`, `index.js` |
 | **Oct 2026** | **Legal Hub** | Added Terms of Service (`terms.html`) compliant with RESA (RA 9646) and Privacy Policy (`privacy.html`) compliant with DPA (RA 10173) | `frontend/pages/legal/` |
 | **Oct 2026** | **Registration Flow** | Same-tab legal link navigation with `?from=register`, mouse/keyboard back button support, and input draft persistence (`sessionStorage`) | `register.html`, `register.js`, `legal.js`, `legal.css` |
+| **Oct 2026** | **Google Auth** | Added Google Identity Services (OAuth 2.0) sign-in & sign-up with FastAPI token verification, SQLite `google_id` migration, Supabase cloud sync, and navbar Google avatar rendering | `backend/auth.py`, `backend/app.py`, `backend/database.py`, `supabase.js`, `auth.js`, `session.js` |
 
 ---
 
@@ -121,6 +122,20 @@ This document records all features, enhancements, bug fixes, user requests, arch
      - Added `frontend/pages/legal/legal.js` and styled `.legal-back-btn` inside the hero banner.
      - Dynamically titles the button **"Back to Registration"** when coming from `register.html`.
      - Supports keyboard back shortcuts (`Alt + Left Arrow` and `Backspace` outside form inputs).
+
+### 9. Google Identity Services (OAuth 2.0) Authentication
+- **User Prompt:** *"add google authentication"*
+- **Rationale & Implementation:**
+  - Replaced placeholder `alert()` handlers and the legacy `google_auth.php` redirect on `login.html` ("Continue with Google") and `register.html` ("Sign up with Google") with real Google Identity Services (OAuth 2.0) authentication.
+  - **Backend Verification & Config (`backend/auth.py`, `backend/app.py`, `backend/models.py`):**
+    - Added zero-dependency `.env` file support (`.env.example` template provided) for `GOOGLE_CLIENT_ID`, activated local git-ignored `.env`, and configured static Web Client ID fallback in `supabase.js` / `api.js` so Google Sign-In works across FastAPI (`:8000`), Live Server (`:5500`), and static deployments.
+    - Added `GET /api/auth/google/config` and `POST /api/auth/google`, validating tokens against Google's `oauth2.googleapis.com/tokeninfo` and `www.googleapis.com/oauth2/v3/userinfo` endpoints with strict `GOOGLE_CLIENT_ID` audience verification and `email_verified` enforcement.
+  - **Database & Cloud Sync (`backend/database.py`, `supabase.js`, `api.js`):**
+    - Added non-destructive `google_id` column migration and partial unique index `idx_users_google_id` to SQLite `users`.
+    - Automatically creates new client accounts or links `google_id` to existing accounts while preserving passwords, RBAC roles (`user`, `admin`, `superadmin`), and custom admin avatars, and syncs verified users to Supabase Cloud (`users` table).
+  - **UI & Session Polish (`auth.js`, `auth.css`, `session.js`, `session.css`):**
+    - Preloads Google OAuth config on page load so `requestAccessToken` runs synchronously on click without triggering browser popup blockers.
+    - Displays clean inline status/setup banners instead of blocking `alert()` dialogs, and renders Google profile pictures inside `.profile-avatar` with fallback to user initials.
 
 ---
 

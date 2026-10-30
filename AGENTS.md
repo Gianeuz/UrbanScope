@@ -17,7 +17,7 @@ an admin dashboard, and the "Mira" chatbot.
 | Frontend | Static **HTML + vanilla CSS + vanilla JS (ES6)** — no framework, no bundler, no npm |
 | Backend | **Python 3 + FastAPI + Uvicorn** (`backend/`) |
 | Database | **SQLite** file `backend/urbanscope.db` (auto-created and seeded) |
-| Auth | PBKDF2 password hashes + **PyJWT** bearer tokens in `localStorage` |
+| Auth | PBKDF2 password hashes + **Google Identity Services (OAuth 2.0)** + **PyJWT** bearer tokens in `localStorage` |
 | Fonts | Plus Jakarta Sans, Dancing Script (Google Fonts) |
 
 ---
@@ -31,7 +31,7 @@ python run.py            # serves site + API on http://127.0.0.1:8000
 
 - Site: `http://127.0.0.1:8000/` · API docs: `http://127.0.0.1:8000/docs`
 - `run.py` uses `uvicorn --reload`, so Python edits hot-reload.
-- Env vars: `HOST`, `PORT`, `URBANSCOPE_SECRET_KEY`.
+- Env vars (or `.env` in root — see `.env.example`): `HOST`, `PORT`, `URBANSCOPE_SECRET_KEY`, `GOOGLE_CLIENT_ID`.
 - Frontend also works from VS Code Live Server (`:5500/frontend/`); it calls the API at `http://127.0.0.1:8000/api`.
 - **Reset data:** delete `backend/urbanscope.db` and restart (or run `python backend/seed_rbac.py`).
 
@@ -84,7 +84,8 @@ to `/pages/…`.
   to do with Supabase; it's a REST client for FastAPI that exposes globals:
   `apiGetProperties`, `apiGetPropertyById`, `apiAddProperty`, `apiUpdateProperty`,
   `apiDeleteProperty`, `apiSubmitInquiry`, `apiGetInquiries`, `apiSignUp`, `apiSignIn`,
-  `apiSignOut`, `apiGetCurrentUser`, `isBackendConfigured` / `isSupabaseConfigured`.
+  `apiGetGoogleConfig`, `apiSignInWithGoogle`, `apiSignOut`, `apiGetCurrentUser`,
+  `isBackendConfigured` / `isSupabaseConfigured`.
 - `shared/js/api.js` is a near-duplicate that no page currently loads. If you change one
   gateway, change both (or consolidate — ask first).
 - API base URL: same origin when served on port `8000`, otherwise `http://127.0.0.1:8000/api`.
@@ -198,6 +199,12 @@ path when rendering from a page.
     - Features a pill document switcher (`[ Terms of Service ]` / `[ Privacy Policy ]`) allowing seamless switching between both documents, sticky Table of Contents sidebar for rapid navigation, responsive reading typography, and integrated standard navbar & session profile chip.
     - All dead `#` links and inline `alert(...)` handlers across `index.html`, `pages/auth/login.html`, `pages/properties/property-detail.html`, `pages/properties/Liora.html`, and `pages/properties/Airmen.html` are linked directly to these new legal pages.
     - **Registration Back Navigation & Draft Persistence**: In `pages/auth/register.html`, legal links navigate in the same tab (`?from=register`) without `target="_blank"`, allowing the mouse back button (Button 4 / Back) and keyboard back shortcuts (`Alt + Left Arrow`, `Backspace` outside inputs) to return directly to the registration page. `terms.html` and `privacy.html` display a top `.legal-back-btn` dynamically titled **"Back to Registration"**. `register.js` caches typed inputs (`fullname`, `phone`, `email`, `terms`) into `sessionStorage` (`urbanscope_register_draft`) on typing and clicking legal links, automatically restoring every field upon return.
+14. **Google Identity Services (OAuth 2.0) Authentication:**
+    - Integrated on both `/pages/auth/login.html` (`#googleLoginBtn`, "Continue with Google") and `/pages/auth/register.html` (`#googleSignup`, "Sign up with Google") via `frontend/pages/auth/auth.js` (removing the broken legacy `google_auth.php` redirect and inline `alert()` placeholders).
+    - **Configuration:** Reads `GOOGLE_CLIENT_ID` from environment variables or root `.env` (with fallback to `.env.example` in `backend/auth.py` and public Web Client ID fallback in `supabase.js` / `api.js` for Live Server & static Vercel hosting; template in `.env.example`) and exposes public status via `GET /api/auth/google/config`. Ensure both `http://localhost:8000` and `http://127.0.0.1:8000` are listed under **Authorized JavaScript origins** in Google Cloud Console.
+    - **Server-Side Token Verification (`POST /api/auth/google`):** `backend/auth.py` (`verify_google_token`) validates Google OAuth2 access tokens and ID tokens against `oauth2.googleapis.com/tokeninfo` and `www.googleapis.com/oauth2/v3/userinfo`, enforcing strict `GOOGLE_CLIENT_ID` audience (`aud`/`azp`) matching and `email_verified == true`.
+    - **Account Linking & Supabase Sync:** Automatically links `google_id` to existing email accounts (preserving passwords, roles, and custom admin avatars) or creates new `user` rows in SQLite (`users.google_id` with partial unique index `idx_users_google_id`), issues UrbanScope JWTs + HTTP-only `access_token` cookies, and syncs the verified record to Supabase Cloud (`REST_BASE/users`).
+    - **Navbar Google Avatar Rendering (`session.js` & `session.css`):** Displays verified external Google profile photos (`referrerpolicy="no-referrer"`) inside `.profile-avatar` with automatic fallback to user initials.
 
 ---
 

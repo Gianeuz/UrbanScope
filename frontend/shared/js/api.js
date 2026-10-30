@@ -12,6 +12,9 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_96sfQ4F18ypajf6bitBRqg_JtWTL4__';
     const REST_BASE = SUPABASE_URL + '/rest/v1';
 
+    // Optional client-side Google OAuth Client ID fallback (primarily loaded via /api/auth/google/config from .env)
+    const GOOGLE_CLIENT_ID = window.URBANSCOPE_GOOGLE_CLIENT_ID || '981770655747-t222jr0ias09rl7aga3302p9am64so43.apps.googleusercontent.com';
+
     const TOKEN_KEY = 'urbanscope_jwt_token';
     const USER_KEY = 'urbanscope_user';
     const DEMO_KEY = 'urbanscope_demo_user';
@@ -774,7 +777,8 @@
                             full_name: u.full_name,
                             phone: u.phone || '',
                             role: u.role || 'user',
-                            user_metadata: { full_name: u.full_name, phone: u.phone }
+                            avatar_url: u.avatar_url || '',
+                            user_metadata: { full_name: u.full_name, phone: u.phone, avatar_url: u.avatar_url || '' }
                         };
 
                         localStorage.setItem(TOKEN_KEY, regData.token);
@@ -860,7 +864,8 @@
                             full_name: u.full_name,
                             phone: u.phone || '',
                             role: u.role || 'user',
-                            user_metadata: { full_name: u.full_name, phone: u.phone }
+                            avatar_url: u.avatar_url || '',
+                            user_metadata: { full_name: u.full_name, phone: u.phone, avatar_url: u.avatar_url || '' }
                         };
 
                         localStorage.setItem(TOKEN_KEY, authRes.token);
@@ -929,6 +934,237 @@
         }
     }
 
+    async function apiGetGoogleConfig() {
+        const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+        try {
+            const res = await fetch(`${localBase}/auth/google/config`, { method: 'GET' });
+            if (res.ok) {
+                const cfg = await res.json();
+                const cid = (cfg.client_id || '').trim();
+                if (cid && !cid.toLowerCase().startsWith('your_google_client_id')) {
+                    return { enabled: true, client_id: cid };
+                }
+            }
+        } catch (e) {}
+
+        const fallbackCid = (window.URBANSCOPE_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID || '').trim();
+        if (fallbackCid && !fallbackCid.toLowerCase().startsWith('your_google_client_id')) {
+            return { enabled: true, client_id: fallbackCid };
+        }
+        return { enabled: false, client_id: '' };
+    }
+
+    async function syncGoogleUserToSupabase(userObj) {
+        if (!userObj || !userObj.email) return null;
+        try {
+            const cleanEmail = userObj.email.trim().toLowerCase();
+            const checkRes = await fetch(
+                `${REST_BASE}/users?email=ilike.${encodeURIComponent(cleanEmail)}&select=id,google_id,avatar_url,role`,
+                { method: 'GET', headers: getHeaders() }
+            );
+            if (!checkRes.ok) return null;
+            const rows = await checkRes.json().catch(() => []);
+            const existing = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
+
+            if (existing && existing.id) {
+                const patchBody = {};
+                if (userObj.google_id && !existing.google_id) {
+                    patchBody.google_id = userObj.google_id;
+                }
+                const isRegular = existing.role === 'user' || existing.role === 'client';
+                if (userObj.avatar_url && (!existing.avatar_url || (isRegular && existing.avatar_url === 'assets/images/agent.jpg'))) {
+                    patchBody.avatar_url = userObj.avatar_url;
+                }
+                if (Object.keys(patchBody).length > 0) {
+                    await fetch(`${REST_BASE}/users?id=eq.${encodeURIComponent(existing.id)}`, {
+                        method: 'PATCH',
+                        headers: getHeaders(),
+                        body: JSON.stringify(patchBody)
+                    }).catch(() => {});
+                }
+                return existing;
+            } else {
+                const supaRole = (userObj.role === 'superadmin' || userObj.role === 'admin') ? 'admin' : 'user';
+                const insertRes = await fetch(`${REST_BASE}/users`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({
+                        email: cleanEmail,
+                        full_name: userObj.full_name || userObj.name || cleanEmail.split('@')[0],
+                        phone: userObj.phone || '',
+                        role: supaRole,
+                        avatar_url: userObj.avatar_url || 'assets/images/agent.jpg',
+                        google_id: userObj.google_id || null
+                    })
+                });
+                if (insertRes.ok) {
+                    const created = await insertRes.json().catch(() => []);
+                    return Array.isArray(created) ? created[0] : created;
+                }
+            }
+        } catch (err) {
+            console.warn('Supabase Google user sync notice:', err.message);
+        }
+        return null;
+    }
+
+    async function apiSignInWithGoogle(googlePayload = {}) {
+        try {
+            const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
+            const body = {
+                credential: googlePayload.credential || null,
+                access_token: googlePayload.access_token || null
+            };
+
+            try {
+                const res = await fetch(`${localBase}/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) {
+                    const authRes = await res.json();
+                    if (authRes.success && authRes.user) {
+                        const u = authRes.user;
+                        const sessionUser = {
+                            id: u.id,
+                            email: u.email,
+                            name: u.full_name,
+                            full_name: u.full_name,
+                            phone: u.phone || '',
+                            role: u.role || 'user',
+                            avatar_url: u.avatar_url || '',
+                            google_id: u.google_id || null,
+                            user_metadata: {
+                                full_name: u.full_name,
+                                phone: u.phone || '',
+                                avatar_url: u.avatar_url || ''
+                            }
+                        };
+
+                        localStorage.setItem(TOKEN_KEY, authRes.token);
+                        localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
+                        localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
+                        if (sessionUser.role === 'admin' || sessionUser.role === 'superadmin') {
+                            localStorage.setItem('adminUser', JSON.stringify(sessionUser));
+                        } else {
+                            localStorage.removeItem('adminUser');
+                        }
+
+                        syncGoogleUserToSupabase(u).catch(() => {});
+
+                        return {
+                            success: true,
+                            data: {
+                                session: true,
+                                user: sessionUser,
+                                token: authRes.token,
+                                redirect_url: authRes.redirect_url
+                            }
+                        };
+                    }
+                } else {
+                    const errData = await res.json().catch(() => ({}));
+                    return {
+                        success: false,
+                        error: errData.detail || 'Google authentication failed.'
+                    };
+                }
+            } catch (networkErr) {
+                console.warn('Local FastAPI Google auth unreachable, attempting static cloud verification:', networkErr);
+            }
+
+            const cfg = await apiGetGoogleConfig();
+            if (!cfg.enabled || !cfg.client_id) {
+                return {
+                    success: false,
+                    error: 'Google Sign-In is not configured. Add GOOGLE_CLIENT_ID to your .env file.'
+                };
+            }
+
+            let profile = null;
+            if (body.access_token) {
+                const tRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(body.access_token)}`);
+                if (!tRes.ok) return { success: false, error: 'Invalid or expired Google access token.' };
+                const tInfo = await tRes.json();
+                if (tInfo.aud !== cfg.client_id && tInfo.azp !== cfg.client_id) {
+                    return { success: false, error: 'Google token client ID mismatch.' };
+                }
+                const uRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { 'Authorization': `Bearer ${body.access_token}` }
+                });
+                if (!uRes.ok) return { success: false, error: 'Unable to fetch Google account profile.' };
+                profile = await uRes.json();
+            } else if (body.credential) {
+                const idRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(body.credential)}`);
+                if (!idRes.ok) return { success: false, error: 'Invalid or expired Google ID token.' };
+                profile = await idRes.json();
+                if (profile.aud !== cfg.client_id) {
+                    return { success: false, error: 'Google token client ID mismatch.' };
+                }
+            } else {
+                return { success: false, error: 'Missing Google authentication token.' };
+            }
+
+            const cleanEmail = (profile.email || '').trim().toLowerCase();
+            const isVerified = profile.email_verified === true || String(profile.email_verified).toLowerCase() === 'true';
+            if (!cleanEmail || !isVerified) {
+                return { success: false, error: 'Google account email is not verified.' };
+            }
+
+            let role = 'user';
+            if (cleanEmail === 'urbanscope.cvsu@gmail.com') role = 'superadmin';
+            else if (cleanEmail === 'admin.realestate@gmail.com') role = 'admin';
+
+            const fullName = (profile.name || cleanEmail.split('@')[0]).trim();
+            const avatarUrl = (profile.picture || '').trim();
+            const googleSub = (profile.sub || '').trim();
+
+            const supaRecord = await syncGoogleUserToSupabase({
+                email: cleanEmail,
+                full_name: fullName,
+                phone: '',
+                role: role,
+                avatar_url: avatarUrl,
+                google_id: googleSub
+            });
+
+            const sessionUser = {
+                id: (supaRecord && supaRecord.id) ? supaRecord.id : Date.now(),
+                email: cleanEmail,
+                name: fullName,
+                full_name: fullName,
+                phone: '',
+                role: role,
+                avatar_url: avatarUrl,
+                google_id: googleSub,
+                user_metadata: { full_name: fullName, avatar_url: avatarUrl }
+            };
+
+            const simulatedToken = 'sb_google_' + sessionUser.id + '_' + Date.now();
+            localStorage.setItem(TOKEN_KEY, simulatedToken);
+            localStorage.setItem(USER_KEY, JSON.stringify(sessionUser));
+            localStorage.setItem(DEMO_KEY, JSON.stringify(sessionUser));
+            if (role === 'admin' || role === 'superadmin') {
+                localStorage.setItem('adminUser', JSON.stringify(sessionUser));
+            } else {
+                localStorage.removeItem('adminUser');
+            }
+
+            const redirectUrl = (role === 'superadmin')
+                ? '/pages/superadmin/dashboard.html'
+                : (role === 'admin' ? '/pages/admin/dashboard.html' : '/index.html');
+
+            return {
+                success: true,
+                data: { session: true, user: sessionUser, token: simulatedToken, redirect_url: redirectUrl }
+            };
+        } catch (err) {
+            return { success: false, error: err.message || 'Google authentication failed.' };
+        }
+    }
+
     async function apiSignOut() {
         try {
             const localBase = (location.port === '8000') ? '/api' : 'http://127.0.0.1:8000/api';
@@ -959,7 +1195,13 @@
                             full_name: u.full_name,
                             phone: u.phone || '',
                             role: u.role || 'user',
-                            user_metadata: { full_name: u.full_name, phone: u.phone }
+                            avatar_url: u.avatar_url || '',
+                            google_id: u.google_id || null,
+                            user_metadata: {
+                                full_name: u.full_name,
+                                phone: u.phone || '',
+                                avatar_url: u.avatar_url || ''
+                            }
                         };
                     }
                 } catch (e) {}
@@ -1039,6 +1281,8 @@
     window.apiUpdateAdminPassword = apiUpdateAdminPassword;
     window.apiSignUp = apiSignUp;
     window.apiSignIn = apiSignIn;
+    window.apiGetGoogleConfig = apiGetGoogleConfig;
+    window.apiSignInWithGoogle = apiSignInWithGoogle;
     window.apiSignOut = apiSignOut;
     window.apiGetCurrentUser = apiGetCurrentUser;
     window.apiGetDashboardKPIs = apiGetDashboardKPIs;

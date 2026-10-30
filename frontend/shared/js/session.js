@@ -106,10 +106,11 @@
                 if (!u) return null;
                 var meta = u.user_metadata || {};
                 return {
-                    name: meta.full_name || (u.email || 'User').split('@')[0],
+                    name: meta.full_name || u.full_name || u.name || (u.email || 'User').split('@')[0],
                     email: u.email || '',
-                    phone: meta.phone || '',
-                    role: u.role || 'user'
+                    phone: meta.phone || u.phone || '',
+                    role: u.role || 'user',
+                    avatar_url: u.avatar_url || meta.avatar_url || ''
                 };
             }
         } catch (err) {
@@ -120,6 +121,29 @@
         } catch (e) {
             return null;
         }
+    }
+
+    function hasCustomClientAvatar(user) {
+        var url = String((user && user.avatar_url) || '').trim();
+        return /^https?:\/\//i.test(url) || /^data:image\//i.test(url);
+    }
+
+    function avatarInnerHtml(user) {
+        var init = esc(initials(user.name));
+        if (hasCustomClientAvatar(user)) {
+            return '<img src="' + esc(user.avatar_url) + '" alt="' + init + '" referrerpolicy="no-referrer" data-fallback-initials="' + init + '">';
+        }
+        return init;
+    }
+
+    function wireAvatarFallbacks(container) {
+        if (!container) return;
+        container.querySelectorAll('.profile-avatar img[data-fallback-initials]').forEach(function (img) {
+            img.addEventListener('error', function () {
+                var parent = img.parentElement;
+                if (parent) parent.textContent = img.getAttribute('data-fallback-initials') || 'U';
+            }, { once: true });
+        });
     }
 
     async function logout() {
@@ -138,7 +162,7 @@
         return '' +
             '<div class="profile-dropdown" role="menu">' +
                 '<div class="profile-dropdown-head">' +
-                    '<span class="profile-avatar">' + esc(initials(user.name)) + '</span>' +
+                    '<span class="profile-avatar">' + avatarInnerHtml(user) + '</span>' +
                     '<div><strong>' + esc(user.name) + '</strong><small>' + esc(user.email) + '</small></div>' +
                 '</div>' +
                 '<a href="' + base + 'index.html" role="menuitem">Home</a>' +
@@ -168,10 +192,11 @@
             wrap.id = 'profileMenu';
             wrap.innerHTML =
                 '<button type="button" class="profile-chip" id="profileChip" aria-haspopup="true" aria-expanded="false">' +
-                    '<span class="profile-avatar">' + esc(initials(user.name)) + '</span>' +
+                    '<span class="profile-avatar">' + avatarInnerHtml(user) + '</span>' +
                     '<span class="profile-name">' + esc(user.name.split(' ')[0]) + '</span>' +
                     '<svg class="profile-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
                 '</button>' + dropdownHtml(user);
+            wireAvatarFallbacks(wrap);
             acts.appendChild(wrap);
             wrap.querySelector('#profileChip').addEventListener('click', function (e) {
                 e.stopPropagation();
@@ -231,10 +256,11 @@
             userSection.className = 'mobile-drawer-user';
             userSection.innerHTML =
                 '<div class="mobile-user-info">' +
-                    '<span class="profile-avatar" style="width:30px;height:30px;font-size:0.75rem;">' + esc(initials(user.name)) + '</span>' +
+                    '<span class="profile-avatar" style="width:30px;height:30px;font-size:0.75rem;">' + avatarInnerHtml(user) + '</span>' +
                     '<span>' + esc(user.name) + '</span>' +
                 '</div>' +
                 '<button type="button" class="m-signout-btn" data-action="signout">Sign Out</button>';
+            wireAvatarFallbacks(userSection);
             nav.appendChild(userSection);
         } else {
             var authSection = document.createElement('div');

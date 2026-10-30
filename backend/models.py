@@ -24,6 +24,11 @@ class UserLogin(BaseModel):
     password: str = Field(..., description="Account password")
 
 
+class GoogleAuthRequest(BaseModel):
+    credential: Optional[str] = Field(default=None, description="Google OAuth2 ID token (JWT) from Google Identity Services")
+    access_token: Optional[str] = Field(default=None, description="Google OAuth2 access token from GIS Token Client")
+
+
 class UserResponse(BaseModel):
     id: int
     email: str
@@ -31,6 +36,7 @@ class UserResponse(BaseModel):
     phone: Optional[str] = ""
     role: str = "user"
     avatar_url: Optional[str] = "assets/images/agent.jpg"
+    google_id: Optional[str] = None
     created_at: Optional[str] = None
 
 
