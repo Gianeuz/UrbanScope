@@ -785,6 +785,7 @@
                             'Content-Type': 'application/json',
                             'Authorization': token ? ('Bearer ' + token) : ''
                         },
+                        credentials: 'include',
                         body: JSON.stringify({
                             full_name: fullName,
                             email: targetEmail,
@@ -900,6 +901,10 @@
                 avatar_url: avatarUrl
             }));
 
+            try {
+                window.dispatchEvent(new CustomEvent('urbanscope:profileUpdated', { detail: merged }));
+            } catch (ev) {}
+
             return { success: true, user: merged };
         } catch (err) {
             console.warn('apiUpdateAdminProfile notice:', err);
@@ -907,6 +912,10 @@
                 const storedAdmin = JSON.parse(localStorage.getItem('adminUser') || '{}');
                 const merged = { ...storedAdmin, ...(arg1 || {}) };
                 localStorage.setItem('adminUser', JSON.stringify(merged));
+                localStorage.setItem('urbanscope_admin_profile', JSON.stringify(merged));
+                try {
+                    window.dispatchEvent(new CustomEvent('urbanscope:profileUpdated', { detail: merged }));
+                } catch (ev) {}
                 return { success: true, user: merged };
             } catch (e) { }
             return { success: false, error: err.message };

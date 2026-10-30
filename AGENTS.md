@@ -263,7 +263,8 @@ path when rendering from a page.
     - **Public API & Zero-Latency Caching**:
       - Public endpoint `GET /api/agent/profile` in `backend/app.py` serves lead agent credentials without requiring authorization tokens.
       - `apiGetLeadAgentProfile()` in `supabase.js` and `api.js` queries `urbanscope_admin_profile` first for instant 0ms rendering, followed by background synchronization with FastAPI and Supabase Cloud.
-      - Real-time multi-tab synchronization via `window.addEventListener('storage', ...)` updates open homepage and client tabs immediately when changes are saved in the admin profile settings.
+      - Real-time multi-tab synchronization via `window.addEventListener('storage', ...)`, `window.addEventListener('focus', ...)`, and custom `urbanscope:profileUpdated` events updates open homepage and client tabs immediately when changes are saved in the admin profile settings.
+      - **Target User Email Resolution (`backend/app.py`)**: `PUT /api/admin/profile` resolves target account by `payload.email` first (updating `admin.realestate@gmail.com` / user 1 directly even if the authenticated session has a different user ID, e.g. superadmin or OAuth account, preventing `400 Email is already in use` conflicts). Supports simulated session tokens (`sb_session_*`, `sb_google_*`) in `get_current_user_from_request`.
 
 ---
 

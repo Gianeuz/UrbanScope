@@ -614,5 +614,20 @@ async function initDynamicAgentDetails() {
             } catch (err) {}
         }
     });
+
+    // Custom event listener within the same window / tab
+    window.addEventListener('urbanscope:profileUpdated', (e) => {
+        if (e.detail) {
+            renderHomepageAgentDetails(e.detail);
+        }
+    });
+
+    // Re-sync when user switches back to this tab
+    window.addEventListener('focus', () => {
+        try {
+            const p = JSON.parse(localStorage.getItem('urbanscope_admin_profile') || 'null');
+            if (p) renderHomepageAgentDetails(p);
+        } catch (err) {}
+    });
 }
 

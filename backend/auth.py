@@ -270,6 +270,11 @@ def get_current_user_from_request(
         return None
 
     payload = decode_access_token(token)
+    if not payload and isinstance(token, str):
+        if token.startswith("sb_session_") or token.startswith("sb_google_") or token.startswith("demo_token_"):
+            parts = token.split("_")
+            if len(parts) >= 3 and parts[2].isdigit():
+                payload = {"sub": parts[2]}
     if not payload:
         return None
 

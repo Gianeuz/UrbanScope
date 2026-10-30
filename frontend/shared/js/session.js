@@ -391,6 +391,14 @@
         }
     });
 
+    window.addEventListener('urbanscope:profileUpdated', function() {
+        syncGlobalFooterContact();
+    });
+
+    window.addEventListener('focus', function() {
+        syncGlobalFooterContact();
+    });
+
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 

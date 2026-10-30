@@ -392,6 +392,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.setItem('adminUser', JSON.stringify(mergedAdmin));
             localStorage.setItem('urbanscope_user', JSON.stringify(mergedAdmin));
             localStorage.setItem('urbanscope_demo_user', JSON.stringify(mergedAdmin));
+            try {
+                window.dispatchEvent(new CustomEvent('urbanscope:profileUpdated', { detail: updatedData }));
+            } catch (e) {}
 
             try {
                 if (typeof apiUpdateAdminProfile === 'function') {
